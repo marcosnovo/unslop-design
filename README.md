@@ -1,7 +1,8 @@
 <h1 align="center">unslop-design</h1>
 
 <p align="center">
-  <b>A skill for Claude Code and Codex that makes your app stop looking AI-generated.</b><br>
+  <b>An agent skill that makes your app stop looking AI-generated.</b><br>
+  Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
   42 numbered design fixes and a review process that shows you the before/after before touching your code.
 </p>
 
@@ -22,6 +23,7 @@
 <p align="center">
   <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill-111111">
   <img alt="Codex skill" src="https://img.shields.io/badge/Codex-skill-111111">
+  <img alt="Agent Skills standard" src="https://img.shields.io/badge/Agent%20Skills-SKILL.md-111111">
   <img alt="SwiftUI · Compose · Web" src="https://img.shields.io/badge/SwiftUI%20·%20Compose%20·%20Web-111111">
   <img alt="MIT license" src="https://img.shields.io/badge/license-MIT-111111">
 </p>
@@ -58,48 +60,63 @@ see which one helped.
 
 ## Install
 
-**Claude Code**
+**Every agent on your machine, one command:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/marcosnovo/unslop-design/main/install.sh | bash
+```
+
+It clones the skill once into `~/.agents/skills/unslop-design` and links it
+into every agent it finds, so one `git pull` updates them all. Nothing is
+overwritten: an existing folder with the same name is left alone.
+`--dry-run` shows what it would do, `--copy` copies instead of linking, and
+`--uninstall` removes only what it installed.
+([Read the script](install.sh) before piping it into a shell.)
+
+**Or one agent by hand.** Clone into its skills folder:
+
+| Agent | Global folder | Call it |
+|---|---|---|
+| Claude Code | `~/.claude/skills/` | `/unslop-design` |
+| Codex · Cline · Zed | `~/.agents/skills/` | `$unslop-design` (Codex) |
+| Cursor | `~/.cursor/skills/` | ask for it by name |
+| GitHub Copilot | `~/.copilot/skills/` | ask for it by name |
+| Gemini CLI | `~/.gemini/skills/` | ask for it by name |
+| Antigravity | `~/.gemini/antigravity/skills/` | ask for it by name |
+| Windsurf | `~/.codeium/windsurf/skills/` | ask for it by name |
+| OpenCode | `~/.config/opencode/skills/` | ask for it by name |
+| Amp | `~/.config/agents/skills/` | ask for it by name |
+| Kiro | `~/.kiro/skills/` | ask for it by name |
+| Goose · Roo Code · Junie | `~/.config/goose/skills/` · `~/.roo/skills/` · `~/.junie/skills/` | ask for it by name |
 
 ```bash
 git clone https://github.com/marcosnovo/unslop-design ~/.claude/skills/unslop-design
 ```
 
-**Codex**
-
-```bash
-git clone https://github.com/marcosnovo/unslop-design ~/.agents/skills/unslop-design
-```
-
-That's it: it's now available in every project. Restart Codex if it was
-open. Update later with `git -C <that folder> pull`.
+Every agent also picks it up on its own when the request matches (design
+review, screenshots, "less AI"), so calling it by name is optional.
 
 <details>
-<summary>Using both? Install once</summary>
+<summary>Only for one project, with the skills CLI, or in a chat app</summary>
 
-Clone it into `~/.agents/skills/unslop-design` (Codex) and link it for
-Claude Code:
-
-```bash
-ln -s ~/.agents/skills/unslop-design ~/.claude/skills/unslop-design
-```
-
-</details>
-
-<details>
-<summary>Only for one project, or on claude.ai</summary>
-
-- **One project:** clone it into `.claude/skills/unslop-design` (Claude Code)
-  or `.agents/skills/unslop-design` (Codex) inside that repo and commit it,
-  so your team (and cloud sessions) get it too.
-- **claude.ai / Claude desktop chat:** download the repo as a ZIP and upload
-  it in Settings → Capabilities → Skills.
+- **One project:** clone it into `.agents/skills/unslop-design` inside the
+  repo (Claude Code: `.claude/skills/`, Windsurf: `.windsurf/skills/`,
+  Kiro: `.kiro/skills/`) and commit it, so your team and cloud sessions get
+  it too.
+- **[skills CLI](https://github.com/vercel-labs/skills):**
+  `npx skills add marcosnovo/unslop-design -g`.
+- **claude.ai, Claude desktop or ChatGPT:** download `unslop-design.zip`
+  from the [latest release](https://github.com/marcosnovo/unslop-design/releases/latest)
+  and upload it as a skill (Claude: Settings → Capabilities → Skills).
+  Chat apps can review screenshots and draw the before/after; the parts
+  that touch a codebase need a coding agent.
 
 </details>
 
 ## Use it
 
-Type `/unslop-design` in Claude Code or `$unslop-design` in Codex, or just
-ask in plain words. It triggers on its own
+Type `/unslop-design` (or `$unslop-design` in Codex), or just ask in plain
+words. It triggers on its own
 when you send screenshots or a screen recording and ask for design feedback.
 
 ```text
@@ -219,6 +236,8 @@ before/after without the whole team.
 | [`checklist.md`](checklist.md) | The 42 fixes, each with what to do and why |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |
+| [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
+| [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
 | [`references.md`](references.md) | Four real before/afters and a chapter map of *Refactoring UI* |
 
@@ -233,13 +252,15 @@ rules.
 </details>
 
 <details>
-<summary><b>Claude Code or Codex: what changes?</b></summary>
+<summary><b>Which agent should I use? What changes between them?</b></summary>
 
-Nothing in the rules. Both read the same `SKILL.md`; Codex also reads
+Nothing in the rules: all of them read the same `SKILL.md` (the open
+[Agent Skills](https://agentskills.io) format); Codex also reads
 `agents/openai.yaml` for its UI. The parallel reviewers use subagents where
 your tool has them, and run one after another where it doesn't. The
 before/after is a published artifact in Claude Code and a local HTML file
-in Codex.
+elsewhere. The full process (parallel reviewers, worktrees, PR) works best
+in agents with subagents and git: Claude Code, Codex, Cursor, Copilot.
 </details>
 
 <details>

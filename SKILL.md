@@ -1,6 +1,11 @@
 ---
 name: unslop-design
 description: Review and redesign an app or website UI to strip out the "slop" (decorative accent color, gradients, meaningless shadows, noisy badges, emoji as icons, eyeballed spacing, greetings as page titles, Title Case, flat hierarchy, repeated numbers) using a system (spacing, type, color roles, elevation) and an orchestrated process — inventory from screen recordings or screenshots, a grayscale pass, parallel product-designer reviewers, a published winning proposal, devs per area, audits and a PR. Works for any project (SwiftUI, Compose, web). Use it when asked to "review the design", "make a proposal", "make it look less AI", "unslop", "polish this screen", "design review", "product designer review", "winning proposal", or when given videos or screenshots of an app with a request for feedback or a redesign. Also use it when starting a design system (spacing, type, palette, shadow scales) or auditing tokens, contrast or consistency across screens.
+license: MIT
+metadata:
+  author: marcosnovo
+  version: "1.2.0"
+  homepage: https://github.com/marcosnovo/unslop-design
 ---
 
 # Unslop design
@@ -53,14 +58,15 @@ one you need, not all of them.
    2,000 items). What can't be compiled in your environment gets audited by
    reading, and the PR says so.
 
-## Claude Code or Codex
+## Any agent (Claude Code, Codex, Cursor, Copilot, Gemini…)
 
-The skill works the same in both. Where it says "agents", use what your
-tool has: Claude Code's subagents (with a git worktree each for devs) or
-Codex subagents. With no subagents, run the reviewers one after another,
+The rules are the same everywhere. Where it says "agents", use what your
+tool has: subagents if it has them (Claude Code, Codex…), with a git
+worktree each for devs. With no subagents, run the reviewers one after another,
 each with its own brief, and keep their outputs separate before the jury
-step. Where it says "publish", Claude Code publishes an artifact; Codex
-writes an HTML file the user opens.
+step. Where it says "publish", Claude Code publishes an artifact; other agents
+write an HTML file the user opens. In a chat app without a codebase, stop
+after the before/after proposal.
 
 ## Working agreement (defaults)
 
