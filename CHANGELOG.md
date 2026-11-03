@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 — 2026-11-03
+
+- Two fixes beyond clean (#58-#59): objects from the domain before boxes,
+  and floating chrome when the content is a canvas (map, camera,
+  timeline). From the developer of Utkik, used with permission.
+- A seventh reference: Utkik, a flight and ship tracker built from objects
+  instead of cards.
+
 ## 1.4.0 — 2026-11-03
 
 - Web: `web.md` playbook (finding tokens per stack — Tailwind, shadcn, CSS

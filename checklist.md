@@ -248,6 +248,25 @@ cite them ("#14") in their boards.
     slot, not a bell); cards reflow with `minmax()`; tables scroll inside
     their own container. Check with `scripts/web-audit.mjs`.
 
+## Beyond clean: distinctive
+Everything above gets a screen to *clean*. These two are the next step,
+once it holds up in grayscale; skip them on a screen that isn't clean yet.
+58. **Objects before boxes.** Boxes have a purpose — grouping things you
+    act on together — but they shouldn't be the only building block. Before
+    adding a card, ask whether an object from the domain can carry the same
+    information: the route arc between two airports instead of a "From/To"
+    box, the aircraft photo as the header, the map itself as the list. Draw
+    the screen once with no containers at all and add back only the ones
+    that separate something (#31, #47).
+59. **When the content is a canvas, chrome floats.** A screen whose main
+    view is a map, a camera, a timeline or a document doesn't need a
+    permanent tab bar eating its bottom edge: a floating menu (a short
+    vertical list of icon + label that opens over the canvas), a search at
+    the top and a sheet for the selected item can carry the navigation. Keep
+    the tab bar where the app is several equal sections (#46). Test that
+    every destination is still reachable in two taps and by VoiceOver /
+    TalkBack.
+
 ## Also (what came up in real reviews)
 - **Sheets/modals sized to content**, not fixed heights that clip text at
   larger type sizes; opaque background over maps or glass; a visible close

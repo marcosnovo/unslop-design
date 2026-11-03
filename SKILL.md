@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.4.0"
+  version: "1.5.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 

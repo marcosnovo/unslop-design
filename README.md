@@ -3,13 +3,13 @@
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
   Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
-  57 numbered design fixes, two scripts that measure your UI, and a review process that shows you the before/after before touching your code.
+  59 numbered design fixes, two scripts that measure your UI, and a review process that shows you the before/after before touching your code.
 </p>
 
 <p align="center">
   <a href="#install">Install</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#the-57-fixes">The 57 fixes</a> ·
+  <a href="#the-59-fixes">The 59 fixes</a> ·
   <a href="#web-and-dashboards">Web</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#faq">FAQ</a>
@@ -157,7 +157,7 @@ Audit our tokens: spacing, type scale, contrast in dark mode
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
 
-## The 57 fixes
+## The 59 fixes
 
 Every fix has a number so reviewers can cite it ("#20 badge is too loud")
 and you can accept or reject them one by one. A few of them:
@@ -186,7 +186,7 @@ and you can accept or reject them one by one. A few of them:
 | 55 | Ink headline on a neutral canvas | gradient text over a purple glow |
 
 <details>
-<summary><b>All 57, by section</b></summary>
+<summary><b>All 59, by section</b></summary>
 
 **System** · 1 spacing scale · 2 type scale and two weights · 3 palette with
 shades defined up front · 4 grays with one temperature · 5 named elevation
@@ -224,6 +224,9 @@ content solid · 47 a signature is a family · 48 real content in every mock
 51 one category, one color · 52 a delta names its baseline · 53 interactive
 states drawn · 54 shortcuts as keys · 55 no gradient text, no page glow ·
 56 a data voice · 57 works at 390, 768 and 1280 px
+
+**Beyond clean** · 58 objects before boxes · 59 when the content is a canvas,
+chrome floats
 
 Full text with the reason behind each one: [`checklist.md`](checklist.md).
 
@@ -272,7 +275,7 @@ before/after without the whole team.
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles and the short flow (what the agent reads first) |
-| [`checklist.md`](checklist.md) | The 57 fixes, each with what to do and why |
+| [`checklist.md`](checklist.md) | The 59 fixes, each with what to do and why |
 | [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |
@@ -283,7 +286,7 @@ before/after without the whole team.
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
-| [`references.md`](references.md) | Six real before/afters and a chapter map of *Refactoring UI* |
+| [`references.md`](references.md) | Six real before/afters, one reference app and a chapter map of *Refactoring UI* |
 
 ## FAQ
 
@@ -348,6 +351,9 @@ for the checklist review only.
   iOS and Android.
 - The web fixes (#49-#57) started from Damir Sokolovsky's unslopping video
   of a dashboard on X.
+- #58 and #59 came from the developer of Utkik, who answered the launch
+  post with "boxes have their purpose, but an app shouldn't only be built
+  by them" — and a better-looking app to prove it.
 
 ## Contributing
 

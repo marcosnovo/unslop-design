@@ -62,6 +62,17 @@ the year muted (#26) · "+12%!!" → "+12% vs last month" in a mono data voice
 card → a rendered card (#35) · glowing bars → series lines with a few axis
 ticks (#39). `examples/` rebuilds it so the scripts have something to bite.
 
+**7. Utkik (live flight and ship tracker, shared by its developer on
+Threads).** Not a before/after: an answer to "it's still boxes bonanza".
+The map is the whole screen and there's no tab bar; the menu opens as a
+floating list of icons with labels over the map (#59). The selected flight
+is the aircraft's real photo, the route as one arc from POZ to CPH with the
+plane on it and "Landing ~16:16 · in 3 min" under it, then three large
+numbers (altitude, speed, heading) — the arc and the photo do the work a
+stack of cards would (#58, #18, #11). In the developer's words: boxes have
+their purpose, but an app shouldn't be built only from them. Used with
+permission.
+
 ## Refactoring UI (Wathan & Schoger): what it adds to the checklist
 | Chapter | Idea | # |
 |---|---|---|
