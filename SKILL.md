@@ -1,10 +1,10 @@
 ---
 name: unslop-design
-description: Review and redesign an app or website UI to strip out the "slop" (decorative accent color, gradients, meaningless shadows, noisy badges, emoji as icons, eyeballed spacing, greetings as page titles, Title Case, flat hierarchy, repeated numbers) using a system (spacing, type, color roles, elevation) and an orchestrated process — inventory from screen recordings or screenshots, a grayscale pass, parallel product-designer reviewers, a published winning proposal, devs per area, audits and a PR. Works for any project (SwiftUI, Compose, web). Use it when asked to "review the design", "make a proposal", "make it look less AI", "unslop", "polish this screen", "design review", "product designer review", "winning proposal", or when given videos or screenshots of an app with a request for feedback or a redesign. Also use it when starting a design system (spacing, type, palette, shadow scales) or auditing tokens, contrast or consistency across screens.
+description: Review and redesign an app or website UI to strip out the "slop" (decorative accent color, gradients, glows, noisy badges, emoji as icons, eyeballed spacing, greetings as titles, Title Case, flat hierarchy, repeated numbers) with a system (spacing, type, color roles, elevation) and an orchestrated process: inventory from recordings or screenshots, grayscale pass, parallel product-designer reviewers, a published winning proposal, devs per area, audits and a PR. Covers SwiftUI, Compose and web (dashboards, landing pages, Tailwind), with scripts that scan the code and measure the rendered page. Use it when asked to "review the design", "make it look less AI", "unslop", "polish this screen", "design review", "winning proposal", "audit this dashboard", or when given videos or screenshots of an app or site asking for feedback or a redesign. Also use it to start a design system (spacing, type, palette, shadow scales) or to audit tokens, contrast or consistency across screens.
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.3.0"
+  version: "1.4.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -12,11 +12,22 @@ metadata:
 
 Three parts: **what to fix** (`checklist.md`, each fix with its reason),
 **how to orchestrate it** (`process.md`, rounds with reviewers and devs in
-parallel) and **cases and sources** (`references.md`: the five before/afters
-that started this skill and a map of *Refactoring UI*). The spec card every
+parallel) and **cases and sources** (`references.md`: the before/afters
+that shaped this skill and a map of *Refactoring UI*). The spec card every
 reviewer fills is in `spec-card.md`. Per-platform notes
-(SwiftUI, Compose, web, widgets, watch, car) live in `platforms.md`. Read the
-one you need, not all of them.
+(SwiftUI, Compose, web, widgets, watch, car) live in `platforms.md`; websites,
+web apps and dashboards have their own playbook in `web.md`. Read the one
+you need, not all of them.
+
+Two scripts measure instead of guessing:
+- `python3 scripts/slop-scan.py <paths>` — slop patterns in source (web,
+  SwiftUI, Compose) with file, line and fix number. Standard library only.
+- `node scripts/web-audit.mjs <url>` — the rendered page at 390/768/1280 px:
+  horizontal scroll, a census of every size/color/radius/shadow/spacing in
+  use, computed contrast, focus states, emoji, glows, plus a grayscale
+  screenshot. Needs Playwright.
+
+`examples/dashboard-before.html` and `-after.html` show both on one page.
 
 ## Principles (non-negotiable)
 
@@ -89,9 +100,11 @@ after the before/after proposal.
 ## Short flow
 
 1. Inventory: frames from the videos (`process.md` § 1), screens and
-   states, and each screen located in the code.
+   states, and each screen located in the code. Run `scripts/slop-scan.py` on the
+   UI code and, for the web, `scripts/web-audit.mjs` on each key page.
 2. System: check (or create) the spacing, type, color and elevation scales
-   (`checklist.md` § System). Without scales, reviewers judge by eye.
+   (`checklist.md` § System). Without scales, reviewers judge by eye; the
+   audit's census shows which values the page really uses.
 3. Grayscale pass + parallel reviewers (3-4, one per area) against
    `checklist.md`, applying fixes **one at a time**.
 4. Winning proposal: one HTML page with before/after, the spec card and

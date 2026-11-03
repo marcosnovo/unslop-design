@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — after</title>
+<!-- The same dashboard after the checklist. Tokens first, then every value
+     comes from them. Comments cite the fix number. -->
+<style>
+  :root {
+    /* spacing scale, non-linear (#1) */
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+    /* type scale, hand-picked (#2) */
+    --t-xs: 12px; --t-sm: 14px; --t-md: 16px; --t-lg: 28px; --t-xl: 36px;
+    --w-regular: 400; --w-medium: 500;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-data: ui-monospace, "SF Mono", Menlo, monospace;            /* #56 */
+    /* neutral grays with one temperature (#4), roles (#19, #24) */
+    --canvas: #f6f6f5; --surface: #ffffff; --surface-2: #efefed; --line: #e3e3e0;
+    --ink: #161616; --ink-2: #5c5c58; --ink-3: #6e6e69;
+    --up: #137a43; --focus: #2d5bd3;
+    /* one identity per category, shared by dot, legend and series (#51) */
+    --c-enterprise: #b8860b; --c-business: #1f9d55; --c-pro: #2f6fdb; --c-starter: #d0457a; --c-free: #7a5bd1;
+    --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / .06), 0 1px 1px rgb(0 0 0 / .04);   /* #5, #32 */
+    --rail: var(--s5);                                                       /* #43 */
+    --icon-slot: 20px;                                                       /* #49 */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #121212; --surface: #1b1b1b; --surface-2: #252525; --line: #2c2c2c;
+      --ink: #f2f2f0; --ink-2: #a8a8a3; --ink-3: #8f8f8a; --up: #4cc38a; --focus: #8fb0ff;
+      --shadow-1: none;                         /* dark: lighter surface, not shadow */
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); font-size: var(--t-md); color: var(--ink); background: var(--canvas); }
+  .app { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
+  .side { padding: var(--s5) var(--s4); border-right: 1px solid var(--line); background: var(--surface); }
+  .brand { display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s3); font-weight: var(--w-medium); }
+  .brand button { margin-left: auto; }
+  .search { display: flex; align-items: center; gap: var(--s3); margin: var(--s5) 0; padding: var(--s2) var(--s3);
+    border-radius: var(--r-md); background: var(--surface-2); color: var(--ink-2); font-size: var(--t-sm); }
+  kbd { margin-left: auto; font: var(--t-xs)/1 var(--font); padding: var(--s1) var(--s2); border-radius: var(--s1);
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }          /* #54 */
+  kbd + kbd { margin-left: var(--s1); }
+  .head { margin: var(--s5) var(--s3) var(--s2); font-size: var(--t-xs); color: var(--ink-3); }   /* #45 */
+  .nav { display: grid; gap: var(--s1); }
+  .nav a { display: grid; grid-template-columns: var(--icon-slot) 1fr auto; align-items: center; gap: var(--s3);
+    padding: var(--s2) var(--s3); border-radius: var(--r-sm); color: var(--ink-2); text-decoration: none; font-size: var(--t-sm); }
+  .nav a:hover { background: var(--surface-2); color: var(--ink); }                               /* #53 */
+  .nav a[aria-current] { background: var(--surface-2); color: var(--ink); font-weight: var(--w-medium); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .nav svg { width: var(--icon-slot); height: var(--icon-slot); }
+  .count { font: var(--t-xs) var(--font-data); color: var(--ink-3); font-variant-numeric: tabular-nums; }  /* #50 */
+  .dot { width: var(--s2); height: var(--s2); border-radius: 50%; justify-self: center; }
+  .icon-btn { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: var(--r-sm);
+    background: none; color: var(--ink-2); cursor: pointer; }
+  .icon-btn:hover { background: var(--surface-2); }
+  main { padding: var(--s6) var(--rail); max-width: 1120px; }
+  .crumb { color: var(--ink-2); font-size: var(--t-sm); }
+  h1 { margin: var(--s2) 0 var(--s5); font-size: var(--t-xl); font-weight: var(--w-regular); letter-spacing: -0.02em; }
+  h1 span { color: var(--ink-3); }                                                                 /* #26 */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s4); }
+  .card { padding: var(--s5); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-1);
+    border: 1px solid var(--line); min-width: 0; }
+  .label { font-size: var(--t-sm); color: var(--ink-2); }
+  .num { font-size: var(--t-lg); margin: var(--s2) 0 var(--s1); font-variant-numeric: tabular-nums; }
+  .delta { font: var(--t-xs) var(--font-data); color: var(--ink-3); }
+  .delta b { color: var(--up); font-weight: var(--w-regular); }                                    /* #52 */
+  .wide { margin-top: var(--s4); }
+  .chart { width: 100%; height: auto; margin-top: var(--s5); }
+  .chart text { font: var(--t-xs) var(--font-data); fill: var(--ink-3); }
+  .chart .grid-line { stroke: var(--line); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--s4); margin-top: var(--s3); font-size: var(--t-xs); color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: var(--s2); }
+  @media (max-width: 900px) {                                                                      /* #57 */
+    .app { grid-template-columns: 1fr; }
+    .side { border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .nav, .side .head { display: none; }
+    .search { margin-bottom: 0; }
+    main { padding: var(--s5) var(--s4); }
+    h1 { font-size: var(--t-lg); }
+    .chart text { font-size: 24px; }   /* viewBox units: the chart is drawn at half size here */
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><path d="M16 5a3 3 0 010 6M18 14c2 .5 3 2 3 5"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17l5-5 4 3 7-7"/><path d="M15 8h5v5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M10 5v14"/></symbol>
+  </defs>
+</svg>
+<div class="app">
+  <aside class="side">
+    <div class="brand">Ember
+      <button class="icon-btn" aria-label="Collapse sidebar"><svg width="20" height="20"><use href="#i-sidebar"/></svg></button>
+    </div>
+    <div class="search" role="search"><svg width="16" height="16"><use href="#i-search"/></svg> Search <kbd>⌘</kbd><kbd>K</kbd></div>
+    <div class="head">Navigation</div>
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-current="page"><svg><use href="#i-grid"/></svg>Overview<span></span></a>
+      <a href="#"><svg><use href="#i-inbox"/></svg>Inbox<span class="count">12</span></a>
+      <a href="#"><svg><use href="#i-layers"/></svg>Projects<span></span></a>
+      <a href="#"><svg><use href="#i-users"/></svg>Customers<span></span></a>
+      <a href="#"><svg><use href="#i-doc"/></svg>Invoices<span></span></a>
+      <a href="#"><svg><use href="#i-chart"/></svg>Reports<span></span></a>
+    </nav>
+    <div class="head">Plans</div>
+    <nav class="nav" aria-label="Plans">
+      <a href="#"><i class="dot" style="background:var(--c-enterprise)"></i>Enterprise<span class="count">18</span></a>
+      <a href="#"><i class="dot" style="background:var(--c-business)"></i>Business<span class="count">64</span></a>
+      <a href="#"><i class="dot" style="background:var(--c-pro)"></i>Pro<span class="count">210</span></a>
+      <a href="#"><i class="dot" style="background:var(--c-starter)"></i>Starter<span class="count">480</span></a>
+      <a href="#"><i class="dot" style="background:var(--c-free)"></i>Free<span class="count">1.2k</span></a>
+    </nav>
+  </aside>
+  <main>
+    <div class="crumb">Overview</div>
+    <h1>October <span>2026</span></h1>
+    <div class="grid">
+      <section class="card"><div class="label">Paid this month</div><div class="num">$48,210</div>
+        <div class="delta"><b>+12%</b> vs September</div></section>
+      <section class="card"><div class="label">Overdue invoices</div><div class="num">7</div>
+        <div class="delta"><b>3 fewer</b> than last week</div></section>
+    </div>
+    <section class="card wide">
+      <div class="label">Revenue by plan</div><div class="num">$124,860.40</div>
+      <div class="delta"><b>+4.2%</b> vs September</div>
+      <svg class="chart" viewBox="0 0 640 220" role="img" aria-label="Revenue by plan, August to January">
+        <g class="grid-line"><line x1="40" y1="20" x2="630" y2="20"/><line x1="40" y1="100" x2="630" y2="100"/><line x1="40" y1="180" x2="630" y2="180"/></g>
+        <text x="0" y="24">120k</text><text x="0" y="104">60k</text><text x="16" y="184">0</text>
+        <path d="M40 180 C160 180 220 30 335 30 S510 180 630 180" fill="none" stroke="var(--c-enterprise)" stroke-width="2"/>
+        <path d="M40 180 C160 180 220 70 335 70 S510 180 630 180" fill="none" stroke="var(--c-business)" stroke-width="2"/>
+        <path d="M40 180 C160 180 220 105 335 105 S510 180 630 180" fill="none" stroke="var(--c-pro)" stroke-width="2"/>
+        <path d="M40 180 C160 180 220 135 335 135 S510 180 630 180" fill="none" stroke="var(--c-starter)" stroke-width="2"/>
+        <path d="M40 180 C160 180 220 165 335 165 S510 180 630 180" fill="none" stroke="var(--c-free)" stroke-width="2"/>
+        <text x="40" y="208">Aug</text><text x="210" y="208">Sep</text><text x="325" y="208">Oct</text><text x="440" y="208">Nov</text><text x="600" y="208">Dec</text>
+      </svg>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--c-enterprise)"></i>Enterprise</span>
+        <span><i class="dot" style="background:var(--c-business)"></i>Business</span>
+        <span><i class="dot" style="background:var(--c-pro)"></i>Pro</span>
+        <span><i class="dot" style="background:var(--c-starter)"></i>Starter</span>
+        <span><i class="dot" style="background:var(--c-free)"></i>Free</span>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

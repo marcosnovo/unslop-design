@@ -38,6 +38,8 @@
 - Strings generated from the source of truth if there is one; not by hand.
 
 ## Web
+The full playbook (stacks, scanners, dashboards, landing pages) is in
+`web.md`. The short version:
 - Tokens in `:root` with a dark version; no loose colors in components.
   Contrast checked with the same script. Think of shades in HSL/OKLCH (hue,
   saturation, lightness), not hex.

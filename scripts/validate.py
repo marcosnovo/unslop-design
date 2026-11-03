@@ -42,7 +42,7 @@ lines = body.count("\n")
 if lines > 500:
     problems.append(f"SKILL.md body: {lines} lines, keep it under 500")
 
-for ref in sorted(set(re.findall(r"`([\w./-]+\.(?:md|yaml|py|sh))`", text))):
+for ref in sorted(set(re.findall(r"`([\w./-]+\.(?:md|yaml|py|sh|mjs))`", text))):
     if "/" not in ref and not (root / ref).exists() and ref not in ("SKILL.md",):
         problems.append(f"referenced file not found: {ref}")
 

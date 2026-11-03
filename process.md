@@ -102,7 +102,10 @@ wait for their "yes" or changes: design is their call.
   3.8:1) and never trusting a comment ("4.5:1" that was 4.26).
 - Off-scale literals: grep the diff for stray numbers in paddings, font
   sizes, radii and shadows (`padding(13)`, `fontSize = 15.sp`, `#3a7bd5`):
-  each one is a missing token.
+  each one is a missing token. `scripts/slop-scan.py <changed paths>` does
+  it, together with the other patterns.
+- Web: `scripts/web-audit.mjs` before and after, light and dark (`web.md`
+  § 6); attach both reports to the PR.
 - Grep every changed string and symbol in UI tests, previews and
   showcase/demo code too: they don't run in CI and go stale.
 - Audits in parallel with CI: one for **compilation** and one for

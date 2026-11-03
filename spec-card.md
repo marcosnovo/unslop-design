@@ -27,6 +27,12 @@ CHROME                          STATES
 [ ] Top bar   floating pill, line icons   [ ] Empty   drawn + one action
 [ ] Tab bar   floating, create apart      [ ] Long    longest language
 [ ] Primary   names its destination       [ ] Dark    checked separately
+
+WEB (if it's a site or web app)
+[ ] Widths    390 / 768 / 1280, no horizontal scroll
+[ ] Icons     20 px slot, one stroke set
+[ ] Focus     2 px ring, offset 2
+[ ] Data      mono / tabular for deltas, axes, counts
 ```
 
 Ticking order = the order the fixes are applied, one at a time (system →

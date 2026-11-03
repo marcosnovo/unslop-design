@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.4.0 — 2026-11-03
+
+- Web: `web.md` playbook (finding tokens per stack — Tailwind, shadcn, CSS
+  modules, CSS-in-JS —, dashboards, landing pages, verification for a web
+  PR).
+- `scripts/slop-scan.py`: slop patterns in web, SwiftUI and Compose source
+  with file, line and fix number (standard library only).
+- `scripts/web-audit.mjs`: measures the rendered page at 390/768/1280 px —
+  horizontal scroll, a census of every value in use, computed contrast,
+  focus states, small targets, emoji, gradient text and glows — plus a
+  grayscale screenshot (Playwright).
+- Nine new fixes (#49-#57) from a dashboard before/after: icon slot, counts
+  as text, one color per category, deltas with a baseline, interactive
+  states, shortcuts as keys, no gradient text or page glow, a data voice,
+  three widths.
+- `examples/`: the same dashboard before and after; #26, #39 and #45
+  refined; a WEB block in the spec card; a sixth reference case.
+
 ## 1.3.0 — 2026-11-03
 
 - Six new fixes (#43-#48): rails, one section gap with no filler copy,

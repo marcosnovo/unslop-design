@@ -108,7 +108,8 @@ cite them ("#14") in their boards.
     potential!"). Numbers with their unit and the user's currency, never
     hardcoded.
 26. **Page title = what it is, not a greeting.** "Morning run", "November
-    2026", not "Hey Alex! 👋". Date or context small (above or below). One
+    2026", not "Hey Alex! 👋". Date or context small (above or below), or
+    as a second tone in the same line ("October" in ink, "2026" muted). One
     concept, one name across the app; name the feature, not the ownership.
     Renaming a product is the owner's call.
 27. **Line height inverse to size.** Small text or long lines: 1.5-2; large
@@ -164,7 +165,10 @@ cite them ("#14") in their boards.
     simplified UI.
 39. **Charts without noise.** Remove gridlines and axes nobody reads; write
     values above bars when they fit; current period saturated, the rest in a
-    tint of the same hue; an axis only if its numbers get used.
+    tint of the same hue; an axis only if its numbers get used. On a
+    dashboard people do read the axis: keep 3-4 ticks in the data voice
+    (#56), series in their category colors (#51) and no glow on the bar you
+    want to highlight.
 
 ## Layout
 40. **One card per idea, the same everywhere.** The "answer card" repeats on
@@ -193,7 +197,9 @@ cite them ("#14") in their boards.
     sections is a single token (e.g. 34 pt) everywhere. Lines like "✨ Share
     your best moments" that only fill a hole are deleted: the gap separates.
 45. **Section headers are labels.** Small, all caps with a little tracking,
-    no emoji: "THE GOOD ONES", not "🔥 The good ones" (#13, #29, #33).
+    no emoji: "THE GOOD ONES", not "🔥 The good ones" (#13, #29, #33). In a
+    dense tool (a sidebar with many groups) a muted sentence-case label
+    ("Plans") is quieter still. Pick one style per product.
 46. **Floating chrome in the platform material, content solid.** Top bar
     and tab bar float as pills in the system material (Liquid Glass, blur)
     with line icons; the main create action is its own solid circle, not a
@@ -207,6 +213,40 @@ cite them ("#14") in their boards.
 48. **Real content in every mock.** Real photos, names, places and times
     ("williamsburg · 2m") in proposals and screenshots. Gray boxes and lorem
     ipsum hide whether the layout survives a long name or a dark photo.
+
+## Web and dashboards
+49. **One icon slot.** Nav icons sit in a fixed-width column (e.g. 20 px)
+    so every label starts on the same line, with or without an icon. Draw a
+    vertical guide through the labels: an emoji 13 px wide next to one 8 px
+    wide shows up immediately (#43).
+50. **Counts are text, not pills.** "Inbox 12" is a right-aligned tabular
+    number in the muted tone; a filled pill only for what needs action now
+    (unread mentions, a failure). "New ✨" badges, "👤" after every count
+    and plan badges on the logo go.
+51. **One category, one color, everywhere.** If plans or series need color,
+    each gets one hue used as a small dot in the nav, the line in the chart
+    and the legend — the same token. Color that only decorates a row goes
+    (#19, #24).
+52. **A delta names its baseline.** "+12% vs September", "3 fewer than last
+    week" — never "+12%!!" or an emoji. Up/down in the role color and a word
+    or arrow (#16, #24).
+53. **Interactive states are drawn.** Hover, `:focus-visible` (a visible
+    ring, never `outline: none` alone), active, disabled and selected. The
+    selected nav row is a quiet filled row, not a gradient pill with a glow.
+    Keyboard users see where they are.
+54. **Shortcuts as keys, placeholders as verbs.** `⌘` `K` as two quiet key
+    caps (`<kbd>`), the field says "Search", not "Search anything…".
+55. **No gradient text, no page glow.** Headline in the ink color, page on
+    a neutral canvas, colored `box-shadow` glows and translucent cards over
+    a purple gradient gone. The default AI palette (purple → blue,
+    fuchsia accents) is a decision only if someone made it (#19, #30, #32).
+56. **A data voice, if it's a tool.** Deltas, axes, counts and timestamps
+    can share one secondary face (a mono or tabular face) so data reads as
+    data. One family more at most, only for numbers and metadata (#2).
+57. **Works at 390, 768 and 1280 px.** No horizontal scroll at any width;
+    the sidebar collapses behind a toggle (that toggle earns the top-left
+    slot, not a bell); cards reflow with `minmax()`; tables scroll inside
+    their own container. Check with `scripts/web-audit.mjs`.
 
 ## Also (what came up in real reviews)
 - **Sheets/modals sized to content**, not fixed heights that clip text at

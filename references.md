@@ -1,6 +1,6 @@
 # Cases and sources
 
-## The five before/afters that started this skill
+## The before/afters that shaped this skill
 Short videos (Oct/Nov 2026) of "unslop" redesigns of iOS apps. What's worth
 taking from each is the **rule**, with its checklist number; don't copy
 their style.
@@ -46,6 +46,21 @@ tabs → line icons in floating glass pills, create as its own black circle
 signature: stadium-shaped photos, hand-drawn rank numbers, a polaroid
 sticker for "your story", a taped handwritten caption (#47) · real photos,
 places and times in the feed (#48).
+
+**6. Web dashboard ("EmberAI", from Damir Sokolovsky's unslopping post on
+X).** A purple-gradient finance dashboard with emoji everywhere. The video
+first draws the spacing on top (16, 24, 36, 18, 32, 20 px: no scale, #1)
+and a guide through the nav showing labels starting 13 px and 8 px from the
+icons (#49). Then: purple tint, glows and gradient text gone, neutral dark
+canvas (#55) · emoji → line icons; plan emoji → small dots in the same
+colors as the chart series (#33, #51) · pill counts → muted tabular
+numbers, "New ✨" → a chevron (#50) · ALL CAPS overlines → muted
+sentence-case labels (#45) · "Welcome back, Damir!" → "October 2026" with
+the year muted (#26) · "+12%!!" → "+12% vs last month" in a mono data voice
+(#52, #56) · "Search anything… ⌘K" → "Search" with two key caps (#54) ·
+"EmberAI PRO" → "Ember", the bell → a sidebar toggle (#55, #57) · clip-art
+card → a rendered card (#35) · glowing bars → series lines with a few axis
+ticks (#39). `examples/` rebuilds it so the scripts have something to bite.
 
 ## Refactoring UI (Wathan & Schoger): what it adds to the checklist
 | Chapter | Idea | # |

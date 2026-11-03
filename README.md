@@ -3,13 +3,14 @@
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
   Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
-  48 numbered design fixes and a review process that shows you the before/after before touching your code.
+  57 numbered design fixes, two scripts that measure your UI, and a review process that shows you the before/after before touching your code.
 </p>
 
 <p align="center">
   <a href="#install">Install</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#the-48-fixes">The 48 fixes</a> ·
+  <a href="#the-57-fixes">The 57 fixes</a> ·
+  <a href="#web-and-dashboards">Web</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#faq">FAQ</a>
 </p>
@@ -113,6 +114,28 @@ review, screenshots, "less AI"), so calling it by name is optional.
 
 </details>
 
+## Web and dashboards
+
+<p align="center">
+  <img src="assets/web-before-after.png" alt="The same finance dashboard before and after. Before: purple gradient page, glowing cards, emoji icons, pill counts, gradient 'Welcome back, Damir!' title and glowing bars. After: neutral canvas, line icons in one column, plan dots matching the chart series, plain counts, 'October 2026' title and deltas with their baseline." width="100%">
+</p>
+
+<p align="center"><sub><a href="examples/dashboard-before.html">examples/dashboard-before.html</a> → <a href="examples/dashboard-after.html">examples/dashboard-after.html</a>, rendered at 1280 px.</sub></p>
+
+For a site or web app the agent also measures instead of eyeballing:
+
+```bash
+python3 scripts/slop-scan.py src/                      # gradients, glows, emoji, arbitrary values, raw colors… with file:line and fix #
+node scripts/web-audit.mjs http://localhost:3000       # the rendered page at 390/768/1280 px
+```
+
+On the example above, `web-audit.mjs` goes from 19 spacing values (15 off
+the scale), 5 weights, 6 radii, 6 shadows, a page that scrolls sideways
+on a phone and 11 links with no focus style, to 6 spacing values, all on the scale, 2
+weights, 1 shadow, no sideways scroll and a focus ring on everything.
+`slop-scan.py` finds 91 hits in the before and none in the after. Details
+in [`web.md`](web.md).
+
 ## Use it
 
 Type `/unslop-design` (or `$unslop-design` in Codex), or just ask in plain
@@ -134,7 +157,7 @@ Audit our tokens: spacing, type scale, contrast in dark mode
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
 
-## The 48 fixes
+## The 57 fixes
 
 Every fix has a number so reviewers can cite it ("#20 badge is too loud")
 and you can accept or reject them one by one. A few of them:
@@ -158,9 +181,12 @@ and you can accept or reject them one by one. A few of them:
 | 43 | One left and one right rail for everything | blocks starting at 12, 16 and 20 pt |
 | 44 | One gap between sections, no filler copy | "✨ Share your best moments" |
 | 47 | A signature taken from the domain, as a small family | a new font plus a glow |
+| 50 | Counts as muted tabular numbers | `12` in a hot-pink pill, `210 👤` |
+| 52 | A delta names its baseline | "+12%!!" |
+| 55 | Ink headline on a neutral canvas | gradient text over a purple glow |
 
 <details>
-<summary><b>All 48, by section</b></summary>
+<summary><b>All 57, by section</b></summary>
 
 **System** · 1 spacing scale · 2 type scale and two weights · 3 palette with
 shades defined up front · 4 grays with one temperature · 5 named elevation
@@ -193,6 +219,11 @@ scale proportionally
 **Chrome and signature** · 43 rails · 44 one section gap, no filler · 45
 section headers are labels · 46 floating chrome in the system material,
 content solid · 47 a signature is a family · 48 real content in every mock
+
+**Web and dashboards** · 49 one icon slot · 50 counts are text, not pills ·
+51 one category, one color · 52 a delta names its baseline · 53 interactive
+states drawn · 54 shortcuts as keys · 55 no gradient text, no page glow ·
+56 a data voice · 57 works at 390, 768 and 1280 px
 
 Full text with the reason behind each one: [`checklist.md`](checklist.md).
 
@@ -241,14 +272,18 @@ before/after without the whole team.
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles and the short flow (what the agent reads first) |
-| [`checklist.md`](checklist.md) | The 48 fixes, each with what to do and why |
+| [`checklist.md`](checklist.md) | The 57 fixes, each with what to do and why |
 | [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |
+| [`web.md`](web.md) | Web playbook: finding tokens per stack, dashboards, landing pages, web PR checks |
+| [`scripts/slop-scan.py`](scripts/slop-scan.py) | Finds slop patterns in source with file, line and fix number |
+| [`scripts/web-audit.mjs`](scripts/web-audit.mjs) | Measures a rendered page: overflow, value census, contrast, focus |
+| [`examples/`](examples) | One dashboard before and after, to try the scripts on |
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
-| [`references.md`](references.md) | Five real before/afters and a chapter map of *Refactoring UI* |
+| [`references.md`](references.md) | Six real before/afters and a chapter map of *Refactoring UI* |
 
 ## FAQ
 
@@ -311,6 +346,8 @@ for the checklist review only.
   Steve Schoger, the source of many of the system rules.
 - Built while redesigning [Refil](https://refil.app), a fuel price app for
   iOS and Android.
+- The web fixes (#49-#57) started from Damir Sokolovsky's unslopping video
+  of a dashboard on X.
 
 ## Contributing
 
