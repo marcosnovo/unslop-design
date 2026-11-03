@@ -53,6 +53,15 @@ one you need, not all of them.
    2,000 items). What can't be compiled in your environment gets audited by
    reading, and the PR says so.
 
+## Claude Code or Codex
+
+The skill works the same in both. Where it says "agents", use what your
+tool has: Claude Code's subagents (with a git worktree each for devs) or
+Codex subagents. With no subagents, run the reviewers one after another,
+each with its own brief, and keep their outputs separate before the jury
+step. Where it says "publish", Claude Code publishes an artifact; Codex
+writes an HTML file the user opens.
+
 ## Working agreement (defaults)
 
 - Reviewers = *senior product designers* and devs = *senior devs*, as
@@ -78,7 +87,7 @@ one you need, not all of them.
    (`checklist.md` § System). Without scales, reviewers judge by eye.
 3. Grayscale pass + parallel reviewers (3-4, one per area) against
    `checklist.md`, applying fixes **one at a time**.
-4. Winning proposal: one artifact with before/after and the list of
+4. Winning proposal: one HTML page with before/after and the list of
    decisions; the user chooses.
 5. Devs per area in isolated worktrees with a closed brief; integrate,
    compile, audit, PR, answer review bots, merge when green.

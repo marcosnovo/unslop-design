@@ -1,7 +1,7 @@
 <h1 align="center">unslop-design</h1>
 
 <p align="center">
-  <b>A Claude Code skill that makes your app stop looking AI-generated.</b><br>
+  <b>A skill for Claude Code and Codex that makes your app stop looking AI-generated.</b><br>
   42 numbered design fixes and a review process that shows you the before/after before touching your code.
 </p>
 
@@ -21,6 +21,7 @@
 
 <p align="center">
   <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill-111111">
+  <img alt="Codex skill" src="https://img.shields.io/badge/Codex-skill-111111">
   <img alt="SwiftUI · Compose · Web" src="https://img.shields.io/badge/SwiftUI%20·%20Compose%20·%20Web-111111">
   <img alt="MIT license" src="https://img.shields.io/badge/license-MIT-111111">
 </p>
@@ -32,7 +33,7 @@
 AI-built UIs all drift to the same look: gradient backgrounds, an accent
 color on everything, "Hey Alex! 👋" as the title, emoji as icons, badges
 shouting in saturated pink, three numbers the same size, spacing picked by
-eye. Each of those has a concrete fix. This skill gives Claude the list,
+eye. Each of those has a concrete fix. This skill gives your agent the list,
 the reasons, and a way to apply them **one at a time** without you losing
 control of the design.
 
@@ -57,18 +58,39 @@ see which one helped.
 
 ## Install
 
+**Claude Code**
+
 ```bash
 git clone https://github.com/marcosnovo/unslop-design ~/.claude/skills/unslop-design
 ```
 
-That's it: it's now available in every project. Update later with
-`git -C ~/.claude/skills/unslop-design pull`.
+**Codex**
+
+```bash
+git clone https://github.com/marcosnovo/unslop-design ~/.agents/skills/unslop-design
+```
+
+That's it: it's now available in every project. Restart Codex if it was
+open. Update later with `git -C <that folder> pull`.
+
+<details>
+<summary>Using both? Install once</summary>
+
+Clone it into `~/.agents/skills/unslop-design` (Codex) and link it for
+Claude Code:
+
+```bash
+ln -s ~/.agents/skills/unslop-design ~/.claude/skills/unslop-design
+```
+
+</details>
 
 <details>
 <summary>Only for one project, or on claude.ai</summary>
 
-- **One project:** clone it into `.claude/skills/unslop-design` inside that
-  repo and commit it, so your team (and cloud sessions) get it too.
+- **One project:** clone it into `.claude/skills/unslop-design` (Claude Code)
+  or `.agents/skills/unslop-design` (Codex) inside that repo and commit it,
+  so your team (and cloud sessions) get it too.
 - **claude.ai / Claude desktop chat:** download the repo as a ZIP and upload
   it in Settings → Capabilities → Skills.
 
@@ -76,7 +98,8 @@ That's it: it's now available in every project. Update later with
 
 ## Use it
 
-Type `/unslop-design`, or just ask in plain words. It triggers on its own
+Type `/unslop-design` in Claude Code or `$unslop-design` in Codex, or just
+ask in plain words. It triggers on its own
 when you send screenshots or a screen recording and ask for design feedback.
 
 ```text
@@ -91,8 +114,8 @@ Review the design of the settings and profile screens and give me a proposal
 Audit our tokens: spacing, type scale, contrast in dark mode
 ```
 
-Screen recordings need `ffmpeg` (`brew install ffmpeg`) so Claude can pull
-frames from them.
+Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
+pull frames from them.
 
 ## The 42 fixes
 
@@ -157,7 +180,7 @@ Full text with the reason behind each one: [`checklist.md`](checklist.md).
   <img src="assets/process.png" alt="Screen recordings, then a grayscale pass, then 3-4 reviewers in parallel, then a before/after you approve, then devs per area, then audit and PR." width="100%">
 </p>
 
-1. **Inventory.** Claude pulls frames from your recordings, lists every
+1. **Inventory.** The agent pulls frames from your recordings, lists every
    screen and state, and finds each one in your code.
 2. **System and grayscale pass.** It checks your spacing, type, color and
    shadow scales, then asks whether each screen still works without color.
@@ -192,10 +215,11 @@ before/after without the whole team.
 
 | File | What it covers |
 |---|---|
-| [`SKILL.md`](SKILL.md) | Principles and the short flow (what Claude reads first) |
+| [`SKILL.md`](SKILL.md) | Principles and the short flow (what the agent reads first) |
 | [`checklist.md`](checklist.md) | The 42 fixes, each with what to do and why |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |
+| [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
 | [`references.md`](references.md) | Four real before/afters and a chapter map of *Refactoring UI* |
 
 ## FAQ
@@ -206,6 +230,16 @@ before/after without the whole team.
 No. The process stops at the before/after page and waits for your yes.
 After that it works on branches and opens a PR; merging is up to your repo's
 rules.
+</details>
+
+<details>
+<summary><b>Claude Code or Codex: what changes?</b></summary>
+
+Nothing in the rules. Both read the same `SKILL.md`; Codex also reads
+`agents/openai.yaml` for its UI. The parallel reviewers use subagents where
+your tool has them, and run one after another where it doesn't. The
+before/after is a published artifact in Claude Code and a local HTML file
+in Codex.
 </details>
 
 <details>

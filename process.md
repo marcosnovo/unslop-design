@@ -55,13 +55,14 @@ table, fixes inconsistent numbers across mockups and leaves a "owner
 decides" list per PR. The winner comes from there, not from the prettiest.
 
 ## 4. Winning proposal
-Combine the boards into ONE artifact (a published page) with: principles,
+Combine the boards into ONE HTML page (an artifact in Claude Code, a local
+file in Codex) with: principles,
 each screen before/after, numbered decisions, what was dropped and why, and
 risks (measured contrast, long languages, states). Hand it to the user and
 wait for their "yes" or changes: design is their call.
 
 ## 5. Devs per area (senior, in worktrees)
-- One agent per area with `isolation: worktree`, **commit without push**; a
+- One agent per area, each in its own git worktree, **commit without push**; a
   closed brief: numbered decisions to implement, files, tokens/components to
   use or create, platforms (iOS + Android/web), languages, tests to touch,
   checks to run, and what not to touch (so areas don't collide).

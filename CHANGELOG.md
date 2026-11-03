@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 — 2026-11-03
+
+- Works in Codex too: install in `~/.agents/skills`, call it with `$unslop-design`.
+- `agents/openai.yaml` with Codex UI metadata.
+- Agent-neutral wording: subagents where the tool has them, sequential
+  reviews where it does not; the before/after is an HTML page.
+- Real before/after screenshots of Refil and two fix-by-fix animations in
+  the README.
+
 ## 1.0.0 — 2026-11-03
 
 First public release.
