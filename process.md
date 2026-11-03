@@ -50,6 +50,11 @@ items, the longest language.
 its two neighbors on the scale; if an end wins, repeat with it in the
 middle. Never pixel by pixel.
 
+**Spec card:** every reviewer ends with a filled `spec-card.md` for their
+screens: the named values (Gap, Gutter, Rails, Radius, Heads, Canvas,
+Accent…) that the before/after shows. Devs implement the card row by row
+and tick only what's visible on screen.
+
 **Jury:** one more agent merges the proposals: a "conflict → winner → why"
 table, fixes inconsistent numbers across mockups and leaves a "owner
 decides" list per PR. The winner comes from there, not from the prettiest.
@@ -104,6 +109,12 @@ wait for their "yes" or changes: design is their call.
   **parity** across platforms; wait for both before merging.
 - Reread the diff as a reviewer: untranslated strings, spacing/color
   literals, hardcoded currency.
+
+## 6b. Fix-by-fix recording (optional, great for the PR and for sharing)
+Capture the screen after each card row lands (same device, data and
+position), then cut a 10-15 s clip: one beat per row, the spec card beside
+the phone with the tick appearing as the change does. It proves each fix on
+its own and doubles as release material.
 
 ## 7. PR and loop
 - Run local checks before pushing (don't burn CI minutes).

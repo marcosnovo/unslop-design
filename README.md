@@ -3,13 +3,13 @@
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
   Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
-  42 numbered design fixes and a review process that shows you the before/after before touching your code.
+  48 numbered design fixes and a review process that shows you the before/after before touching your code.
 </p>
 
 <p align="center">
   <a href="#install">Install</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#the-42-fixes">The 42 fixes</a> ·
+  <a href="#the-48-fixes">The 48 fixes</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#faq">FAQ</a>
 </p>
@@ -134,7 +134,7 @@ Audit our tokens: spacing, type scale, contrast in dark mode
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
 
-## The 42 fixes
+## The 48 fixes
 
 Every fix has a number so reviewers can cite it ("#20 badge is too loud")
 and you can accept or reject them one by one. A few of them:
@@ -155,9 +155,12 @@ and you can accept or reject them one by one. A few of them:
 | 33 | One icon set, one stroke | emoji as icons, icons in colored circles |
 | 39 | Charts: today saturated, values on the bars | gridlines and axes nobody reads |
 | 41 | The primary button names where it goes | "Let's Go! 🚀" |
+| 43 | One left and one right rail for everything | blocks starting at 12, 16 and 20 pt |
+| 44 | One gap between sections, no filler copy | "✨ Share your best moments" |
+| 47 | A signature taken from the domain, as a small family | a new font plus a glow |
 
 <details>
-<summary><b>All 42, by section</b></summary>
+<summary><b>All 48, by section</b></summary>
 
 **System** · 1 spacing scale · 2 type scale and two weights · 3 palette with
 shades defined up front · 4 grays with one temperature · 5 named elevation
@@ -187,6 +190,10 @@ without noise
 **Layout** · 40 one card per idea · 41 action pyramid · 42 components don't
 scale proportionally
 
+**Chrome and signature** · 43 rails · 44 one section gap, no filler · 45
+section headers are labels · 46 floating chrome in the system material,
+content solid · 47 a signature is a family · 48 real content in every mock
+
 Full text with the reason behind each one: [`checklist.md`](checklist.md).
 
 </details>
@@ -203,7 +210,8 @@ Full text with the reason behind each one: [`checklist.md`](checklist.md).
    shadow scales, then asks whether each screen still works without color.
    If it doesn't, the fix is hierarchy, not paint.
 3. **Reviewers in parallel.** 3-4 agents acting as senior product designers,
-   one per area, each drawing an HTML before/after and citing fix numbers.
+   one per area, each drawing an HTML before/after, citing fix numbers and
+   filling a spec card (Gap, Rails, Radius, Heads, Accent…).
    A jury agent merges them and resolves conflicts.
 4. **You approve.** One published page with every before/after, the
    numbered decisions, what was dropped and the risks. Nothing is built
@@ -233,13 +241,14 @@ before/after without the whole team.
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles and the short flow (what the agent reads first) |
-| [`checklist.md`](checklist.md) | The 42 fixes, each with what to do and why |
+| [`checklist.md`](checklist.md) | The 48 fixes, each with what to do and why |
+| [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
-| [`references.md`](references.md) | Four real before/afters and a chapter map of *Refactoring UI* |
+| [`references.md`](references.md) | Five real before/afters and a chapter map of *Refactoring UI* |
 
 ## FAQ
 

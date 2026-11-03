@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.2.0"
+  version: "1.3.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -12,8 +12,9 @@ metadata:
 
 Three parts: **what to fix** (`checklist.md`, each fix with its reason),
 **how to orchestrate it** (`process.md`, rounds with reviewers and devs in
-parallel) and **cases and sources** (`references.md`: the four before/afters
-that started this skill and a map of *Refactoring UI*). Per-platform notes
+parallel) and **cases and sources** (`references.md`: the five before/afters
+that started this skill and a map of *Refactoring UI*). The spec card every
+reviewer fills is in `spec-card.md`. Per-platform notes
 (SwiftUI, Compose, web, widgets, watch, car) live in `platforms.md`. Read the
 one you need, not all of them.
 
@@ -93,8 +94,8 @@ after the before/after proposal.
    (`checklist.md` § System). Without scales, reviewers judge by eye.
 3. Grayscale pass + parallel reviewers (3-4, one per area) against
    `checklist.md`, applying fixes **one at a time**.
-4. Winning proposal: one HTML page with before/after and the list of
-   decisions; the user chooses.
+4. Winning proposal: one HTML page with before/after, the spec card and
+   the list of decisions; the user chooses.
 5. Devs per area in isolated worktrees with a closed brief; integrate,
    compile, audit, PR, answer review bots, merge when green.
 6. Finally: update the project's design system (doc + tokens + its own

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0 — 2026-11-03
+
+- Six new fixes (#43-#48): rails, one section gap with no filler copy,
+  section headers as labels, floating chrome in the system material with
+  solid content, a signature as a small family of details, real content in
+  every mock.
+- `spec-card.md`: the card of named values each reviewer fills and devs
+  tick as they land; also the script for a fix-by-fix recording.
+- Process: spec card before the jury, optional fix-by-fix recording.
+- #41: the brand accent can fill the primary when it is its only use on
+  the screen.
+- A fifth reference case (a social photo feed).
+
 ## 1.2.0 — 2026-11-03
 
 - Works in every agent that reads the open Agent Skills format: Cursor,

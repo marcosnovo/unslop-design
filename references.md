@@ -1,6 +1,6 @@
 # Cases and sources
 
-## The four before/afters that started this skill
+## The five before/afters that started this skill
 Short videos (Oct/Nov 2026) of "unslop" redesigns of iOS apps. What's worth
 taking from each is the **rule**, with its checklist number; don't copy
 their style.
@@ -35,6 +35,17 @@ the small unit on the same baseline (#15) · bars in a light tint with today
 saturated and the value written above, no gridlines (#39) · very light gray
 background and white cards to separate without borders (#31) · trophy emoji
 → a custom illustration (#33, #35).
+
+**5. Social photo feed ("what did you get up to?").** The video shows a
+spec card beside the phone and ticks each row as it lands — the idea behind
+`spec-card.md`. Spacing first: one gap between sections, rails at 16 pt,
+radius 28 (#1, #43, #44) · filler line "✨ Share your best moments" removed
+(#44) · emoji section headers → small caps labels (#45) · ✈️ 🔔 and emoji
+tabs → line icons in floating glass pills, create as its own black circle
+(#33, #46) · one red primary, the only accent on screen (#41) · a scrapbook
+signature: stadium-shaped photos, hand-drawn rank numbers, a polaroid
+sticker for "your story", a taped handwritten caption (#47) · real photos,
+places and times in the feed (#48).
 
 ## Refactoring UI (Wathan & Schoger): what it adds to the checklist
 | Chapter | Idea | # |

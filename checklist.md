@@ -172,7 +172,9 @@ cite them ("#14") in their boards.
     list. No horizontal carousels hiding content
     (`ScrollView(.horizontal)` of cards): stack them. No card inside a card.
 41. **Action pyramid.** One primary per screen/sheet: an **ink** capsule
-    (the accent stops being a button color) that **names its destination**
+    (by default the accent stops being a button color; it can fill the
+    primary only when that is its single use on the screen and the label
+    passes contrast) that **names its destination**
     ("Continue · Full Body Strength", "Go to Shell · 0.7 mi") and, if it
     helps, its state ("● GPS ready"); secondary = gray or outline; tertiary
     = link. Destructive in red **only in the confirmation step**; elsewhere
@@ -181,6 +183,30 @@ cite them ("#14") in their boards.
 42. **Components don't scale proportionally.** A large button gets
     relatively more padding and a small one less; a headline isn't "2.5×
     body" on every screen. Each size is tuned, not zoomed.
+
+## Chrome and signature
+43. **Rails: one left edge, one right edge.** Every block starts on the same
+    left line and ends on the same right one (e.g. 16 pt). Horizontal rows
+    start on the left rail and bleed off the right edge to say "there's
+    more". Draw the rails over a screenshot: whatever pokes out is a bug.
+44. **One gap between sections, no filler copy.** The space between
+    sections is a single token (e.g. 34 pt) everywhere. Lines like "✨ Share
+    your best moments" that only fill a hole are deleted: the gap separates.
+45. **Section headers are labels.** Small, all caps with a little tracking,
+    no emoji: "THE GOOD ONES", not "🔥 The good ones" (#13, #29, #33).
+46. **Floating chrome in the platform material, content solid.** Top bar
+    and tab bar float as pills in the system material (Liquid Glass, blur)
+    with line icons; the main create action is its own solid circle, not a
+    tab. Glass never goes on content cards or behind long text.
+47. **A signature is a family, not a trick.** If the domain has a metaphor
+    (a scrapbook for a photo app, a price board for fuel), take a small set
+    of details from it — cut-out photo shapes, hand-drawn rank numbers, a
+    taped caption, a sticker instead of the 📷 emoji — each with one role,
+    and nothing else decorative. Still principle 7: from the domain,
+    degrading where it doesn't apply.
+48. **Real content in every mock.** Real photos, names, places and times
+    ("williamsburg · 2m") in proposals and screenshots. Gray boxes and lorem
+    ipsum hide whether the layout survives a long name or a dark photo.
 
 ## Also (what came up in real reviews)
 - **Sheets/modals sized to content**, not fixed heights that clip text at
