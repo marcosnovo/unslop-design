@@ -14,8 +14,10 @@
 </p>
 
 <p align="center">
-  <img src="assets/hero.png" alt="Before: purple gradient, 'Hey there! 👋', lime card with a HOT DEAL badge, colorful tiles, emoji icons and a gradient 'Let's Go! 🚀' button. After: neutral background, 'Nearby' title, one large price with its unit on the same baseline, a quiet 'Cheapest' badge and a black 'Go to Shell · 0.7 mi' button." width="100%">
+  <img src="assets/hero.png" alt="Refil, a real fuel price app, before and after. Before (Oct 22): a green gradient station card with a filled Great price badge and a green Navigate button. After (Nov 3): a dark card with one filled Cheapest badge, the price with a small last digit, and a white Go to Esso · 3.3 km button." width="100%">
 </p>
+
+<p align="center"><sub>Real screenshots of <a href="https://refil.app">Refil</a>, same screen and city, before and after running the skill.</sub></p>
 
 <p align="center">
   <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill-111111">
