@@ -1,0 +1,30 @@
+name: New fix
+description: Propose a pattern of AI slop the checklist doesn't catch yet
+labels: ["new fix"]
+body:
+  - type: textarea
+    id: before-after
+    attributes:
+      label: Before and after
+      description: Two screenshots. Your own app or a mock you made.
+    validations:
+      required: true
+  - type: input
+    id: rule
+    attributes:
+      label: The rule, in one sentence
+      placeholder: "Section titles are labels: small, not h1"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      description: What the user loses with the "before".
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: How to check it
+      description: What a reviewer looks for in code or on screen.

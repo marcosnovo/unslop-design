@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="210" viewBox="0 0 1200 210" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="210" fill="#FBFAF8"/>
+  <g font-size="15" font-weight="600" fill="#111" text-anchor="middle">
+    <rect x="20" y="50" width="170" height="92" rx="16" fill="#fff" stroke="#E4E4E7"/>
+    <text x="105" y="88">Screen recordings</text>
+    <text x="105" y="112" font-size="12.5" font-weight="400" fill="#6B6B70">frames → screen list</text>
+
+    <rect x="216" y="50" width="170" height="92" rx="16" fill="#fff" stroke="#E4E4E7"/>
+    <text x="301" y="88">Grayscale pass</text>
+    <text x="301" y="112" font-size="12.5" font-weight="400" fill="#6B6B70">scales + hierarchy</text>
+
+    <rect x="412" y="50" width="170" height="92" rx="16" fill="#fff" stroke="#E4E4E7"/>
+    <text x="497" y="88">Reviewers ×3-4</text>
+    <text x="497" y="112" font-size="12.5" font-weight="400" fill="#6B6B70">in parallel, per area</text>
+
+    <rect x="608" y="50" width="190" height="92" rx="16" fill="#111"/>
+    <text x="703" y="88" fill="#fff">Before / after</text>
+    <text x="703" y="112" font-size="12.5" font-weight="400" fill="#C9C9CE">you approve here</text>
+
+    <rect x="824" y="50" width="170" height="92" rx="16" fill="#fff" stroke="#E4E4E7"/>
+    <text x="909" y="88">Devs per area</text>
+    <text x="909" y="112" font-size="12.5" font-weight="400" fill="#6B6B70">isolated worktrees</text>
+
+    <rect x="1020" y="50" width="160" height="92" rx="16" fill="#fff" stroke="#E4E4E7"/>
+    <text x="1100" y="88">Audit + PR</text>
+    <text x="1100" y="112" font-size="12.5" font-weight="400" fill="#6B6B70">contrast, parity, build</text>
+  </g>
+  <g fill="#9A9AA0" font-size="16" text-anchor="middle">
+    <text x="203" y="102">›</text>
+    <text x="399" y="102">›</text>
+    <text x="595" y="102">›</text>
+    <text x="811" y="102">›</text>
+    <text x="1007" y="102">›</text>
+  </g>
+  <text x="600" y="182" font-size="13" fill="#6B6B70" text-anchor="middle">Nothing gets implemented until you say yes to the before/after.</text>
+</svg>
