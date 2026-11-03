@@ -77,11 +77,35 @@ function measure(scaleValues) {
     const t = (el.innerText || el.getAttribute("aria-label") || "").trim().replace(/\s+/g, " ").slice(0, 40);
     return t ? `${s} "${t}"` : s;
   };
+  // Computed colors can be rgb() or, with Tailwind v4 and modern CSS,
+  // oklch()/lab()/color(). Anything that isn't rgb is painted on a 1×1
+  // canvas and read back as sRGB, so no color escapes the measurement.
+  const probe = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+  const parsed = new Map();
   const parse = (c) => {
-    const m = c && c.match(/rgba?\(([^)]+)\)/);
-    if (!m) return null;
-    const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number);
-    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+    if (!c) return null;
+    if (parsed.has(c)) return parsed.get(c);
+    let out = null;
+    const m = c.match(/^rgba?\(([^)]+)\)$/);
+    if (m) {
+      const p = m[1].split(/[ ,/]+/).filter(Boolean).map((v) => (v.endsWith("%") ? parseFloat(v) / 100 : Number(v)));
+      out = { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+    } else if (probe && CSS.supports("color", c)) {
+      probe.clearRect(0, 0, 1, 1);
+      probe.fillStyle = "#000";
+      probe.fillStyle = c;
+      probe.fillRect(0, 0, 1, 1);
+      const d = probe.getImageData(0, 0, 1, 1).data;
+      out = { r: d[0], g: d[1], b: d[2], a: d[3] / 255 };
+    }
+    parsed.set(c, out);
+    return out;
+  };
+  // Opacity on the element or any ancestor fades the text too.
+  const opacityOf = (el) => {
+    let o = 1;
+    for (let n = el; n && n !== document.documentElement; n = n.parentElement) o *= Number(getComputedStyle(n).opacity);
+    return o;
   };
   const blend = (top, under) => ({
     r: top.r * top.a + under.r * (1 - top.a),
@@ -101,6 +125,7 @@ function measure(scaleValues) {
     for (let n = el; n; n = n.parentElement) {
       const cs = getComputedStyle(n);
       if (cs.backgroundImage && cs.backgroundImage !== "none") return null;
+      if (cs.backgroundColor && cs.backgroundColor !== "transparent" && !parse(cs.backgroundColor)) return null;
       const c = parse(cs.backgroundColor);
       if (c && c.a > 0) { layers.push(c); if (c.a >= 1) break; }
     }
@@ -158,14 +183,16 @@ function measure(scaleValues) {
       if (clip === "text" && cs.backgroundImage !== "none") { gradientText.push(label(el)); continue; }
       const fg = parse(cs.color);
       const bg = bgOf(el);
+      const fade = opacityOf(el);
       if (fg && bg) {
-        const eff = fg.a < 1 ? blend(fg, bg) : fg;
+        const fga = { ...fg, a: fg.a * fade };
+        const eff = fga.a < 1 ? blend(fga, bg) : fga;
         const r = ratio(eff, bg);
         const size = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
         const large = size >= 24 || (bold && size >= 18.66);
         const need = large ? 3 : 4.5;
         if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: cs.color, size: cs.fontSize });
-      } else if (fg) {
+      } else {
         contrastUnknown.push(label(el));
       }
     }
