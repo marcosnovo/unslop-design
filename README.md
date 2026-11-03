@@ -36,6 +36,25 @@ eye. Each of those has a concrete fix. This skill gives Claude the list,
 the reasons, and a way to apply them **one at a time** without you losing
 control of the design.
 
+## One fix at a time
+
+Two Refil screens going through the checklist, each step labeled with the
+area it touches. Every fix is applied and looked at on its own, so you can
+see which one helped.
+
+<table>
+  <tr>
+    <td align="center" width="50%"><img src="assets/refil-mapa.gif" alt="Refil map screen, fix by fix: spacing, color, price, then the station card becomes one dark surface with a 'Go to Ballenoil · 850 m' button." width="100%"></td>
+    <td align="center" width="50%"><img src="assets/refil-perfil.gif" alt="Refil profile screen, fix by fix: the 'Hola, Marcos' greeting becomes the title 'Tu Refil', color is removed, the savings card leads, then alerts are regrouped." width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Map</b> · spacing → color → price → surface</td>
+    <td align="center"><b>Profile</b> · title → color → savings → alerts</td>
+  </tr>
+</table>
+
+<sub>The app is in Spanish. Full-quality MP4s: <a href="assets/videos/refil-mapa.mp4">map</a> · <a href="assets/videos/refil-perfil.mp4">profile</a>.</sub>
+
 ## Install
 
 ```bash
