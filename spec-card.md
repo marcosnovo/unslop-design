@@ -12,7 +12,7 @@ decisions.
 ```text
 SPACING                         TYPE
 [ ] Gap      34 pt  between sections      [ ] Font    system / Manrope
-[ ] Gutter   16 pt  between items         [ ] Heads   13 pt caps, tracked
+[ ] Gutter   16 pt  between items         [ ] Heads   13 pt sentence case, muted
 [ ] Padding  24 pt  inside cards          [ ] Title   23 pt semibold
 [ ] Rails    16 pt  left/right edges      [ ] Numbers tabular, small unit
 [ ] Radius   28 pt  cards (inner = outer − padding)
@@ -33,6 +33,8 @@ WEB (if it's a site or web app)
 [ ] Icons     20 px slot, one stroke set
 [ ] Focus     2 px ring, offset 2
 [ ] Data      mono / tabular for deltas, axes, counts
+[ ] Surfaces  color-scheme, ::selection, accent-color themed
+[ ] Motion    transform/opacity only, reduced-motion
 ```
 
 Ticking order = the order the fixes are applied, one at a time (system →

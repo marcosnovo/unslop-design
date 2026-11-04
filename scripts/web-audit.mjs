@@ -15,6 +15,8 @@
 //   - focus: focusable elements with no visible focus style         (#53)
 //   - targets smaller than 24×24 px                                  (Also)
 //   - emoji used in visible text                                     (#33)
+//   - distinct left edges text starts on                              (#43)
+//   - craft floor: color-scheme, ::selection, transition: all, "..."  (#61-#63)
 // It measures; it doesn't judge taste. Read the report next to the
 // screenshots.
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -146,6 +148,7 @@ function measure(scaleValues) {
     radii = new Map(), shadows = new Map(), spacing = new Map(), offScale = new Map(), tracking = new Map();
   const contrastFails = [], contrastUnknown = [], emoji = [], smallTargets = [], gradientText = [], glow = [];
   const emojiRe = /\p{Extended_Pictographic}/u;
+  const edges = new Map(), transitionAll = [], dots = [];
   const all = [...document.body.querySelectorAll("*")].filter(vis);
   for (const el of all) {
     const cs = getComputedStyle(el);
@@ -168,6 +171,7 @@ function measure(scaleValues) {
         if (colored && (nums[1] === 0 || nums[2] >= 30)) { glow.push(label(el)); break; }
       }
     }
+    if (/(^|,\s*)all\b/.test(cs.transitionProperty) && cs.transitionDuration.split(",").some((d) => parseFloat(d) > 0)) transitionAll.push(label(el));
     const bgc = parse(cs.backgroundColor);
     if (bgc && bgc.a > 0) count(bgs, cs.backgroundColor, el);
 
@@ -178,6 +182,18 @@ function measure(scaleValues) {
       count(families, cs.fontFamily.split(",")[0].replace(/["']/g, "").trim(), el);
       count(colors, cs.color, el);
       if (cs.letterSpacing !== "normal") count(tracking, cs.letterSpacing, el);
+      // Left edges: block-level, left-aligned text only (inline runs, table cells, chart labels and
+      // centered or right-aligned numbers start wherever their neighbors end).
+      if (ownText.length > 1 && !cs.display.startsWith("inline") && cs.display !== "table-cell" && !el.closest("svg")
+          && /^(start|left|-webkit-left|justify)$/.test(cs.textAlign)) {
+        // Where the glyphs start, not the border box: padding, borders and text-indent move the text.
+        const node = [...el.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const first = [...range.getClientRects()].find((r) => r.width > 0);
+        if (first) count(edges, Math.round(first.left / 4) * 4, el);
+      }
+      if (/\w\.\.\.(\s|$)/.test(ownText)) dots.push({ el: label(el), text: ownText.slice(0, 40) });
       if (emojiRe.test(ownText)) emoji.push({ el: label(el), text: ownText.slice(0, 40) });
       const clip = cs.webkitBackgroundClip || cs.backgroundClip;
       if (clip === "text" && cs.backgroundImage !== "none") { gradientText.push(label(el)); continue; }
@@ -211,6 +227,12 @@ function measure(scaleValues) {
     },
     contrastFails, contrastUnknown: contrastUnknown.length, emoji, smallTargets, gradientText, glow,
     focusableCount: focusables.length,
+    leftEdges: toList(edges).sort((a, b) => a.value - b.value),
+    craft: {
+      colorScheme: getComputedStyle(document.documentElement).colorScheme,
+      selectionThemed: getComputedStyle(document.body, "::selection").backgroundColor !== "rgba(0, 0, 0, 0)",
+      transitionAll, dots,
+    },
   };
 }
 
@@ -326,6 +348,16 @@ L.push(``, `## Emoji in visible text [#33, #45]`, ``,
   m.emoji.length ? m.emoji.slice(0, 20).map((x) => `- ${x.el}`).join("\n") : `- none`);
 L.push(``, `## Gradient text and glows [#30, #32, #55]`, ``,
   [...m.gradientText.map((x) => `- gradient text: ${x}`), ...m.glow.slice(0, 15).map((x) => `- colored glow: ${x}`)].join("\n") || `- none`);
+const edgesList = m.leftEdges || [];
+L.push(``, `## Left edges [#43]`, ``,
+  `Left-aligned text blocks start on ${edgesList.length} distinct x positions at ${widest} px; ${edgesList.filter((x) => x.n === 1).length} are used by a single block. A composed page reuses a few rails; many one-off edges mean it was placed piece by piece. Draw them over the screenshot.`, ``,
+  edgesList.length ? edgesList.map((x) => `\`${x.value}px\` ×${x.n}`).join(" · ") : `—`);
+const cf = m.craft || {};
+L.push(``, `## Craft floor [#61-#63]`, ``,
+  `- color-scheme: ${cf.colorScheme && cf.colorScheme !== "normal" ? `\`${cf.colorScheme}\`` : "**not set** (native controls and scrollbars won't follow dark mode)"}`,
+  `- ::selection: ${cf.selectionThemed ? "themed" : "browser default"}`,
+  `- \`transition: all\`: ${cf.transitionAll && cf.transitionAll.length ? `**${cf.transitionAll.length}** — ${cf.transitionAll.slice(0, 6).join(", ")}` : "none"}`,
+  `- three dots instead of …: ${cf.dots && cf.dots.length ? cf.dots.slice(0, 6).map((x) => `${x.el} ("${x.text}")`).join("; ") : "none"}`);
 L.push(``, `## Screenshots`, ``, ...widths.map((w) => `- ${results.widths[w].screenshot}`), `- ${gray} (grayscale: does the hierarchy hold without color? [principle 2])`, ``);
 writeFileSync(join(out, "report.md"), L.join("\n"));
 writeFileSync(join(out, "report.json"), JSON.stringify(results, null, 2));

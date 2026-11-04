@@ -119,7 +119,8 @@ cite them ("#14") in their boards.
     headlines and blocks of ≤ 2-3 lines (if one runs long, rewrite it
     shorter). Numbers in tables right-aligned, with tabular digits.
 29. **Letter-spacing with intent.** Large headlines set in a text font: a
-    bit tighter. ALL CAPS (overlines, "WED, OCT 28 · 7:42"): wider. Leave
+    bit tighter. ALL CAPS, where you kept it (a date stamp like "WED, OCT 28 ·
+    7:42", a signature overline): wider. Leave
     the rest as the type designer set it.
 
 ## Decoration and depth
@@ -196,10 +197,11 @@ cite them ("#14") in their boards.
 44. **One gap between sections, no filler copy.** The space between
     sections is a single token (e.g. 34 pt) everywhere. Lines like "✨ Share
     your best moments" that only fill a hole are deleted: the gap separates.
-45. **Section headers are labels.** Small, all caps with a little tracking,
-    no emoji: "THE GOOD ONES", not "🔥 The good ones" (#13, #29, #33). In a
-    dense tool (a sidebar with many groups) a muted sentence-case label
-    ("Plans") is quieter still. Pick one style per product.
+45. **Section headers are quiet labels.** Small, muted, sentence case, no
+    emoji: "The good ones", not "🔥 THE GOOD ONES" (#13, #25, #33). Small
+    tracked capitals over every section are the commonest AI tell now; keep
+    them only as a deliberate signature, once per screen, never as the
+    default (#29, #60). Pick one style per product.
 46. **Floating chrome in the platform material, content solid.** Top bar
     and tab bar float as pills in the system material (Liquid Glass, blur)
     with line icons; the main create action is its own solid circle, not a
@@ -266,6 +268,36 @@ once it holds up in grayscale; skip them on a screen that isn't clean yet.
     the tab bar where the app is several equal sections (#46). Test that
     every destination is still reachable in two taps and by VoiceOver /
     TalkBack.
+
+## Craft floor
+Small things a careful team gets right and a generated UI gets wrong.
+`scripts/slop-scan.py` and `scripts/web-audit.mjs` find most of them.
+60. **Structure carries information or goes.** An eyebrow over the title,
+    "01 / 02 / 03" on sections that aren't a sequence, one accented word
+    in a headline, a colored stripe on the left of a card, the "big number,
+    small label, three stats" hero: each is fine when it encodes something
+    (a real step, a status) and slop when it's there because templates have
+    it. Remove it and see if anything was lost (#13, #34, #45).
+61. **Real typography characters.** "…" not "...", curly quotes and
+    apostrophes in copy, a non-breaking space between a number and its unit
+    ("10&nbsp;MB", "3&nbsp;km"), `text-wrap: balance` on headlines,
+    `tabular-nums` on numbers that change or line up. In SwiftUI and
+    Compose the same goes for strings (#15, #27).
+62. **The system surfaces wear the theme.** `color-scheme` set (so native
+    controls and scrollbars follow dark mode), `::selection`, `caret-color`
+    and `accent-color` from the palette, the focus ring in a role color. On
+    iOS/Android: the tint of switches, text cursors and pickers. Leaving
+    them default is the giveaway that nobody looked (#53).
+63. **Motion is named, short and optional.** Animate `transform` and
+    `opacity`, listing the properties — never `transition: all`, which
+    animates layout and color you didn't mean. ≤ 200 ms for state changes,
+    and a still alternative under `prefers-reduced-motion` (Reduce Motion
+    on iOS/Android).
+64. **Nothing invented, nothing inflated.** No made-up metrics ("10,000+
+    teams"), testimonials, client logos or ratings; no hand-drawn phone or
+    browser frame when a real screenshot can be taken; no hype verbs
+    ("Supercharge", "Seamless", "Unleash") — say what it does, with a real
+    number if there is one (#16, #48, principle 6).
 
 ## Also (what came up in real reviews)
 - **Sheets/modals sized to content**, not fixed heights that clip text at

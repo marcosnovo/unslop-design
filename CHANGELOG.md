@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.7.0 — 2026-11-04
+
+What the best design skills do that this one didn't (a review of
+impeccable, taste-skill, hallmark, Anthropic's frontend-design and Vercel's
+interface guidelines), adapted:
+- Critique passes on the render: one second, five seconds, squint, cover
+  the logo, count the left edges, gray (`process.md` § 2).
+- Ground the design first (subject, audience, one job, one thing only this
+  product has) and name the surface mode — operate, persuade, read,
+  experience — with an expression budget for each (`SKILL.md`).
+- Score the plan on six axes before showing it; under 3 on any axis means
+  revise first (`process.md` § 4). Quick mode uses it too.
+- Reviewers judge from screenshots and code; one separate agent reads the
+  script output, so numbers don't anchor taste.
+- Five craft-floor fixes (#60-#64): structure that carries information,
+  real typography characters, themed system surfaces, named motion,
+  nothing invented or inflated.
+- #45 flipped: section headers are muted sentence-case labels; small
+  tracked capitals only as a deliberate signature.
+- `slop-scan.py`: `transition: all`, tracked-caps labels, three dots
+  instead of …, hype copy. `web-audit.mjs`: left edges and a craft-floor
+  section (color-scheme, ::selection, `transition: all`, "...").
+  `unslop-score.py` weighs the new rules.
+
 ## 1.6.1 — 2026-11-04
 
 - Claude Code plugin: `.claude-plugin/plugin.json` and `marketplace.json`,

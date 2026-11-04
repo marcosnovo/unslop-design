@@ -1,6 +1,6 @@
 interface:
   display_name: "Unslop design"
-  short_description: "Strip the AI look from an app or web UI: 59 numbered fixes, scripts that measure it, and a before/after you approve"
+  short_description: "Strip the AI look from an app or web UI: 64 numbered fixes, scripts that measure it, and a before/after you approve"
   brand_color: "#111111"
   default_prompt: "Review this screen and give me a before/after proposal to make it look less AI-generated."
 

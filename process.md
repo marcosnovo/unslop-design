@@ -15,20 +15,46 @@ visible title) before giving an opinion. Reference videos (other people's
 before/afters) are read the same way: what you take is the **rule**, not the
 style (`references.md`).
 
-## 2. System and grayscale pass
+## 2. Ground it, then the system and grayscale pass
+- **Ground it first**, in four lines the reviewers get: what the product is
+  about, who uses it, the one job of each key screen, and one thing only
+  this product has (a price board, a route, a scrapbook). Plus the surface
+  mode (`SKILL.md` § Surface modes). A proposal that would fit any other
+  product starts from here, not from the checklist.
 - Before judging screens, check the scales (`checklist.md` § System):
   spacing, type and weights, palette with shades, elevation, radii. Whatever
   is missing goes into an infrastructure PR 1.
 - **Grayscale pass** on each key screen (desaturate the screenshot, or mock
   it without color): at a glance, is it clear what matters and what belongs
   together? If not, the fix is spacing/size/weight/contrast, not color.
+- **Critique passes on the render**, never on the code alone (screenshots
+  or the running app, light and dark):
+  1. *One second*: what's the first thing you see? It should be the answer
+     (principle 3). *Five seconds*: can you say what the screen is for?
+  2. *Squint* (or blur the screenshot): the blocks that remain are the
+     hierarchy. Too many equal blobs = flat; one blob = nothing else reads.
+  3. *Cover the logo*: could a competitor ship this screen unchanged? Then
+     it has no signature yet (#47, #58).
+  4. *Count the left edges*: draw a line where each block's text starts.
+     A composed screen reuses two to four; a new edge per block means it
+     was placed piece by piece (#43; `web-audit.mjs` lists them).
+  5. *Gray*: the grayscale pass above.
 - **Start with the feature, not the shell.** For a new screen, design the
   functionality (search a flight: fields + button) before the navigation;
   the smallest shippable version, without implying what doesn't exist yet.
 
 ## 3. Parallel reviewers (senior product designers)
 3-4 agents, one per area (e.g. Home · Detail · Search · Profile, or Shared
-modals · Settings · Payments · Widgets). Each brief includes:
+modals · Settings · Payments · Widgets).
+
+**Keep the eyes and the numbers apart.** Script output anchors judgment: a
+reviewer who has read "91 hits" looks for hits. So the area reviewers judge
+from screenshots and code, and one extra agent works only from
+`slop-scan.py`, `web-audit.mjs` and `unslop-score.py`; the jury merges both.
+With no subagents, write your visual review down before running the
+scripts.
+
+Each brief includes:
 - the screenshots/frames for THEIR area and the code paths;
 - `checklist.md` and the principles from `SKILL.md`;
 - the project's current design system (tokens, roles, components);
@@ -60,6 +86,20 @@ table, fixes inconsistent numbers across mockups and leaves a "owner
 decides" list per PR. The winner comes from there, not from the prettiest.
 
 ## 4. Winning proposal
+**Score the plan before showing it.** Rate the merged proposal 1-5 on six
+axes, honestly, and put the scores on the page:
+
+| Axis | The question |
+|---|---|
+| Hierarchy | Is the first thing you read the answer, in gray too? |
+| Restraint | Did anything get added that a removal would have solved? |
+| Specificity | Covering the logo, is it still this product? |
+| Execution | Every value from a token; states, long text, dark mode drawn? |
+| Honesty | Only real data, features and numbers (#64, principle 6)? |
+| Fit | Right ambition for the surface mode (operate, persuade, read)? |
+
+Any axis under 3 means revise before the user sees it, not after.
+
 Combine the boards into ONE HTML page (an artifact in Claude Code, a local
 file in Codex) with: principles,
 each screen before/after, numbered decisions, what was dropped and why, and

@@ -3,13 +3,13 @@
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
   Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
-  59 numbered design fixes, a five-fix quick mode for one screen, scripts that measure your UI and score it from 0 to 100, and a review process that shows you the before/after before touching your code.
+  64 numbered design fixes, a five-fix quick mode for one screen, scripts that measure your UI and score it from 0 to 100, and a review process that shows you the before/after before touching your code.
 </p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#the-59-fixes">The 59 fixes</a> ·
+  <a href="#the-64-fixes">The 64 fixes</a> ·
   <a href="#web-and-dashboards">Web</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#faq">FAQ</a>
@@ -209,7 +209,7 @@ python3 scripts/unslop-score.py src/ --audit unslop-audit/report.json  # plus th
 
 ```text
 $ python3 scripts/unslop-score.py examples/dashboard-before.html
-unslop score: 27/100 — slop  (1 source file)
+unslop score: 26/100 — slop  (1 source file)
 
 Where the points went (fix the top rows first):
   -  12  [#32] Colored glows  (4)
@@ -217,19 +217,19 @@ Where the points went (fix the top rows first):
   -   8  [#53] Focus outline removed  (1)
   …
 
-Badge: [![unslop score](https://img.shields.io/badge/unslop_score-27%2F100-red)](https://github.com/marcosnovo/unslop-design)
+Badge: [![unslop score](https://img.shields.io/badge/unslop_score-26%2F100-red)](https://github.com/marcosnovo/unslop-design)
 ```
 
 Each kind of slop costs points per hit up to a cap, so the number says how
 many kinds are left, not how big the codebase is. Paste the badge in your
-README, and put "score 27 → 100" at the top of the PR. It's a smoke alarm,
+README, and put "score 26 → 100" at the top of the PR. It's a smoke alarm,
 not a judge: a 95 can still have a flat hierarchy. `--min 80` makes it exit
 1 below 80 if you want it in a pre-commit hook.
 
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
 
-## The 59 fixes
+## The 64 fixes
 
 Every fix has a number so reviewers can cite it ("#20 badge is too loud")
 and you can accept or reject them one by one. A few of them:
@@ -258,7 +258,7 @@ and you can accept or reject them one by one. A few of them:
 | 55 | Ink headline on a neutral canvas | gradient text over a purple glow |
 
 <details>
-<summary><b>All 59, by section</b></summary>
+<summary><b>All 64, by section</b></summary>
 
 **System** · 1 spacing scale · 2 type scale and two weights · 3 palette with
 shades defined up front · 4 grays with one temperature · 5 named elevation
@@ -289,7 +289,7 @@ without noise
 scale proportionally
 
 **Chrome and signature** · 43 rails · 44 one section gap, no filler · 45
-section headers are labels · 46 floating chrome in the system material,
+section headers are quiet labels · 46 floating chrome in the system material,
 content solid · 47 a signature is a family · 48 real content in every mock
 
 **Web and dashboards** · 49 one icon slot · 50 counts are text, not pills ·
@@ -299,6 +299,10 @@ states drawn · 54 shortcuts as keys · 55 no gradient text, no page glow ·
 
 **Beyond clean** · 58 objects before boxes · 59 when the content is a canvas,
 chrome floats
+
+**Craft floor** · 60 structure carries information or goes · 61 real
+typography characters · 62 system surfaces wear the theme · 63 motion is
+named, short and optional · 64 nothing invented, nothing inflated
 
 Full text with the reason behind each one: [`checklist.md`](checklist.md).
 
@@ -347,7 +351,7 @@ before/after without the whole team.
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles, quick mode and the full flow (what the agent reads first) |
-| [`checklist.md`](checklist.md) | The 59 fixes, each with what to do and why |
+| [`checklist.md`](checklist.md) | The 64 fixes, each with what to do and why |
 | [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |

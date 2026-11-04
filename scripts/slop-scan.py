@@ -56,6 +56,16 @@ RULES = [
      re.compile(r"[\"'>`][^\"'<`\n]{2,}!!"), "all"),
     ("greeting", "#26", "Greeting as a title (name what the screen is)",
      re.compile(r"\b(Welcome back|Hey there|Hello there|Good (morning|afternoon|evening)),?\b", re.I), "all"),
+    ("transition-all", "#63", "transition: all (animate transform and opacity, named)",
+     re.compile(r"transition\s*:\s*all\b|transition-property\s*:\s*all\b|\btransition-all\b"), "web"),
+    ("tracked-caps", "#45 #60", "Small tracked all-caps label (eyebrow/kicker) — does it carry information?",
+     re.compile(r"\buppercase\b[^\"'\n]*\btracking-(wide|wider|widest)\b|\btracking-(wide|wider|widest)\b[^\"'\n]*\buppercase\b|"
+                r"text-transform\s*:\s*uppercase|\.textCase\(\.uppercase\)|\.uppercase\(\)"), "all"),
+    ("three-dots", "#61", "Three dots in UI text (use the … character)",
+     re.compile(r"[\"'>`][^\"'<`\n]*[A-Za-z]\.\.\.(?=[\"'<`\s])"), "all"),
+    ("hype-copy", "#64", "Hype copy (say what it does, with a number if there is one)",
+     re.compile(r"[\"'>`][^\"'<`\n]*\b(Supercharge|Unleash|Revolutioni[sz]e|Seamless(ly)?|Effortless(ly)?|Game-changing|"
+                r"Cutting-edge|Next-level|Elevate your|Transform your|Take your \w+ to the next level)\b"), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
 ]

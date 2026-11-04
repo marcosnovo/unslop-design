@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.6.1"
+  version: "1.7.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -88,20 +88,37 @@ after the before/after proposal.
 One screenshot, one screen or one page, or the user says "quick": no
 subagents, no jury, one pass you can finish in a few minutes.
 
-1. Measure what you can: `scripts/unslop-score.py` on the screen's code
-   (with `--audit` for a web page). No code: read the screenshot, then look
-   at it desaturated (principle 2).
+1. Ground it in one line (what the screen is for, its surface mode) and
+   measure what you can: `scripts/unslop-score.py` on the screen's code
+   (with `--audit` for a web page). Then the passes on the render
+   (`process.md` § 2): one second, squint, cover the logo, left edges, gray.
 2. Pick the **five fixes that change the screen most**, each with its
    `checklist.md` number and one line of why. Hierarchy and spacing before
    color, color before polish. Say what you would *not* change.
 3. Show the before/after: the edited code's render, or an HTML mock of the
    screen if there's no code, with the filled `spec-card.md` rows it uses.
+   Score it on the six axes of `process.md` § 4 first; under 3 on any
+   axis, revise before showing.
 4. On "yes", apply them as tokens (principle 1), rerun the score and report
    "score X → Y" and what's still left.
 
 Switch to the full flow below when there are several screens or videos,
 no design system yet, platforms to ship together, or the user asks for a
 full review.
+
+## Surface modes
+
+Not every screen gets the same ambition. Name the mode before judging:
+
+| Mode | Screens | What wins | Expression budget |
+|---|---|---|---|
+| Operate | dashboards, settings, editors, admin | scanning, consistency, platform conventions | low: one signature at most |
+| Persuade | landing pages, onboarding, paywalls | one message, one action, a real product shot | higher: one bold idea |
+| Read | articles, docs, detail pages | line length, rhythm, quiet chrome | low |
+| Experience | games, maps, camera, media | the content itself as the canvas (#59) | high, from the domain |
+
+The checklist applies to all four; the budget decides how far #47 and
+#58 go.
 
 ## Working agreement (full flow)
 

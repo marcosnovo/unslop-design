@@ -57,6 +57,10 @@ It writes screenshots at 390, 768 and 1280 px, a grayscale one (principle
 - **Focus**: focusable elements that look the same focused and not (#53).
 - **Targets** under 24×24 px, **emoji** in visible text, **gradient text**
   and **colored glows**.
+- **Left edges**: the x positions text blocks start on, and how many are
+  used once (#43).
+- **Craft floor**: `color-scheme`, `::selection`, `transition: all` and
+  "..." instead of … (#61-#63).
 
 `python3 scripts/unslop-score.py src/ --audit unslop-audit/report.json`
 turns both into one score from 0 to 100 with where the points went.
@@ -80,8 +84,11 @@ are facts; the reviewer still decides what's slop.
   tables; number and unit with `align-items: baseline`.
 - **States**: `:hover`, `:focus-visible`, `:active`, `[aria-current]`,
   `:disabled`, `[aria-busy]`. Never remove `outline` without a replacement.
-- **Motion**: transitions ≤ 200 ms on color/opacity/transform; everything
-  inside `@media (prefers-reduced-motion: no-preference)`.
+- **Motion**: transitions ≤ 200 ms on color/opacity/transform, listed by
+  name (never `transition: all`); everything inside
+  `@media (prefers-reduced-motion: no-preference)` (#63).
+- **System surfaces**: `color-scheme: light dark` on `:root`,
+  `::selection`, `caret-color` and `accent-color` from the palette (#62).
 - **Icons**: one SVG set (Lucide, Heroicons, Phosphor…) at one stroke
   width, sized by the icon slot (#49). No emoji in UI.
 - **Fonts**: the system stack is the safe default; a web font only if it
