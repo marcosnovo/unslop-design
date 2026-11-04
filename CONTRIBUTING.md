@@ -28,3 +28,10 @@ release renumbers deliberately (noted in `CHANGELOG.md`).
 - Short sentences, imperative voice, one idea per bullet.
 - Concrete over abstract: a value, a component name, a before/after.
 - No new jargon when a plain word works.
+
+## Releasing
+
+Bump `metadata.version` in `SKILL.md` and `version` in
+`.claude-plugin/plugin.json` together (`python3 scripts/validate.py` fails
+if they differ, and plugin users only get updates when it changes), add the
+entry to `CHANGELOG.md`, and check `claude plugin validate --strict .`.

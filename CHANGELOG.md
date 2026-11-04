@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.6.1 — 2026-11-04
+
+- Claude Code plugin: `.claude-plugin/plugin.json` and `marketplace.json`,
+  so `/plugin marketplace add marcosnovo/unslop-design` and
+  `/plugin install unslop-design@unslop` install and update it.
+- README: a quick start at the top (plugin, skills CLI, a check that it
+  works) and a release badge.
+- `scripts/validate.py` fails if `SKILL.md` and `plugin.json` versions
+  differ.
+
 ## 1.6.0 — 2026-11-04
 
 - Quick mode, the default for one screenshot, screen or page: no

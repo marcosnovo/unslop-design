@@ -1,0 +1,24 @@
+{
+  "name": "unslop-design",
+  "displayName": "Unslop Design",
+  "version": "1.6.1",
+  "description": "Make your app or site stop looking AI-generated: 59 numbered design fixes, a quick five-fix mode, scripts that scan your UI and score it 0-100, and a before/after you approve.",
+  "author": {
+    "name": "Marcos Novo",
+    "url": "https://github.com/marcosnovo"
+  },
+  "homepage": "https://github.com/marcosnovo/unslop-design",
+  "repository": "https://github.com/marcosnovo/unslop-design",
+  "license": "MIT",
+  "keywords": [
+    "design",
+    "ui",
+    "design-review",
+    "swiftui",
+    "jetpack-compose",
+    "tailwindcss",
+    "web-design",
+    "accessibility"
+  ],
+  "icon": ".claude-plugin/icon.png"
+}

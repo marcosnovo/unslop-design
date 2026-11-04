@@ -46,6 +46,14 @@ for ref in sorted(set(re.findall(r"`([\w./-]+\.(?:md|yaml|py|sh|mjs))`", text)))
     if "/" not in ref and not (root / ref).exists() and ref not in ("SKILL.md",):
         problems.append(f"referenced file not found: {ref}")
 
+plugin = root / ".claude-plugin" / "plugin.json"
+if plugin.exists():
+    import json
+    sv = re.search(r'^\s+version:\s*"?([^"\n]+)"?', front, re.M)
+    pv, sv = json.loads(plugin.read_text(encoding="utf-8")).get("version"), sv and sv.group(1)
+    if pv != sv:
+        problems.append(f"version: SKILL.md says {sv}, .claude-plugin/plugin.json says {pv} (bump both, or plugin users miss the update)")
+
 for p in problems:
     print("✗", p)
 if problems:

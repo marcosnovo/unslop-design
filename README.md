@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="#install">Install</a> ·
+  <a href="#quick-start">Quick start</a> ·
   <a href="#use-it">Use it</a> ·
   <a href="#the-59-fixes">The 59 fixes</a> ·
   <a href="#web-and-dashboards">Web</a> ·
@@ -27,7 +27,32 @@
   <img alt="Agent Skills standard" src="https://img.shields.io/badge/Agent%20Skills-SKILL.md-111111">
   <img alt="SwiftUI · Compose · Web" src="https://img.shields.io/badge/SwiftUI%20·%20Compose%20·%20Web-111111">
   <img alt="MIT license" src="https://img.shields.io/badge/license-MIT-111111">
+  <a href="https://github.com/marcosnovo/unslop-design/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/marcosnovo/unslop-design?color=111111&label=release"></a>
 </p>
+
+## Quick start
+
+**Claude Code**, as a plugin (updates with `/plugin update`):
+
+```text
+/plugin marketplace add marcosnovo/unslop-design
+/plugin install unslop-design@unslop
+```
+
+**Any other agent** (Codex, Cursor, Copilot, Gemini CLI, Windsurf, OpenCode…),
+with the [skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add marcosnovo/unslop-design -g
+```
+
+Pick one route per agent: installing the same skill twice makes it show up
+twice. Other routes (one command for every agent, one project only, chat
+apps) are in [Install](#install).
+
+**Check it works.** In a project, paste a screenshot and write *unslop this
+screen*. You should get five numbered fixes, each with its reason, and a
+before/after to approve before any code changes.
 
 ---
 
@@ -60,6 +85,22 @@ see which one helped.
 <sub>The app is in Spanish. Full-quality MP4s: <a href="assets/videos/refil-mapa.mp4">map</a> · <a href="assets/videos/refil-perfil.mp4">profile</a>.</sub>
 
 ## Install
+
+**Claude Code plugin.** In Claude Code:
+
+```text
+/plugin marketplace add marcosnovo/unslop-design
+/plugin install unslop-design@unslop
+```
+
+or from a terminal, `claude plugin marketplace add marcosnovo/unslop-design
+&& claude plugin install unslop-design@unslop`. Update with `claude plugin
+marketplace update unslop && claude plugin update unslop-design@unslop`.
+Plugin skills are namespaced, so the command is `/unslop-design:unslop-design`;
+asking in plain words works the same.
+
+**[skills CLI](https://github.com/vercel-labs/skills)**, for any agent it
+supports: `npx skills add marcosnovo/unslop-design -g`.
 
 **Every agent on your machine, one command:**
 
@@ -98,14 +139,12 @@ Every agent also picks it up on its own when the request matches (design
 review, screenshots, "less AI"), so calling it by name is optional.
 
 <details>
-<summary>Only for one project, with the skills CLI, or in a chat app</summary>
+<summary>Only for one project, or in a chat app</summary>
 
 - **One project:** clone it into `.agents/skills/unslop-design` inside the
   repo (Claude Code: `.claude/skills/`, Windsurf: `.windsurf/skills/`,
   Kiro: `.kiro/skills/`) and commit it, so your team and cloud sessions get
   it too.
-- **[skills CLI](https://github.com/vercel-labs/skills):**
-  `npx skills add marcosnovo/unslop-design -g`.
 - **claude.ai, Claude desktop or ChatGPT:** download `unslop-design.zip`
   from the [latest release](https://github.com/marcosnovo/unslop-design/releases/latest)
   and upload it as a skill (Claude: Settings → Capabilities → Skills).
@@ -317,6 +356,7 @@ before/after without the whole team.
 | [`scripts/web-audit.mjs`](scripts/web-audit.mjs) | Measures a rendered page: overflow, value census, contrast, focus |
 | [`scripts/unslop-score.py`](scripts/unslop-score.py) | Both as one score from 0 to 100, with the breakdown and a badge |
 | [`examples/`](examples) | One dashboard before and after, to try the scripts on |
+| [`.claude-plugin/`](.claude-plugin) | Claude Code plugin and marketplace manifests |
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
