@@ -1,10 +1,10 @@
 ---
 name: unslop-design
-description: Review and redesign an app or website UI to strip out the "slop" (decorative accent color, gradients, glows, noisy badges, emoji as icons, eyeballed spacing, greetings as titles, Title Case, flat hierarchy, repeated numbers) with a system (spacing, type, color roles, elevation) and an orchestrated process: inventory from recordings or screenshots, grayscale pass, parallel product-designer reviewers, a published winning proposal, devs per area, audits and a PR. Covers SwiftUI, Compose and web (dashboards, landing pages, Tailwind), with scripts that scan the code and measure the rendered page. Use it when asked to "review the design", "make it look less AI", "unslop", "polish this screen", "design review", "winning proposal", "audit this dashboard", or when given videos or screenshots of an app or site asking for feedback or a redesign. Also use it to start a design system (spacing, type, palette, shadow scales) or to audit tokens, contrast or consistency across screens.
+description: Review and redesign an app or website UI to strip out the "slop" (decorative accent color, gradients, glows, noisy badges, emoji as icons, eyeballed spacing, greetings as titles, Title Case, flat hierarchy, repeated numbers) with a system (spacing, type, color roles, elevation) and two modes: a quick five-fix pass for one screen, or an orchestrated process for a whole app (parallel reviewers, a published winning proposal, devs per area, audits, PR). Covers SwiftUI, Compose and web (dashboards, landing pages, Tailwind), with scripts that scan the code, measure the rendered page and score it from 0 to 100. Use it when asked to "review the design", "make it look less AI", "unslop", "polish this screen", "design review", "winning proposal", "audit this dashboard", or when given videos or screenshots of an app or site asking for feedback or a redesign. Also use it to start a design system (spacing, type, palette, shadow scales) or to audit tokens, contrast or consistency across screens.
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.5.0"
+  version: "1.6.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -19,13 +19,16 @@ reviewer fills is in `spec-card.md`. Per-platform notes
 web apps and dashboards have their own playbook in `web.md`. Read the one
 you need, not all of them.
 
-Two scripts measure instead of guessing:
+Three scripts measure instead of guessing:
 - `python3 scripts/slop-scan.py <paths>` — slop patterns in source (web,
   SwiftUI, Compose) with file, line and fix number. Standard library only.
 - `node scripts/web-audit.mjs <url>` — the rendered page at 390/768/1280 px:
   horizontal scroll, a census of every size/color/radius/shadow/spacing in
   use, computed contrast, focus states, emoji, glows, plus a grayscale
   screenshot. Needs Playwright.
+- `python3 scripts/unslop-score.py <paths> [--audit report.json]` — both
+  as one number from 0 to 100 with where the points went, plus a README
+  badge. Run it before and after: "score 41 → 88" is the PR's headline.
 
 `examples/dashboard-before.html` and `-after.html` show both on one page.
 
@@ -80,7 +83,27 @@ step. Where it says "publish", Claude Code publishes an artifact; other agents
 write an HTML file the user opens. In a chat app without a codebase, stop
 after the before/after proposal.
 
-## Working agreement (defaults)
+## Quick mode (the default for one screen)
+
+One screenshot, one screen or one page, or the user says "quick": no
+subagents, no jury, one pass you can finish in a few minutes.
+
+1. Measure what you can: `scripts/unslop-score.py` on the screen's code
+   (with `--audit` for a web page). No code: read the screenshot, then look
+   at it desaturated (principle 2).
+2. Pick the **five fixes that change the screen most**, each with its
+   `checklist.md` number and one line of why. Hierarchy and spacing before
+   color, color before polish. Say what you would *not* change.
+3. Show the before/after: the edited code's render, or an HTML mock of the
+   screen if there's no code, with the filled `spec-card.md` rows it uses.
+4. On "yes", apply them as tokens (principle 1), rerun the score and report
+   "score X → Y" and what's still left.
+
+Switch to the full flow below when there are several screens or videos,
+no design system yet, platforms to ship together, or the user asks for a
+full review.
+
+## Working agreement (full flow)
 
 - Reviewers = *senior product designers* and devs = *senior devs*, as
   agents (use the model the user asks for). The orchestrator doesn't build
@@ -97,7 +120,7 @@ after the before/after proposal.
   purpose.
 - After the last round, update the project's design system.
 
-## Short flow
+## Full flow
 
 1. Inventory: frames from the videos (`process.md` § 1), screens and
    states, and each screen located in the code. Run `scripts/slop-scan.py` on the

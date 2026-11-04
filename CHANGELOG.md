@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.6.0 — 2026-11-04
+
+- Quick mode, the default for one screenshot, screen or page: no
+  subagents, the five fixes that change the screen most with their
+  numbers, the before/after, and the score before and after. The
+  orchestrated process stays for whole apps and full reviews.
+- `scripts/unslop-score.py`: `slop-scan.py` and, optionally, a
+  `web-audit.mjs` report as one score from 0 to 100, with where the points
+  went, a README badge and `--min` for a pre-commit hook. The example
+  dashboard goes from 0 to 99.
+
 ## 1.5.0 — 2026-11-03
 
 - Two fixes beyond clean (#58-#59): objects from the domain before boxes,

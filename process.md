@@ -106,6 +106,9 @@ wait for their "yes" or changes: design is their call.
   it, together with the other patterns.
 - Web: `scripts/web-audit.mjs` before and after, light and dark (`web.md`
   § 6); attach both reports to the PR.
+- `scripts/unslop-score.py` before and after (with `--audit` on the web):
+  "score X → Y" goes at the top of the PR, with the rows still costing
+  points.
 - Grep every changed string and symbol in UI tests, previews and
   showcase/demo code too: they don't run in CI and go stale.
 - Audits in parallel with CI: one for **compilation** and one for

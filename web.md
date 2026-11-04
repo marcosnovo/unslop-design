@@ -58,6 +58,9 @@ It writes screenshots at 390, 768 and 1280 px, a grayscale one (principle
 - **Targets** under 24×24 px, **emoji** in visible text, **gradient text**
   and **colored glows**.
 
+`python3 scripts/unslop-score.py src/ --audit unslop-audit/report.json`
+turns both into one score from 0 to 100 with where the points went.
+
 Run it before and after a round and put both reports in the PR. Its numbers
 are facts; the reviewer still decides what's slop.
 

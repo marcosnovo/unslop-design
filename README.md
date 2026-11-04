@@ -3,7 +3,7 @@
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
   Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
-  59 numbered design fixes, two scripts that measure your UI, and a review process that shows you the before/after before touching your code.
+  59 numbered design fixes, a five-fix quick mode for one screen, scripts that measure your UI and score it from 0 to 100, and a review process that shows you the before/after before touching your code.
 </p>
 
 <p align="center">
@@ -133,7 +133,8 @@ On the example above, `web-audit.mjs` goes from 19 spacing values (15 off
 the scale), 5 weights, 6 radii, 6 shadows, a page that scrolls sideways
 on a phone and 11 links with no focus style, to 6 spacing values, all on the scale, 2
 weights, 1 shadow, no sideways scroll and a focus ring on everything.
-`slop-scan.py` finds 91 hits in the before and none in the after. Details
+`slop-scan.py` finds 91 hits in the before and none in the after, and
+`unslop-score.py` goes from 0 to 99. Details
 in [`web.md`](web.md).
 
 ## Use it
@@ -153,6 +154,38 @@ Review the design of the settings and profile screens and give me a proposal
 ```text
 Audit our tokens: spacing, type scale, contrast in dark mode
 ```
+
+With one screenshot or one screen the agent runs **quick mode**: no
+subagents, the five fixes that change the screen most (each with its
+number), the before/after, and on your yes it applies them and reports the
+score. Several screens, a recording or "full review" switch to the full
+process with parallel reviewers.
+
+### Score it
+
+```bash
+python3 scripts/unslop-score.py src/                                   # the code alone
+python3 scripts/unslop-score.py src/ --audit unslop-audit/report.json  # plus the rendered page (web-audit.mjs)
+```
+
+```text
+$ python3 scripts/unslop-score.py examples/dashboard-before.html
+unslop score: 27/100 — slop  (1 source file)
+
+Where the points went (fix the top rows first):
+  -  12  [#32] Colored glows  (4)
+  -  10  [#33] Emoji in the UI  (19)
+  -   8  [#53] Focus outline removed  (1)
+  …
+
+Badge: [![unslop score](https://img.shields.io/badge/unslop_score-27%2F100-red)](https://github.com/marcosnovo/unslop-design)
+```
+
+Each kind of slop costs points per hit up to a cap, so the number says how
+many kinds are left, not how big the codebase is. Paste the badge in your
+README, and put "score 27 → 100" at the top of the PR. It's a smoke alarm,
+not a judge: a 95 can still have a flat hierarchy. `--min 80` makes it exit
+1 below 80 if you want it in a pre-commit hook.
 
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
@@ -274,7 +307,7 @@ before/after without the whole team.
 
 | File | What it covers |
 |---|---|
-| [`SKILL.md`](SKILL.md) | Principles and the short flow (what the agent reads first) |
+| [`SKILL.md`](SKILL.md) | Principles, quick mode and the full flow (what the agent reads first) |
 | [`checklist.md`](checklist.md) | The 59 fixes, each with what to do and why |
 | [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
@@ -282,6 +315,7 @@ before/after without the whole team.
 | [`web.md`](web.md) | Web playbook: finding tokens per stack, dashboards, landing pages, web PR checks |
 | [`scripts/slop-scan.py`](scripts/slop-scan.py) | Finds slop patterns in source with file, line and fix number |
 | [`scripts/web-audit.mjs`](scripts/web-audit.mjs) | Measures a rendered page: overflow, value census, contrast, focus |
+| [`scripts/unslop-score.py`](scripts/unslop-score.py) | Both as one score from 0 to 100, with the breakdown and a badge |
 | [`examples/`](examples) | One dashboard before and after, to try the scripts on |
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
