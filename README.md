@@ -2,8 +2,8 @@
 
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
-  Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.<br>
-  64 numbered design fixes, a five-fix quick mode for one screen, scripts that measure your UI and score it from 0 to 100, and a review process that shows you the before/after before touching your code.
+  It reviews your UI, shows you the before/after, and applies 64 numbered design fixes one at a time.<br>
+  Works with Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.
 </p>
 
 <p align="center">
@@ -20,6 +20,14 @@
 </p>
 
 <p align="center"><sub>Real screenshots of <a href="https://refil.app">Refil</a>, same screen and city, before and after running the skill.</sub></p>
+
+**What you get**
+
+- **A review you can read.** Numbered fixes (#1-#64), each with its reason, so
+  you accept or reject them one by one.
+- **A before/after first.** Nothing in your code changes until you approve it.
+- **A number, not a vibe.** Scripts measure your UI and score it from 0 to 100:
+  the example dashboard goes from **26 to 100**, and 90+ slop hits to none.
 
 <p align="center">
   <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill-111111">
@@ -48,7 +56,7 @@ npx skills add marcosnovo/unslop-design -g
 
 Pick one route per agent: installing the same skill twice makes it show up
 twice. Other routes (one command for every agent, one project only, chat
-apps) are in [Install](#install).
+apps, manual clone) are in [More ways to install](#more-ways-to-install).
 
 **Check it works.** In a project, paste a screenshot and write *unslop this
 screen*. You should get five numbered fixes, each with its reason, and a
@@ -74,7 +82,7 @@ see which one helped.
 <table>
   <tr>
     <td align="center" width="50%"><img src="assets/refil-mapa.gif" alt="Refil map screen, fix by fix: spacing, color, price, then the station card becomes one dark surface with a 'Go to Ballenoil · 850 m' button." width="100%"></td>
-    <td align="center" width="50%"><img src="assets/refil-perfil.gif" alt="Refil profile screen, fix by fix: the 'Hola, Marcos' greeting becomes the title 'Tu Refil', color is removed, the savings card leads, then alerts are regrouped." width="100%"></td>
+    <td align="center" width="50%"><img src="assets/refil-perfil.gif" alt="Refil profile screen, fix by fix: the 'Hola, Marcos' greeting (Hello, Marcos) becomes the title 'Tu Refil' (Your Refil), color is removed, the savings card leads, then alerts are regrouped." width="100%"></td>
   </tr>
   <tr>
     <td align="center"><b>Map</b> · spacing → color → price → surface</td>
@@ -84,23 +92,13 @@ see which one helped.
 
 <sub>The app is in Spanish. Full-quality MP4s: <a href="assets/videos/refil-mapa.mp4">map</a> · <a href="assets/videos/refil-perfil.mp4">profile</a>.</sub>
 
-## Install
+## More ways to install
 
-**Claude Code plugin.** In Claude Code:
-
-```text
-/plugin marketplace add marcosnovo/unslop-design
-/plugin install unslop-design@unslop
-```
-
-or from a terminal, `claude plugin marketplace add marcosnovo/unslop-design
-&& claude plugin install unslop-design@unslop`. Update with `claude plugin
-marketplace update unslop && claude plugin update unslop-design@unslop`.
-Plugin skills are namespaced, so the command is `/unslop-design:unslop-design`;
-asking in plain words works the same.
-
-**[skills CLI](https://github.com/vercel-labs/skills)**, for any agent it
-supports: `npx skills add marcosnovo/unslop-design -g`.
+**Claude Code from a terminal:** `claude plugin marketplace add
+marcosnovo/unslop-design && claude plugin install unslop-design@unslop`.
+Update with `claude plugin marketplace update unslop && claude plugin update
+unslop-design@unslop`. Plugin skills are namespaced, so the command is
+`/unslop-design:unslop-design`; asking in plain words works the same.
 
 **Every agent on your machine, one command:**
 
@@ -172,8 +170,8 @@ On the example above, `web-audit.mjs` goes from 19 spacing values (15 off
 the scale), 5 weights, 6 radii, 6 shadows, a page that scrolls sideways
 on a phone and 11 links with no focus style, to 6 spacing values, all on the scale, 2
 weights, 1 shadow, no sideways scroll and a focus ring on everything.
-`slop-scan.py` finds 91 hits in the before and none in the after, and
-`unslop-score.py` goes from 0 to 99. Details
+`slop-scan.py` finds 92 hits in the before and none in the after, and
+`unslop-score.py` goes from 26 to 100 on the code alone. Details
 in [`web.md`](web.md).
 
 ## Use it
@@ -348,6 +346,9 @@ before/after without the whole team.
 
 ## What's in the repo
 
+<details>
+<summary>Files and scripts</summary>
+
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles, quick mode and the full flow (what the agent reads first) |
@@ -365,6 +366,8 @@ before/after without the whole team.
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
 | [`references.md`](references.md) | Six real before/afters, one reference app and a chapter map of *Refactoring UI* |
+
+</details>
 
 ## FAQ
 
