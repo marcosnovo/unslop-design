@@ -293,6 +293,8 @@ function measure(scaleValues) {
     const r = el.getBoundingClientRect();
     if (r.width < 200 || r.height < 120) return false;
     const cs = getComputedStyle(el), bg = parse(cs.backgroundColor), under = el.parentElement && bgOf(el.parentElement);
+    // A url() background is a real image (a CSS photo), not a placeholder; only fills count.
+    if (/url\(/.test(cs.backgroundImage)) return false;
     const painted = cs.backgroundImage !== "none" || parseFloat(cs.borderTopWidth) > 0 || parseFloat(cs.borderLeftWidth) > 0
       || (bg && bg.a > 0 && under && Math.abs(bg.r - under.r) + Math.abs(bg.g - under.g) + Math.abs(bg.b - under.b) > 12);
     return painted;

@@ -211,4 +211,4 @@ Run the scripts with the project's own values: `--scale` (and
 `--type-scale`) from its spacing and type tokens, and `--allow` with the rule
 ids its written decisions cover (`--allow tracked-caps,off-scale`). Allowed
 rules are listed apart and not scored; contrast and unverified claims can't
-be allowed.
+be allowed, nor can focus or target size.

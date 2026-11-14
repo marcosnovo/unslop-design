@@ -229,6 +229,10 @@
     },
     "tokens-dark-in-media": {
       "raw-color": 1
+    },
+    "audit-css-image-hero": {
+      "gradient": 1,
+      "raw-color": 2
     }
   },
   "audit": {
@@ -363,6 +367,19 @@
         "empty_blocks": 0
       },
       "widths": "1280"
+    },
+    "audit-css-image-hero": {
+      "page": "page.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 1
+      }
     }
   },
   "cli": [
@@ -436,6 +453,32 @@
       "contains": [
         "unslop score: 100/100",
         "allowed by the project (--allow, not scored): tracked-caps ×1"
+      ]
+    },
+    {
+      "name": "allow-refuses-focus",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--allow",
+        "tracked-caps,focus"
+      ],
+      "exit": 1,
+      "contains": [
+        "can't include focus"
+      ]
+    },
+    {
+      "name": "allow-refuses-targets",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--allow",
+        "targets"
+      ],
+      "exit": 1,
+      "contains": [
+        "can't include targets"
       ]
     }
   ]

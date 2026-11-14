@@ -410,17 +410,18 @@ def token_checks(paths, hits):
 
 
 # A written project decision can allow a taste rule (a base-6 grid, tracked caps as the
-# brand's signature). It can't allow the floors: contrast (principle 5) and invented
-# claims (principle 6). Shared with unslop-score.py.
-NEVER_ALLOW = {"contrast", "graphics-contrast", "unverified-claim"}
+# brand's signature). It can't allow the floors: contrast and visible focus and target size
+# (accessibility, principle 5) and invented claims (principle 6). Shared with unslop-score.py.
+NEVER_ALLOW = {"contrast", "graphics-contrast", "focus", "no-focus", "targets", "unverified-claim"}
 
 
 def parse_allow(value):
     allow = {r.strip() for r in (value or "").split(",") if r.strip()}
     refused = allow & NEVER_ALLOW
     if refused:
-        sys.exit(f"--allow can't include {', '.join(sorted(refused))}: contrast and invented claims are floors "
-                 f"(principles 5 and 6), not taste. Report them as blockers with the measured value instead.")
+        sys.exit(f"--allow can't include {', '.join(sorted(refused))}: contrast, focus, target size and invented "
+                 f"claims are floors (accessibility, principles 5 and 6), not taste. Report them as blockers "
+                 f"with the measured value instead.")
     return allow
 
 
