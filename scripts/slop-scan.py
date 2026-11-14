@@ -133,10 +133,23 @@ def css_rules(text, names):
     return " ".join(m.group(2) for m in CSS_RULE.finditer(text) if m.group(1) in names)
 
 
+def jsx_style(attrs):
+    """style="…" as is; style={{ display: "grid", gridTemplateColumns: "…" }} as CSS."""
+    html = re.search(r"""\bstyle\s*=\s*["']([^"']+)""", attrs)
+    if html:
+        return html.group(1)
+    obj = re.search(r"\bstyle\s*=\s*\{\{(.*?)\}\}", attrs, re.S)
+    if not obj:
+        return ""
+    out = []
+    for k, v in re.findall(r"""(\w+)\s*:\s*(["'`][^"'`]*["'`]|[\w.-]+)""", obj.group(1)):
+        out.append(re.sub(r"[A-Z]", lambda c: "-" + c.group(0).lower(), k) + ": " + v.strip("\"'`") + ";")
+    return " ".join(out)
+
+
 def side_by_side(text, start, cls):
-    """True when the card sits in a multi-column grid or a flex row."""
-    if re.search(r"flex\s*:\s*1\b|flex-grow\s*:\s*1", css_rules(text, set(cls.split()))):
-        return True
+    """(True when the card sits in a multi-column grid or a flex row, its parent's offset)."""
+    own_row = bool(re.search(r"flex\s*:\s*1\b|flex-grow\s*:\s*1", css_rules(text, set(cls.split()))))
     stack = []
     for m in TAG.finditer(text, 0, start):
         closing, name, attrs, selfclose = m.groups()
@@ -146,20 +159,22 @@ def side_by_side(text, start, cls):
             while stack and stack.pop()[0] != name:
                 pass
         else:
-            stack.append((name, attrs))
+            stack.append((name, attrs, m.start()))
     if not stack:
-        return False
-    attrs = stack[-1][1]
+        return own_row, -1
+    _, attrs, parent = stack[-1]
+    if own_row:
+        return True, parent
     pc = re.search(r"""\bclass(?:Name)?\s*=\s*["'{`]+([^"'`}]+)""", attrs)
     pcls = pc.group(1) if pc else ""
-    style = (re.search(r"""\bstyle\s*=\s*["']([^"']+)""", attrs) or [None, ""])[1]
-    rules = css_rules(text, set(pcls.split())) + " " + style
+    rules = css_rules(text, set(pcls.split())) + " " + jsx_style(attrs)
     if ROW_UTILITY.search(pcls):
-        return True
+        return True, parent
     cols = re.search(r"grid-template-columns\s*:\s*([^;}]+)", rules)
     if cols and (len(cols.group(1).split()) >= 2 or re.search(r"repeat\(\s*([2-9]|auto)", cols.group(1))):
-        return True
-    return bool(re.search(r"display\s*:\s*(inline-)?flex", rules) and not re.search(r"flex-direction\s*:\s*column", rules))
+        return True, parent
+    row = re.search(r"display\s*:\s*(inline-)?flex", rules) and not re.search(r"flex-direction\s*:\s*column", rules)
+    return bool(row), parent
 
 
 def file_checks(path, text, kind, hits):
@@ -192,11 +207,17 @@ def file_checks(path, text, kind, hits):
             is_surface = (UTILITY_SURFACE.search(cls) and UTILITY_FILL.search(cls)) or names & surfaces
             if is_surface:
                 groups.setdefault(cls, []).append(m.start())
-        for cls, starts in groups.items():
+        rows = {}  # (class, parent) -> starts: each container judged on its own
+        for cls, all_starts in groups.items():
+            if len(all_starts) < 3:
+                continue
+            for s in all_starts:
+                inline, parent = side_by_side(text, s, cls)
+                if inline:  # a stacked list of rows is #40's entity row, not tiles
+                    rows.setdefault((cls, parent), []).append(s)
+        for (cls, _parent), starts in rows.items():
             n = line_of(starts[0])
             if len(starts) < 3 or n in ignored:
-                continue
-            if not side_by_side(text, starts[0], cls):  # a stacked list of rows is #40's entity row, not tiles
                 continue
             blocks = [element_at(text, s) for s in starts]
             with_number = sum(1 for b in blocks if NUMBER_CHILD.search(b))

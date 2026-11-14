@@ -5,10 +5,11 @@
 Found by running the skill end to end on a new screen (a running app's
 Today screen in the AI template: 31 → 94, the ten-app lineup passed, the
 second critic gave Specificity 4):
-- `card-sameness` only counts cards that sit side by side: a multi-column
-  grid, a flex row or `flex: 1` cards (SwiftUI/Compose: inside a grid,
-  `HStack` or `Row`). A stacked list of rows is #40's entity row, not a
-  row of tiles, and was a false positive.
+- `card-sameness` only counts cards that sit side by side, three or more
+  in the same container: a multi-column grid, a flex row (class, CSS,
+  `style="…"` or a JSX `style={{…}}`) or `flex: 1` cards (SwiftUI/Compose:
+  inside a grid, `HStack` or `Row`). A stacked list of rows is #40's
+  entity row, not a row of tiles, and was a false positive.
 - The emoji rule no longer counts typographic marks (✓ ✔ ✕ ✗ ★ ☆).
 - Pep-talk copy is caught: a single "!" in UI text (#25, new `exclaim`
   rule) and motivational hype ("crush it", "you've got this", "let's go",
@@ -17,8 +18,9 @@ second critic gave Specificity 4):
   so its findings can cite a number, and a finding that contradicts a rule
   is rejected rather than applied. In the test it proposed dropping the
   destination from the primary button, against #41.
-- The example dashboard scores 24 before (its "Welcome back, Damir!" now
-  counts) and 100 after.
+- The example dashboard scores 25 before and 100 after: its "Welcome
+  back, Damir!" now counts, and its two side-by-side KPI cards no longer
+  read as a row of three.
 
 ## 1.8.1 — 2026-11-14
 
