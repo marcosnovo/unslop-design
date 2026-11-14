@@ -15,6 +15,8 @@
 //   - text contrast computed from the real colors, failures listed  (principle 5)
 //   - icon and small-graphic contrast (SVG ≤ 64 px), under 3:1       (WCAG 1.4.11)
 //   - text scale: whether type grows with the reader's text size     (#2)
+//   - reading: lines over ~85 characters, justified/centered long text (#27, #28)
+//   - empty blocks: big painted boxes with no text or media           (#35)
 //   - focus: focusable elements with no visible focus style         (#53)
 //   - targets smaller than 24×24 px                                  (Also)
 //   - emoji used in visible text                                     (#33)
@@ -271,6 +273,32 @@ function measure(scaleValues) {
     const where = svg.closest("button, a, [aria-label], section, li, nav, header, footer");
     if (best && best < 3) graphicsFails.push({ el: (where ? label(where) + " > " : "") + label(svg), ratio: Math.round(best * 100) / 100, color });
   }
+  // Reading (#27, #28): running text longer than ~85 characters a line, or justified/centered.
+  const longLines = [], alignedText = [];
+  for (const el of document.body.querySelectorAll("p, li, blockquote, dd, figcaption")) {
+    if (!vis(el)) continue;
+    const text = (el.innerText || "").replace(/\s+/g, " ").trim();
+    if (text.length < 160) continue;
+    const cs = getComputedStyle(el);
+    if (/^(justify|center)$/.test(cs.textAlign)) alignedText.push({ el: label(el), align: cs.textAlign });
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const lines = new Set([...range.getClientRects()].filter((r) => r.width > 0).map((r) => Math.round(r.top))).size;
+    if (lines >= 2 && text.length / lines > 85) longLines.push({ el: label(el), cpl: Math.round(text.length / lines) });
+  }
+  // Empty blocks (#35): a big painted box with nothing in it, a placeholder where an image or the product should be.
+  const media = "img, svg, video, canvas, picture, iframe, object, embed, input, textarea, select";
+  let emptyBlocks = [...document.body.querySelectorAll("*")].filter((el) => {
+    if (!vis(el) || el.matches(media) || el.querySelector(media) || (el.innerText || "").trim()) return false;
+    const r = el.getBoundingClientRect();
+    if (r.width < 200 || r.height < 120) return false;
+    const cs = getComputedStyle(el), bg = parse(cs.backgroundColor), under = el.parentElement && bgOf(el.parentElement);
+    const painted = cs.backgroundImage !== "none" || parseFloat(cs.borderTopWidth) > 0 || parseFloat(cs.borderLeftWidth) > 0
+      || (bg && bg.a > 0 && under && Math.abs(bg.r - under.r) + Math.abs(bg.g - under.g) + Math.abs(bg.b - under.b) > 12);
+    return painted;
+  });
+  emptyBlocks = emptyBlocks.filter((el) => !emptyBlocks.some((o) => o !== el && o.contains(el)))
+    .map((el) => { const r = el.getBoundingClientRect(); return { el: label(el), w: Math.round(r.width), h: Math.round(r.height) }; });
   const focusables = [...document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"]')].filter(vis);
   for (const el of focusables) {
     const r = el.getBoundingClientRect();
@@ -284,6 +312,7 @@ function measure(scaleValues) {
       letterSpacing: toList(tracking), spacing: toList(spacing), offScaleSpacing: toList(offScale),
     },
     contrastFails, contrastUnknown: contrastUnknown.length, graphicsFails, emoji, smallTargets, gradientText, glow,
+    longLines, alignedText, emptyBlocks,
     focusableCount: focusables.length,
     leftEdges: toList(edges).sort((a, b) => a.value - b.value),
     craft: {
@@ -499,6 +528,11 @@ L.push(``, `## Focus [#53]`, ``,
     : `All ${results.focus.checked} focusable elements checked change when focused.`);
 L.push(``, `## Targets under 24×24 px`, ``,
   m.smallTargets.length ? m.smallTargets.slice(0, 20).map((x) => `- ${x.el} (${x.w}×${x.h})`).join("\n") : `- none`);
+L.push(``, `## Reading [#27, #28]`, ``,
+  ...(m.longLines.length ? m.longLines.slice(0, 10).map((x) => `- **${x.cpl} characters a line** (aim for 45-75): ${x.el}`) : [`- line length within ~85 characters`]),
+  ...(m.alignedText.length ? m.alignedText.slice(0, 10).map((x) => `- long text ${x.align === "justify" ? "justified" : "centered"}: ${x.el}`) : []));
+L.push(``, `## Empty blocks [#35]`, ``,
+  m.emptyBlocks.length ? m.emptyBlocks.slice(0, 10).map((x) => `- ${x.w}×${x.h} painted box with no text or media: ${x.el}`).join("\n") : `- none`);
 L.push(``, `## Emoji in visible text [#33, #45]`, ``,
   m.emoji.length ? m.emoji.slice(0, 20).map((x) => `- ${x.el}`).join("\n") : `- none`);
 L.push(``, `## Gradient text and glows [#30, #32, #55]`, ``,

@@ -85,6 +85,7 @@
       "title-case": 5,
       "tracked-caps": 1,
       "transition-all": 6,
+      "translucent-text": 12,
       "unverified-claim": 4
     },
     "screen-stride-after": {
@@ -104,12 +105,14 @@
       "raw-color": 16,
       "title-case": 2,
       "tracked-caps": 1,
-      "transition-all": 1
+      "transition-all": 1,
+      "translucent-text": 6
     },
     "screen-subscriptions-after": {},
     "screen-subscriptions-before": {
       "card-sameness": 2,
       "emoji": 10,
+      "empty-action": 1,
       "exclaim": 7,
       "glow": 2,
       "gradient": 4,
@@ -121,11 +124,14 @@
       "title-case": 7,
       "tracked-caps": 1
     },
-    "screen-trail-after": {},
+    "screen-trail-after": {
+      "raw-color": 16
+    },
     "screen-trail-before": {
       "canvas-tabbar": 2,
       "card-sameness": 1,
       "emoji": 6,
+      "empty-action": 2,
       "exclaim": 4,
       "glow": 1,
       "gradient": 2,
@@ -136,7 +142,8 @@
       "raw-color": 14,
       "stock-kit": 1,
       "title-case": 2,
-      "tracked-caps": 1
+      "tracked-caps": 1,
+      "translucent-text": 4
     },
     "stock-kit-compose-template": {
       "stock-kit": 1
@@ -163,6 +170,65 @@
     "project-decisions": {
       "off-scale": 2,
       "tracked-caps": 1
+    },
+    "audit-reading": {
+      "card-sameness": 1,
+      "emoji": 7,
+      "exclaim": 1,
+      "glow": 1,
+      "gradient": 4,
+      "gradient-text": 1,
+      "hype-copy": 1,
+      "off-scale": 2,
+      "raw-color": 13,
+      "three-dots": 1,
+      "title-case": 1,
+      "tracked-caps": 1,
+      "unverified-claim": 2
+    },
+    "claims-comparatives": {
+      "unverified-claim": 2
+    },
+    "native-elevation-translucent-empty": {
+      "elevation-literal": 2,
+      "empty-action": 2,
+      "translucent-text": 2
+    },
+    "native-token-files": {},
+    "screen-article-after": {},
+    "screen-article-before": {
+      "card-sameness": 1,
+      "emoji": 7,
+      "exclaim": 1,
+      "glow": 1,
+      "gradient": 4,
+      "gradient-text": 1,
+      "hype-copy": 1,
+      "off-scale": 2,
+      "raw-color": 13,
+      "three-dots": 1,
+      "title-case": 1,
+      "tracked-caps": 1,
+      "unverified-claim": 2
+    },
+    "screen-pulse-after": {},
+    "screen-pulse-before": {
+      "elevation-literal": 1,
+      "emoji": 7,
+      "empty-action": 1,
+      "exclaim": 2,
+      "gradient": 1,
+      "greeting": 1,
+      "hype-copy": 1,
+      "native-literal": 15,
+      "raw-color": 1,
+      "stock-kit": 1,
+      "title-case": 3,
+      "tracked-caps": 1,
+      "translucent-text": 1
+    },
+    "tokens-dark-in-media": {
+      "raw-color": 1
     }
   },
   "audit": {
@@ -173,7 +239,10 @@
         "graphics": 3,
         "emoji": 0,
         "glow": 0,
-        "text_scales": false
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "audit-typographic-marks": {
@@ -183,7 +252,10 @@
         "graphics": 0,
         "emoji": 1,
         "glow": 0,
-        "text_scales": true
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "audit-root-200": {
@@ -193,7 +265,10 @@
         "graphics": 0,
         "emoji": 0,
         "glow": 0,
-        "text_scales": true
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "screen-mise-before": {
@@ -203,7 +278,10 @@
         "graphics": 0,
         "emoji": 15,
         "glow": 1,
-        "text_scales": false
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "screen-mise-after": {
@@ -213,7 +291,10 @@
         "graphics": 0,
         "emoji": 0,
         "glow": 0,
-        "text_scales": true
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "screen-relay-after": {
@@ -223,7 +304,10 @@
         "graphics": 0,
         "emoji": 0,
         "glow": 0,
-        "text_scales": true
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "screen-stride-after": {
@@ -233,7 +317,10 @@
         "graphics": 0,
         "emoji": 0,
         "glow": 0,
-        "text_scales": false
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
     },
     "screen-trail-after": {
@@ -243,8 +330,39 @@
         "graphics": 1,
         "emoji": 0,
         "glow": 0,
-        "text_scales": false
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
       }
+    },
+    "audit-reading": {
+      "page": "layering.html",
+      "expect": {
+        "contrast": 11,
+        "graphics": 0,
+        "emoji": 10,
+        "glow": 1,
+        "text_scales": false,
+        "long_lines": 4,
+        "aligned_text": 4,
+        "empty_blocks": 1
+      },
+      "widths": "1280"
+    },
+    "screen-article-after": {
+      "page": "layering-after.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0
+      },
+      "widths": "1280"
     }
   },
   "cli": [

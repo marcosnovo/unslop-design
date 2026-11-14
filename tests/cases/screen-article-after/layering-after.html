@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A guide to winter layering</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --ink: #1f2430; --ink-2: #4a5160; --paper: #fafaf9; --rule: #e4e4e0; --accent: #3a4fb5;
+  --s1: .25rem; --s2: .5rem; --s3: 1rem; --s4: 1.5rem; --s5: 2rem; --s6: 3rem; --s7: 4rem;
+  --t-sm: .875rem; --t-md: 1.125rem; --t-lg: 1.5rem; --t-xl: 2.25rem;
+  --measure: 65ch; --rail: 1.25rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink: #ecebe6; --ink-2: #b4b6bd; --paper: #17191f; --rule: #2e313a; --accent: #9db0ff; } }
+:root[data-theme="dark"] { --ink: #ecebe6; --ink-2: #b4b6bd; --paper: #17191f; --rule: #2e313a; --accent: #9db0ff; }
+::selection { background: var(--accent); color: var(--paper); }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 var(--t-md)/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: var(--measure); margin: 0 auto; padding: var(--s7) var(--rail) var(--s7); }
+h1 { font-size: var(--t-xl); line-height: 1.15; font-weight: 700; letter-spacing: -.01em; margin: 0 0 var(--s2); text-wrap: balance; }
+.meta { margin: 0 0 var(--s5); color: var(--ink-2); font-size: var(--t-sm); }
+.lede { margin: 0 0 var(--s4); }
+nav { margin: 0 0 var(--s6); padding-bottom: var(--s4); border-bottom: 1px solid var(--rule); font-size: var(--t-sm); display: flex; flex-wrap: wrap; gap: 0 var(--s4); }
+nav a { color: var(--accent); text-decoration: none; padding: var(--s2) 0; }
+nav a:hover { text-decoration: underline; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h2 { font-size: var(--t-lg); line-height: 1.25; font-weight: 700; margin: var(--s6) 0 var(--s2); }
+p { margin: 0 0 var(--s3); color: var(--ink); }
+blockquote { margin: var(--s6) 0 0; padding: 0; font-size: var(--t-lg); line-height: 1.35; font-weight: 600; text-wrap: balance; }
+blockquote p { color: var(--ink); margin: 0 0 var(--s2); }
+blockquote span { display: block; font-size: var(--t-md); font-weight: 400; color: var(--ink-2); line-height: 1.6; }
+</style></head>
+<body>
+<main>
+<h1>A guide to winter layering</h1>
+<p class="meta">By Ana Gil · Outdoor skills, beginner</p>
+<p class="lede">Three layers keep you warm outdoors: a base that moves sweat away, a mid layer that traps heat, and a shell that blocks wind and rain.</p>
+<nav aria-label="On this page"><a href="#base">Base layer</a><a href="#mid">Mid layer</a><a href="#shell">Shell</a></nav>
+<h2 id="base">Base layer</h2>
+<p>The base layer sits against your skin and moves sweat away from it. Merino wool (150–200&nbsp;g/m²) stays warm when damp and doesn’t smell after a long day; synthetic polyester dries faster and costs less. Avoid cotton: it holds water and pulls heat from your body, which is how a cold day turns dangerous. A snug fit matters more than thickness, because fabric that doesn’t touch the skin can’t move moisture.</p>
+<h2 id="mid">Mid layer</h2>
+<p>The mid layer traps warm air. A 100-weight fleece works for most days between −5 and 5&nbsp;°C; a light synthetic insulated jacket (60–100&nbsp;g/m² fill) adds warmth for stops. Down is warmer for its weight but loses most of its loft when wet, so keep it for dry cold and breaks, and carry it in a dry bag. Open the zip before you overheat instead of after, so you don’t soak the layer from inside.</p>
+<h2 id="shell">Shell</h2>
+<p>The shell blocks wind and rain. A waterproof-breathable jacket with pit zips handles changing weather; a windproof softshell is enough on dry, windy days and breathes better while you climb. Check that the hood fits over a helmet or a warm hat and that the cuffs close over gloves.</p>
+
+<blockquote><p>“Be bold, start cold.”</p><span>Start the hike slightly cold: after ten minutes of walking you’ll be warm, and you won’t have sweated into your layers.</span></blockquote>
+</main>
+</body></html>

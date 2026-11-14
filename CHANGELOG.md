@@ -1,5 +1,65 @@
 # Changelog
 
+## 1.8.9 — 2026-11-14
+
+One release for three test runs, held until all three were in: a project
+with its own design skill (Ledger), and two blind runs by a fresh agent
+that only had the skill and the user's request: a long article (Read
+mode) and a Jetpack Compose settings screen it couldn't compile.
+
+Project decisions and the floors (`SKILL.md`):
+- A written project decision beats a taste rule (a base-6 grid over #1,
+  a brand face over #6, tracked caps as the signature over #45), never
+  **contrast** (principle 5) or **invented claims** (principle 6). The
+  agent had offered "keep white on the brand green at 3.4:1" as an option;
+  it's now a blocker reported with the ratio and a fix inside the brand.
+- `slop-scan.py` and `unslop-score.py` take `--allow` for the rules a
+  written decision covers (listed apart, not scored) and refuse
+  `contrast`, `graphics-contrast` and `unverified-claim`. Run them with the
+  project's own `--scale` / `--type-scale`.
+
+Quick mode (`SKILL.md`):
+- It ends with a fixed report (render looked at, the passes, six axes,
+  spec card rows, score, not checked), so a skipped step shows: the first
+  agent never opened the render and said so only when asked.
+- The before/after is one page, side by side at the same width. Native
+  code that can't run here gets an HTML mock at device size, which counts
+  as the render, and each state is audited on its own page (a board mixed
+  both into one census).
+
+Scanner (`slop-scan.py`):
+- Fixed: a one-line `:root { … }` left the scanner "inside :root" for the
+  rest of the file, hiding raw colors and off-scale values after it.
+- Fixed: hex values in custom-property definitions anywhere on a line (a
+  dark palette in `@media … { :root { … } }`) aren't raw colors.
+- Fixed: literals in token files on native (`Tokens.kt`, `Type.swift`,
+  typography, dimens, spacing, shapes) aren't literals in a view.
+- New `elevation-literal` (#5, #32): `cardElevation(6.dp)`,
+  `.shadow(radius: 12)` on components.
+- New `translucent-text` (#22): `Color.White.copy(alpha = …)`,
+  `.white.opacity(…)`, `text-white/60`, `color: rgba(255,255,255,.6)`.
+- New `empty-action` (#64, principle 6): `onClick = {}`, `Button { }`,
+  `action: {}`, `onClick={() => {}}`: a control that implies a feature
+  that doesn't exist ("Save changes" when switches already save).
+- `unverified-claim` reads any comparative after "Nx" ("10x warmer") and
+  "100% waterproof / secure / guaranteed…"; `hype-copy` knows "crushing
+  it", "in today's fast-paced world", "let's dive in".
+
+Rendered checks (`web-audit.mjs`):
+- **Reading** (#27, #28): running text over ~85 characters a line, and
+  long text justified or centered. The article had 114-141 characters a
+  line, justified, and nothing measured it.
+- **Empty blocks** (#35): a big painted box with no text or media, the
+  placeholder where a photo or the product should be.
+- `unslop-score.py` weighs all three.
+
+Checklist: #34's "one gradient" allowance never covers gradient text
+(#55).
+
+Tests: 57 cases and 10 rendered checks (from 41 and 8), including the
+three test projects before and after, and five command-line checks for
+`--allow` and its refusals.
+
 ## 1.8.8 — 2026-11-14
 
 A regression suite for the scripts, from the cases built while testing

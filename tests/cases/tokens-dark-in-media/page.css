@@ -1,0 +1,4 @@
+:root { --ink: #1f2430; --paper: #fafaf9; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink: #ecebe6; --paper: #17191f; } }
+:root[data-theme="dark"] { --ink: #ecebe6; --paper: #17191f; }
+.card { color: var(--ink); background: var(--paper); border-color: #ccc; }

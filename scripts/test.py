@@ -49,10 +49,10 @@ def scan_case(scan, folder):
     return dict(sorted(counts.items()))
 
 
-def audit_case(script, html):
+def audit_case(script, html, widths="390"):
     """Run web-audit.mjs on one page; None if Playwright isn't available."""
     with tempfile.TemporaryDirectory() as out:
-        r = subprocess.run(["node", script, html, "--out", out, "--widths", "390"],
+        r = subprocess.run(["node", script, html, "--out", out, "--widths", widths],
                            capture_output=True, text=True, timeout=300)
         if r.returncode == 2 and "Playwright" in (r.stderr + r.stdout):
             return None
@@ -66,6 +66,9 @@ def audit_case(script, html):
         "emoji": len(m["emoji"]),
         "glow": len(m["glow"]),
         "text_scales": bool(ts.get("checked")) and ts.get("grew", 0) / ts["checked"] >= 0.5,
+        "long_lines": len(m.get("longLines", [])),
+        "aligned_text": len(m.get("alignedText", [])),
+        "empty_blocks": len(m.get("emptyBlocks", [])),
     }
 
 
@@ -123,7 +126,7 @@ def main():
         for name, page in sorted(expected.get("audit", {}).items()):
             if a.only and a.only not in name:
                 continue
-            got = audit_case(a.audit, os.path.join(CASES, name, page["page"]))
+            got = audit_case(a.audit, os.path.join(CASES, name, page["page"]), page.get("widths", "390"))
             if got is None:
                 skipped += 1
                 continue

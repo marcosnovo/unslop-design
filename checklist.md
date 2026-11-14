@@ -156,7 +156,8 @@ cite them ("#14") in their boards.
 34. **Decoration allowed, with conditions.** If a screen still feels flat
     after fixing hierarchy and spacing: a section background color, a
     two-hue gradient ≤ 30° apart or a low-contrast pattern, once per screen
-    and never behind small text. Better to "supercharge what's there"
+    and never behind small text. Never on the text itself: gradient text is
+    not this allowance, it's #55. Better to "supercharge what's there"
     (checkmarks instead of bullets, selectable cards instead of a stack of
     radio buttons) than to add pieces.
 

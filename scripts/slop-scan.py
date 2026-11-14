@@ -21,8 +21,10 @@ NATIVE = {".swift", ".kt"}
 SKIP_DIRS = {"node_modules", ".git", "dist", "build", ".next", ".nuxt", ".svelte-kit", "out", "coverage",
              "vendor", "Pods", "DerivedData", ".build", ".gradle", "public", "static"}
 # Files where literals belong: the token/theme definitions themselves.
-TOKEN_FILE = re.compile(r"(token|theme|variables|palette|colors?|tailwind\.config|design[-_]?system)", re.I)
+TOKEN_FILE = re.compile(r"(token|theme|variables|palette|colors?|tailwind\.config|design[-_]?system|typography|dimens|spacing|"
+                        r"^type\.(kt|swift)$|^shapes?\.(kt|swift)$)", re.I)
 
+TOKEN_DECL = re.compile(r"--[\w-]+\s*:\s*[^;}]+")
 # Typographic marks in the same blocks (✓ ✔ ✕ ✗ ★ ☆) are characters, not emoji.
 EMOJI = re.compile("(?![✓✔✕✖✗✘★☆✦✧])[\U0001F300-\U0001FAFF☀-➿⭐⬆↔-↪⌚-⏿]")
 PX_PROP = re.compile(r"\b(padding|margin|gap|row-gap|column-gap|font-size|border-radius|inset|top|left|right|bottom)"
@@ -88,7 +90,17 @@ RULES = [
                 r"Crush(?:ing)? (it|your)|You'?ve got this|You got this|Let'?s (go|do this|crush)|Beast mode|Level up|"
                 r"(?:adventure|journey|story|future|next chapter|\w+ experience) awaits|Your (?:journey|adventure) (?:starts|begins)|"
                 r"Ready when you are|Like never before|At your fingertips|The future of \w+|"
+                r"In today'?s (?:fast-paced|digital|busy) (?:world|age)|Let'?s dive in|"
                 r"Unlock your|Smash (it|your))\b", re.I), "all"),
+    ("elevation-literal", "#5 #32", "Shadow / elevation literal on a component (one named elevation token)",
+     re.compile(r"\b(?:cardElevation|shadowElevation|tonalElevation|elevation)\s*(?:=\s*|\()\s*\d+(?:\.\d+)?\.dp|"
+                r"\.shadow\(\s*(?:color:[^)]*?,\s*)?radius:\s*\d"), "native"),
+    ("translucent-text", "#22", "Semi-transparent white text (on color it washes out: use a role color, measured)",
+     re.compile(r"Color\.White\.copy\(\s*alpha\s*=\s*0?\.\d|(?:foregroundColor|foregroundStyle)\(\s*(?:Color)?\.white\.opacity\(|"
+                r"\btext-white/\d{1,2}\b|(?<![-\w])color\s*:\s*rgba\(\s*255\s*,\s*255\s*,\s*255\s*,\s*0?\.\d"), "all"),
+    ("empty-action", "#64", "A control whose action is empty (it implies a feature that doesn't exist: principle 6)",
+     re.compile(r"\bonClick\s*=\s*\{\s*\}|\bonClick=\{\s*\(\s*\)\s*=>\s*\{\s*\}\s*\}|"
+                r"\bButton\s*\(\s*(?:action:\s*)?\{\s*\}|\bButton\s*\{\s*\}\s*label|\baction:\s*\{\s*\}"), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
 ]
@@ -130,7 +142,9 @@ TRACKING = re.compile(r"\.tracking\(|\.kerning\(|letterSpacing\s*=")
 # separate lines ("<div>10x</div>" then "<div>Faster</div>") still read as one claim.
 UNVERIFIED_CLAIM = re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by\s+(?:over\s+|more than\s+)?[\d,.]+\s*[km]?\+?\s+\w+)|"
                 r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:teams|users|customers|companies|developers|engineers|businesses|people|creators))|"
-                r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>){1,12}(?i:faster|better|more|quicker|cheaper|productiv)|"
+                r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>){1,12}(?i:faster|better|more|quicker|cheaper|productiv|[a-z]{3,}er\b)|"
+                r"\b100\s?%(?:\s|<[^<>]+>){1,12}(?i:waterproof|secure|safe|guaranteed|satisfaction|natural|organic|accurate|"
+                r"reliable|effective|confidence|private|free\b)|"
                 r"\b99\.9+%(?:\s|<[^<>]+>){1,12}(?i:uptime|reliab|sla)")
 # A map, camera or canvas with a permanent tab bar under it (#59): the chrome eats the
 # canvas's bottom edge. Heuristic and cheap in the score: one canvas and one bottom bar
@@ -461,8 +475,8 @@ def scan(path, scale, hits, type_scale=None):
         if "unslop-ignore" in line:
             continue
         stripped = line.strip()
-        if stripped.startswith(":root") or "@theme" in stripped:
-            in_root = True
+        if (stripped.startswith(":root") or "@theme" in stripped) and stripped.count("{") > stripped.count("}"):
+            in_root = True  # a block that stays open; a one-line ":root { … }" closes itself
         if in_root and stripped.startswith("}"):
             in_root = False
             continue
@@ -473,8 +487,12 @@ def scan(path, scale, hits, type_scale=None):
                 continue
             if rid == "raw-color" and (is_token_file or in_root or stripped.startswith("--")):
                 continue
+            if rid == "raw-color" and not rx.search(TOKEN_DECL.sub("", line)):
+                continue  # only token definitions (e.g. a dark palette inside @media … { :root { … } })
             if rid == "no-focus" and has_focus_visible:
                 continue
+            if rid in ("native-literal", "elevation-literal") and is_token_file:
+                continue  # Tokens.kt / Type.kt / Theme.swift: literals belong there
             if rx.search(line):
                 hits.setdefault((rid, ref, desc), []).append((path, n, stripped[:110]))
         if kind == "web":

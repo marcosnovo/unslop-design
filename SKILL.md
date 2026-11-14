@@ -28,8 +28,9 @@ Three scripts measure instead of guessing:
 - `node scripts/web-audit.mjs <url>` — the rendered page at 390/768/1280 px:
   horizontal scroll, a census of every size/color/radius/shadow/spacing in
   use, computed contrast, focus states, emoji, glows, plus a grayscale
-  screenshot, icon contrast (3:1, WCAG 1.4.11) for small SVG, and whether
-  the type follows the reader's text size.
+  screenshot, icon contrast (3:1, WCAG 1.4.11) for small SVG, whether
+  the type follows the reader's text size, line length and justified or
+  centered long text, and big empty placeholder boxes.
   `--device iphone,iphone-se,pixel` renders at real phone
   size and density with safe areas and reports which font really
   rendered. Needs Playwright.
@@ -109,8 +110,12 @@ subagents, no jury, one pass you can finish in a few minutes.
 2. Pick the **five fixes that change the screen most**, each with its
    `checklist.md` number and one line of why. Hierarchy and spacing before
    color, color before polish. Say what you would *not* change.
-3. Show the before/after: the edited code's render, or an HTML mock of the
-   screen if there's no code, with the filled `spec-card.md` rows it uses.
+3. Show the before/after **on one page, side by side at the same width**:
+   the edited code's render, or an HTML mock of the screen when there's no
+   code or it can't run here (native without a simulator: the mock at
+   device size is the render, and the report says so), with the filled
+   `spec-card.md` rows it uses. Audit each state as its own page, not the
+   side-by-side board, or the census mixes before and after.
    Score it on the six axes of `process.md` § 4 first; under 3 on any
    axis, revise before showing. For Persuade and Experience screens run
    the second critic of § 4 once; for Operate and Read, answer its

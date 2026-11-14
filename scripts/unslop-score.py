@@ -50,6 +50,9 @@ CODE = {
     "arbitrary-value": ("Tailwind arbitrary values", "#1", 0.5, 8),
     "off-scale": ("Values off the spacing scale", "#1", 0.5, 8),
     "native-literal": ("Literals in native views", "#1", 0.5, 8),
+    "elevation-literal": ("Elevation literals on components", "#5", 1, 3),
+    "translucent-text": ("Semi-transparent white text", "#22", 1, 4),
+    "empty-action": ("Controls with an empty action", "#64", 2, 6),
 }
 # Rendered page. "sprawl" = distinct values beyond what a system needs.
 PAGE = {
@@ -57,6 +60,9 @@ PAGE = {
     "contrast": ("Text under WCAG AA", "P5", 1, 15),
     "graphics-contrast": ("Icons/graphics under 3:1", "P5", 1, 6),
     "text-scale": ("Type ignores the reader's text size", "#2", 3, 3),
+    "long-lines": ("Lines over ~85 characters", "#27", 1, 4),
+    "aligned-text": ("Long text justified or centered", "#28", 1, 3),
+    "empty-block": ("Empty placeholder blocks", "#35", 2, 4),
     "focus": ("No visible focus", "#53", None, 10),
     "targets": ("Targets under 24 px", "#53", 0.5, 5),
     "spacing-sprawl": ("Distinct spacing values > 8", "#1", 0.5, 8),
@@ -98,6 +104,9 @@ def score_page(report):
     rows["overflow"] = sum(1 for w in report["widths"].values() if w["overflow"]["scrollWidth"] > w["overflow"]["viewport"])
     rows["contrast"] = len(m["contrastFails"])
     rows["graphics-contrast"] = len(m.get("graphicsFails", []))
+    rows["long-lines"] = len(m.get("longLines", []))
+    rows["aligned-text"] = len(m.get("alignedText", []))
+    rows["empty-block"] = len(m.get("emptyBlocks", []))
     ts = report.get("textScale") or {}
     rows["text-scale"] = 1 if ts.get("checked") and ts.get("grew", 0) / ts["checked"] < 0.5 else 0
     rows["targets"] = len(m["smallTargets"])
