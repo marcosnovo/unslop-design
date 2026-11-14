@@ -37,7 +37,9 @@ PX = re.compile(r"(-?\d+(?:\.\d+)?)px")
 # or the string in Text/Button/Label/navigationTitle/Section/Tab.
 _COMMON = ("Your|My|All|Of|For|To|And|With|In|On|At|By|From|Add|Edit|View|Get|Start|Stop|Save|"
            "Create|Delete|Remove|Manage|Recent|Next|Total|Today|This|Upcoming|Soon|Now|More|See|Show|Go|"
-           "Back|Sign|Log|Up|Out|Learn|Try|Unlock|Upgrade|Activity|Settings|Account|Details|Overview")
+           "Back|Sign|Log|Up|Out|Learn|Try|Unlock|Upgrade|Activity|Settings|Account|Details|Overview|"
+           "Status|Order|Orders|Tracking|History|Profile|Notifications|Summary|Payment|Payments|Billing|"
+           "Preferences|Privacy|Security|Plan|Plans|Subscription|Subscriptions|Report|Reports|Messages")
 _TC_WORDS = r"(?=[^\"<\n]*\b(?:" + _COMMON + r")\b)[A-Z][\w'’+-]*(?:\s+[A-Z][\w'’+-]*){1,5}"
 _LEAD = r"(?:[\U0001F300-\U0001FAFF☀-➿]\uFE0F?\s*)?"  # an emoji in front doesn't hide it
 TITLE_CASE = re.compile(r">\s*" + _LEAD + _TC_WORDS + r"[!?.]?\s*<|"

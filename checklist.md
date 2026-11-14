@@ -185,7 +185,9 @@ cite them ("#14") in their boards.
     tint of the same hue; an axis only if its numbers get used. On a
     dashboard people do read the axis: keep 3-4 ticks in the data voice
     (#56), series in their category colors (#51) and no glow on the bar you
-    want to highlight.
+    want to highlight. On a phone, labels stay at 11px or more as drawn: an
+    SVG whose viewBox shrinks to fit shrinks its text too, so set the
+    viewBox to the drawn width or size the labels in CSS px.
 
 ## Layout
 40. **One card per idea, the same everywhere.** The "answer card" repeats on

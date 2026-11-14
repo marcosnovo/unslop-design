@@ -64,6 +64,7 @@ PAGE = {
     "long-lines": ("Lines over ~85 characters", "#27", 1, 4),
     "aligned-text": ("Long text justified or centered", "#28", 1, 3),
     "empty-block": ("Empty placeholder blocks", "#35", 2, 4),
+    "tiny-text": ("Text drawn under 11 px", "#2", 1, 4),
     "focus": ("No visible focus", "#53", None, 10),
     "targets": ("Targets under 24 px", "#53", 0.5, 5),
     "spacing-sprawl": ("Distinct spacing values > 8", "#1", 0.5, 8),
@@ -108,6 +109,7 @@ def score_page(report):
     rows["long-lines"] = len(m.get("longLines", []))
     rows["aligned-text"] = len(m.get("alignedText", []))
     rows["empty-block"] = len(m.get("emptyBlocks", []))
+    rows["tiny-text"] = max([len(w.get("tinyText", [])) for w in report["widths"].values()] or [0])
     ts = report.get("textScale") or {}
     rows["text-scale"] = 1 if ts.get("checked") and ts.get("grew", 0) / ts["checked"] < 0.5 else 0
     rows["targets"] = len(m["smallTargets"])

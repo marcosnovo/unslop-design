@@ -37,6 +37,8 @@ Three scripts measure instead of guessing:
 - `python3 scripts/unslop-score.py <paths> [--audit report.json]` — both
   as one number from 0 to 100 with where the points went, plus a README
   badge. Run it before and after: "score 41 → 88" is the PR's headline.
+  A hit is fixed by changing the value, never by hiding it from the
+  scanner (a `calc()` that lands on the same 11px is still 11px).
 
 `examples/dashboard-before.html` and `-after.html` show both on one page.
 
@@ -116,7 +118,8 @@ subagents, no jury, one pass you can finish in a few minutes.
    device size is the render, and the report says so), with the filled
    `spec-card.md` rows it uses. Audit each state as its own page, not the
    side-by-side board, or the census mixes before and after; a phone mock
-   with `--device` and `--widths 390` (its text-scale line says nothing
+   (fluid up to the device width, not a fixed 393px) with `--device` and
+   `--widths 390` (its text-scale line says nothing
    about native Dynamic Type: draw the largest size instead). For a
    desktop page, "same width" means its real width: stack the two, don't
    shrink them into half-width frames.

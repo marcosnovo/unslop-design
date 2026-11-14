@@ -66,7 +66,7 @@
       "hype-copy": 1,
       "off-scale": 22,
       "raw-color": 25,
-      "title-case": 2,
+      "title-case": 3,
       "tracked-caps": 1,
       "transition-all": 1
     },
@@ -268,7 +268,7 @@
       "greeting": 1,
       "off-scale": 7,
       "raw-color": 7,
-      "title-case": 2
+      "title-case": 3
     },
     "screen-paywall-before": {
       "emoji": 4,
@@ -282,6 +282,12 @@
       "title-case": 1,
       "translucent-text": 2,
       "unverified-claim": 1
+    },
+    "audit-svg-chart": {
+      "raw-color": 5
+    },
+    "title-case-nouns": {
+      "title-case": 2
     }
   },
   "audit": {
@@ -296,6 +302,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -313,6 +320,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -330,6 +338,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 1,
@@ -347,6 +356,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 4,
         "unknown": 0,
         "off_scale": 7,
@@ -364,6 +374,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -381,6 +392,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -398,6 +410,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -415,6 +428,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -432,6 +446,7 @@
         "long_lines": 4,
         "aligned_text": 4,
         "empty_blocks": 1,
+        "tiny_text": 0,
         "estimated": 3,
         "unknown": 0,
         "off_scale": 4,
@@ -450,6 +465,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -468,6 +484,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 1,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -485,6 +502,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 1,
         "unknown": 0,
         "off_scale": 0,
@@ -502,6 +520,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -519,6 +538,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -536,6 +556,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -554,6 +575,7 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 0,
         "unknown": 0,
         "off_scale": 0,
@@ -572,10 +594,29 @@
         "long_lines": 0,
         "aligned_text": 0,
         "empty_blocks": 0,
+        "tiny_text": 0,
         "estimated": 4,
         "unknown": 0,
         "off_scale": 2,
         "edges": 3
+      }
+    },
+    "audit-svg-chart": {
+      "page": "index.html",
+      "expect": {
+        "contrast": 1,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "tiny_text": 3,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 1,
+        "edges": 1
       }
     }
   },

@@ -17,6 +17,8 @@ Paywalls and pressure copy:
   "save N%". "Save 88% vs weekly" passes, even with a tag in between.
 - **unverified-claim** catches "Join 2,000,000+ happy users" (up to two
   words before the noun).
+- **title-case** knows common screen nouns (Status, Order, History,
+  Payment, Preferences…): "Order Status Tracking" passed before.
 
 Web audit (`web-audit.mjs`):
 - Text on a gradient is checked against its worst stop and marked
@@ -27,8 +29,16 @@ Web audit (`web-audit.mjs`):
 - SVG text (chart labels) is left out of the text-scale check.
 - Left edges ignore text in the second and later columns of a grid or
   flex row.
+- SVG text is measured as drawn: its contrast uses `fill` (not CSS
+  `color`), and a new check lists text drawn under 11 px at each width,
+  with a score row (**tiny-text**). A chart whose viewBox shrinks to a
+  phone took its 12-unit labels down to 5 px with nothing reported.
 
 Process (`SKILL.md`, `checklist.md`):
+- A scanner hit is fixed by changing the value, not by hiding it (a
+  `calc()` that lands on the same 11px). Phone mocks are fluid up to the
+  device width, so the 390 audit doesn't report a scroll that isn't there.
+- #39: chart labels stay at 11 px or more as drawn on a phone.
 - **Only a screenshot, no code:** rebuild the before as an HTML mock,
   call sampled colors approximate, and label scores as mock scores.
 - Phone mocks are audited with `--device` at 390; the text-scale line
@@ -41,8 +51,8 @@ Process (`SKILL.md`, `checklist.md`):
   vertical ones. #51: app-wide categories keep their color; parts of one
   measure use one hue light and dark, with a dash or a direct label.
 
-Tests: 11 new cases (pressure, adjective claims, gradient text, the UA
-button, SVG text, grid edges, and the three test screens before and
+Tests: 13 new cases (pressure, adjective claims, gradient text, the UA
+button, SVG text, an SVG chart, Title Case nouns, grid edges, and the three test screens before and
 after).
 
 ## 1.8.9 — 2026-11-14

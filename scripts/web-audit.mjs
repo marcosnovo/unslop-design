@@ -89,7 +89,34 @@ mkdirSync(out, { recursive: true });
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 // Runs inside the page. Returns plain data only.
+// Both run inside the page, so each carries its own copy of drawnSize: the size text is
+// drawn at. SVG text scales with its viewBox, so 11 user units can be 5 px on a phone.
+const DRAWN = `const drawnSize = (el, cs) => {
+  const size = parseFloat(cs.fontSize);
+  const m = el.closest("svg") && el.getScreenCTM ? el.getScreenCTM() : null;
+  return m ? size * Math.hypot(m.a, m.b) : size;
+};`;
+
+// Text drawn under 11 px at this width (a chart squeezed to a phone, a caption at 10px).
+const tinyText = `(() => { ${DRAWN}
+  const out = [];
+  for (const el of document.body.querySelectorAll("*")) {
+    if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+    const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    if (!r.width || !r.height || cs.visibility === "hidden") continue;
+    const s = drawnSize(el, cs);
+    if (s < 11) out.push({ el: el.tagName.toLowerCase() + (typeof el.className === "string" && el.className.trim() ? "." + el.className.trim().split(/\\s+/)[0] : ""),
+      size: Math.round(s * 10) / 10, text: el.textContent.trim().slice(0, 30) });
+  }
+  return out;
+})()`;
+
 function measure(scaleValues) {
+  const drawnSize = (el, cs) => {
+    const size = parseFloat(cs.fontSize);
+    const m = el.closest("svg") && el.getScreenCTM ? el.getScreenCTM() : null;
+    return m ? size * Math.hypot(m.a, m.b) : size;
+  };
   const vis = (el) => {
     const cs = getComputedStyle(el);
     if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity) === 0) return false;
@@ -260,24 +287,26 @@ function measure(scaleValues) {
       // Emoji are color bitmaps: CSS color doesn't paint them, so an emoji-only span isn't text to measure.
       // Typographic marks (✓ ✔ © ™ ★) are painted with CSS color, so they stay in; only real emoji go.
       if (!ownText.replace(/(?![©®™✓✔✕✖✗✘★☆])\p{Extended_Pictographic}|[\uFE0F\u200D\s]/gu, "")) continue;
-      const fg = parse(cs.color);
+      // SVG text paints with fill, not color.
+      const paint = el.closest("svg") && /^(rgb|#)/.test(cs.fill) ? cs.fill : cs.color;
+      const fg = parse(paint);
       const bg = bgOf(el);
       const fade = opacityOf(el);
       if (fg && bg) {
         const fga = { ...fg, a: fg.a * fade };
         const eff = fga.a < 1 ? blend(fga, bg) : fga;
         const r = ratio(eff, bg);
-        const size = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
+        const size = drawnSize(el, cs), bold = Number(cs.fontWeight) >= 700;
         const large = size >= 24 || (bold && size >= 18.66);
         const need = large ? 3 : 4.5;
-        if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: cs.color, size: cs.fontSize });
+        if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: paint, size: Math.round(size * 10) / 10 + "px" });
       } else if (fg) {
         const stops = gradientStops(el);
         if (stops) {
           const r = Math.min(...stops.map((s) => { const fga = { ...fg, a: fg.a * fade }; return ratio(fga.a < 1 ? blend(fga, s) : fga, s); }));
-          const size = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
+          const size = drawnSize(el, cs), bold = Number(cs.fontWeight) >= 700;
           const need = size >= 24 || (bold && size >= 18.66) ? 3 : 4.5;
-          if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: cs.color, size: cs.fontSize, estimated: true });
+          if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: paint, size: Math.round(size * 10) / 10 + "px", estimated: true });
         } else contrastUnknown.push(label(el));
       } else {
         contrastUnknown.push(label(el));
@@ -459,7 +488,8 @@ for (const w of widths) {
   await page.waitForTimeout(wait);
   const shot = join(out, `w${w}${dark ? "-dark" : ""}.png`);
   await page.screenshot({ path: shot, fullPage: true });
-  results.widths[w] = { screenshot: shot, overflow: await page.evaluate(overflow) };
+  results.widths[w] = { screenshot: shot, overflow: await page.evaluate(overflow),
+    tinyText: await page.evaluate(tinyText) };
 }
 // Real device renders (opt-in).
 results.devices = {};
@@ -575,6 +605,13 @@ L.push(``, `## Targets under 24×24 px`, ``,
 L.push(``, `## Reading [#27, #28]`, ``,
   ...(m.longLines.length ? m.longLines.slice(0, 10).map((x) => `- **${x.cpl} characters a line** (aim for 45-75): ${x.el}`) : [`- line length within ~85 characters`]),
   ...(m.alignedText.length ? m.alignedText.slice(0, 10).map((x) => `- long text ${x.align === "justify" ? "justified" : "centered"}: ${x.el}`) : []));
+{
+  const tiny = Object.entries(results.widths).filter(([, r]) => r.tinyText && r.tinyText.length);
+  L.push(``, `## Text drawn under 11 px [#2]`, ``,
+    tiny.length ? tiny.map(([w, r]) => `- at ${w} px, ${r.tinyText.length}: ` + r.tinyText.slice(0, 6).map((x) => `${x.el} ${x.size}px "${x.text}"`).join("; ")).join("\n")
+      + `\n\nSVG text counts at the size it's drawn: a chart whose viewBox shrinks to the phone shrinks its labels too.`
+      : `- none at any width (SVG text measured at its drawn size)`);
+}
 L.push(``, `## Empty blocks [#35]`, ``,
   m.emptyBlocks.length ? m.emptyBlocks.slice(0, 10).map((x) => `- ${x.w}×${x.h} painted box with no text or media: ${x.el}`).join("\n") : `- none`);
 L.push(``, `## Emoji in visible text [#33, #45]`, ``,
