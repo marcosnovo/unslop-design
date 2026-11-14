@@ -103,6 +103,22 @@ CTA = re.compile(r"<(button|Button)\b|<a\b[^>]*\bhref")
 NATIVE_CARD_CALL = re.compile(r"\b([A-Z]\w*(?:Card|Tile))\(")
 
 
+def element_at(text, start):
+    """The element opening at `start`, up to its own closing tag (nesting counted)."""
+    tag = re.match(r"<([\w.]+)", text[start:]).group(1)
+    tags = re.compile(rf"<(/?){re.escape(tag)}\b[^>]*?(/?)>")
+    depth = 0
+    for m in tags.finditer(text, start):
+        if m.group(2):  # self-closing
+            if depth == 0:
+                return text[start:m.end()]
+            continue
+        depth += -1 if m.group(1) else 1
+        if depth == 0:
+            return text[start:m.end()]
+    return text[start:start + 400]
+
+
 def file_checks(path, text, kind, hits):
     lines = text.splitlines()
     ignored = {n for n, l in enumerate(lines, 1) if "unslop-ignore" in l}
@@ -114,7 +130,8 @@ def file_checks(path, text, kind, hits):
     found = [(line_of(m.start()), f"--{m.group(1)}: {m.group(2).strip()}") for m in SHADCN_DECL.finditer(text)
              if m.group(2).strip() in SHADCN_DEFAULTS[m.group(1)]]
     found = [f for f in found if f[0] not in ignored]
-    if len({v.split(":")[0] for _, v in found}) >= 2:
+    props = {v.split(":")[0] for _, v in found}
+    if len(props) >= 2 and props & {"--radius", "--primary"}:  # kept grays alone aren't an untouched kit
         hits.setdefault(kit_key, []).append((path, found[0][0], f"shadcn: {', '.join(v for _, v in found[:3])}"))
     found = [(line_of(m.start()), m.group(0)) for m in COMPOSE_TEMPLATE.finditer(text)]
     found = [f for f in found if f[0] not in ignored]
@@ -136,7 +153,7 @@ def file_checks(path, text, kind, hits):
             n = line_of(starts[0])
             if len(starts) < 3 or n in ignored:
                 continue
-            blocks = [text[s: (text.find("\n", s + 400) + 1 or len(text))] for s in starts]
+            blocks = [element_at(text, s) for s in starts]
             with_number = sum(1 for b in blocks if NUMBER_CHILD.search(b))
             with_action = sum(1 for b in blocks if CTA.search(b))
             if with_number >= 3 and with_action * 2 < len(blocks):  # cards with a button are offers (pricing), not stat tiles
@@ -144,10 +161,12 @@ def file_checks(path, text, kind, hits):
     else:
         calls = {}
         for m in NATIVE_CARD_CALL.finditer(text):
+            if re.search(r"\b(struct|fun|class|func|init)\s+$", text[max(0, m.start() - 20):m.start()]):
+                continue  # the declaration, not a call
             calls.setdefault(m.group(1), []).append(m.start())
         for name, starts in calls.items():
             n = line_of(starts[0])
-            if len(starts) >= 3 and n not in ignored and not re.search(rf"\b(struct|fun|class)\s+{name}\b", text[:starts[0]]):
+            if len(starts) >= 3 and n not in ignored:
                 hits.setdefault(key, []).append((path, n, f"{name}(…) ×{len(starts)}"))
 
 
