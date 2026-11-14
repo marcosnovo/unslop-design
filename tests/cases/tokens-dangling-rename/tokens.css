@@ -1,0 +1,49 @@
+/* Mise tokens: one :root for every screen (jury, round 1). Values only here. */
+:root{
+  /* space, base 4 (#1) */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+
+  /* type, rem: 5 sizes + line heights (#2, #27) */
+  --t-sm:.875rem;  --lh-sm:1.25rem;   /* 14/20  labels, units, tab labels, section heads, secondary */
+  --t-md:1rem;     --lh-md:1.5rem;    /* 16/24  body, switch labels, amendments, back link, meta */
+  --t-lg:1.25rem;  --lh-lg:1.75rem;   /* 20/28  recipe lines, library rows, quantities */
+  --t-xl:1.5rem;   --lh-xl:2rem;      /* 24/32  recipe-of-the-day name  (NEW lh, was 24/36) */
+  --t-2xl:2rem;    --lh-2xl:2.25rem;  /* 32/36  screen titles */
+  --w-reg:400; --w-strong:700;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:ui-serif,Georgia,"Times New Roman",serif; /* recipe title, step numbers, amendments, recipe-of-the-day name only */
+
+  /* shape + elevation */
+  --radius:4px; --radius-full:999px;  /* full: switch track and knob only */
+  /* elevation: none. Separation = 1px --rule borders and the paper/counter change */
+
+  /* sizes */
+  --tap:48px; --col:5rem; --icon:24px; --icon-sm:16px;
+  --switch-w:var(--s7); --switch-h:var(--s6); /* knob 24 = --s5, inset 4 = --s1 */
+
+  /* colour, light */
+  --counter:#E6DFCF; --paper:#FBF7EC; --now:#F4EBD3;
+  --ink:#2B2723; --ink-soft:#5E5648;
+  --rule:#CFC6B0; --margin:#A8321F; --pen:#27496D; --switch-off:#7B715F;
+
+  /* focus */
+  --focus:3px solid var(--pen);  /* offset -3px edge-to-edge rows, tabs, back link; 2px isolated controls */
+
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{
+  --counter:#1B1814; --paper:#26221C; --now:#322C22;
+  --ink:#F1EADA; --ink-soft:#B3A993;
+  --rule:#4A4336; --margin:#E8846F; --pen:#9DBDE0; --switch-off:#8C8270;
+}}
+
+/* added by PR 2 and PR 3, unified at integration: one name per value */
+:root{
+  --hairline:1px;          /* rules, borders, the margin line */
+  --heavy:2px;         /* header rule, strike-through */
+  --page:30rem;        /* phone column cap (owner decision, PR 1) */
+  --focus-in:-3px;     /* focus offset on edge-to-edge rows and tabs */
+  --focus-out:2px;     /* focus offset on isolated controls */
+  --stroke:2;          /* icon stroke width, unitless (SVG) */
+  --ease:.15s;         /* colour transition, off under prefers-reduced-motion */
+}

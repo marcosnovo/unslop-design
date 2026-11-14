@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.8.8 — 2026-11-14
+
+A regression suite for the scripts, from the cases built while testing
+1.8.0-1.8.7 (they lived in a temporary session and were checked by hand on
+every PR):
+- `tests/cases`: 41 cases, one folder each. They cover every detector's
+  hit and its near miss: starter kits (shadcn v3/v4, the Compose
+  template, a customized theme), stat-card rows vs lists, pricing tiers,
+  `.map()` and declared-first components, tracked caps, canvas + tab bar,
+  hidden navs, split claims, dangling tokens, quoted JSX definitions. Plus
+  the five test screens before and after (Stride, Subscriptions, Relay,
+  Trail, Mise).
+- `tests/expected.json`: the exact hits per rule for each case, and eight
+  rendered checks for `web-audit.mjs` (faded icons, typographic marks,
+  root at 200 %, contrast, glows, text scale).
+- `scripts/test.py`: standard library only; `--audit` adds the rendered
+  checks when Playwright is there and says so when it isn't; `--update`
+  rewrites the expectations so a behavior change shows as a diff.
+  Breaking the glow detector on purpose fails exactly the three cases that
+  depend on it.
+- `CONTRIBUTING.md`: a new rule or a fixed false positive comes with a
+  case for the hit and one for the near miss.
+
 ## 1.8.7 — 2026-11-14
 
 The first run of the **implementation stage** of the full flow

@@ -1,0 +1,6 @@
+Text("Apple Music").font(.headline)
+Text("Add expense")
+Text("Hey \(name)")
+Text("MON").font(.caption)
+Text("km").tracking(-0.5)
+Text("NEW").padding(4)

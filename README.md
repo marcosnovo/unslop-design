@@ -364,6 +364,7 @@ before/after without the whole team.
 | [`.claude-plugin/`](.claude-plugin) | Claude Code plugin and marketplace manifests |
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
+| [`scripts/test.py`](scripts/test.py) | Regression tests: every case in `tests/cases` gives exactly the hits `tests/expected.json` lists |
 | [`agents/openai.yaml`](agents/openai.yaml) | Codex UI metadata (name, description, default prompt) |
 | [`references.md`](references.md) | Six real before/afters, one reference app and a chapter map of *Refactoring UI* |
 

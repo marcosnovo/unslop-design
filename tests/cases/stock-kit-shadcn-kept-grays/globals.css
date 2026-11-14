@@ -1,0 +1,6 @@
+:root {
+  --radius: 0.25rem;
+  --primary: oklch(0.5 0.15 150);
+  --foreground: oklch(0.145 0 0);
+  --ring: oklch(0.708 0 0);
+}

@@ -1,0 +1,85 @@
+/* Shared by library.html and settings.html: page, sheet, rows, switches, tab bar. Tokens only. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  margin:0;background:var(--counter);color:var(--ink);
+  font:var(--w-reg) var(--t-md)/var(--lh-md) var(--font);
+  accent-color:var(--ink);
+  /* clearance = tab bar (pad + icon + gap + label + pad) + breathing room + safe area */
+  padding-bottom:calc(var(--s1) * 3 + var(--icon) + var(--lh-sm) + var(--hair) + var(--s4) + env(safe-area-inset-bottom));
+}
+::selection{background:var(--now);color:var(--ink)}
+.page{
+  max-width:var(--page);margin:0 auto;
+  padding:var(--s5) max(var(--s4),env(safe-area-inset-right)) 0 max(var(--s4),env(safe-area-inset-left));
+}
+h1{margin:0 0 var(--s5);font-size:var(--t-2xl);line-height:var(--lh-2xl);font-weight:var(--w-strong)}
+p{margin:0}
+
+.sheet{background:var(--paper);border:var(--hair) solid var(--rule);border-radius:var(--radius);overflow:hidden}
+.sheet ul,ul.sheet{list-style:none;margin:0;padding:0}
+
+/* shared row */
+.row{
+  display:flex;align-items:center;gap:var(--s3);
+  min-height:var(--tap);padding:var(--s3) var(--s4);
+  color:var(--ink);text-decoration:none;
+}
+.sheet li + li{border-top:var(--hair) solid var(--rule)}
+a.row:focus-visible,.tab:focus-visible{outline:var(--focus);outline-offset:var(--focus-in)}
+
+/* library */
+.day{padding:var(--s5) var(--s4) var(--s3);border-bottom:var(--heavy) solid var(--margin)}
+.kind{font-size:var(--t-sm);line-height:var(--lh-sm);font-weight:var(--w-strong);color:var(--ink-soft)}
+.day-name{font-family:var(--serif);font-weight:var(--w-strong);font-size:var(--t-xl);line-height:var(--lh-xl)}
+.day-time{font-size:var(--t-md);line-height:var(--lh-md);color:var(--ink-soft)}
+.label{margin:0;padding:var(--s4) var(--s4) var(--s2);font-size:var(--t-sm);line-height:var(--lh-sm);font-weight:var(--w-strong);color:var(--ink-soft)}
+.mins{
+  flex:none;width:var(--col);text-align:right;white-space:nowrap;
+  font-size:var(--t-lg);line-height:var(--lh-lg);font-weight:var(--w-strong);font-variant-numeric:tabular-nums;
+}
+.mins small{font-size:var(--t-sm);line-height:var(--lh-sm);font-weight:var(--w-reg);color:var(--ink-soft)}
+.name{font-size:var(--t-lg);line-height:var(--lh-lg);min-width:0;overflow-wrap:anywhere}
+a.row:hover,a.row:active{background:var(--now)}
+
+/* settings */
+.set{justify-content:space-between;gap:var(--s4)}
+.set .txt{flex:1;min-width:0}
+.set .lbl{display:block}
+.set .sub{display:block;font-size:var(--t-sm);line-height:var(--lh-sm);color:var(--ink-soft)}
+.val{color:var(--ink-soft);margin-left:auto;text-align:right}
+.chev{flex:none;width:var(--icon-sm);height:var(--icon-sm);fill:none;stroke:var(--ink-soft);stroke-width:var(--stroke);stroke-linecap:round;stroke-linejoin:round}
+
+button.switch{
+  flex:none;position:relative;appearance:none;border:0;padding:0;cursor:pointer;
+  width:var(--switch-w);height:var(--switch-h);border-radius:var(--radius-full);
+  background:var(--switch-off);
+}
+button.switch::after{
+  content:"";position:absolute;top:var(--s1);left:var(--s1);
+  width:var(--s5);height:var(--s5);border-radius:var(--radius-full);background:var(--paper);
+}
+button.switch[aria-checked="true"]{background:var(--ink)}
+button.switch[aria-checked="true"]::after{left:calc(100% - var(--s5) - var(--s1))}
+/* the row is the larger target: pad the hit area to --tap without changing the look */
+button.switch:focus-visible{outline:var(--focus);outline-offset:var(--focus-out)}
+@media (prefers-reduced-motion:no-preference){
+  button.switch,button.switch::after{transition:background-color .15s,left .15s}
+}
+
+/* tab bar */
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:1;
+  background:var(--paper);border-top:var(--hair) solid var(--rule);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tabs ul{display:flex;max-width:var(--page);margin:0 auto;padding:0;list-style:none}
+.tabs li{flex:1}
+.tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s1);
+  min-height:var(--tap);padding:var(--s1);
+  color:var(--ink-soft);text-decoration:none;
+  font-size:var(--t-sm);line-height:var(--lh-sm);font-weight:var(--w-reg);
+}
+.tab svg{width:var(--icon);height:var(--icon);fill:none;stroke:currentColor;stroke-width:var(--stroke);stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--ink);font-weight:var(--w-strong)}

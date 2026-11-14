@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Lemon garlic pasta · Mise</title><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="recipe.css"></head><body>
+<a class="back" href="library.html">&lsaquo;&nbsp;Library</a>
+<main class="card">
+<header>
+  <p class="kind">Italian · Dinner</p>
+  <h1>Lemon garlic pasta</h1>
+  <p class="meta">Serves 4 · 10 min prep · 15 min cook</p>
+</header>
+<div class="head"><h2 id="ih">Ingredients</h2><p class="count" id="count" aria-live="polite">0 of 5 ready</p></div>
+<ul class="list ing" aria-labelledby="ih">
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="q">400 <small>g</small></span><span class="txt"><span class="main">Spaghetti</span></span></button></li>
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="q">4</span><span class="txt"><span class="main">Garlic cloves</span></span></button></li>
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="q">1</span><span class="txt"><span class="main">Lemon</span><span class="note">zest and juice</span></span></button></li>
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="q">60 <small>g</small></span><span class="txt"><span class="main">Parmesan</span><span class="note">grated</span></span></button></li>
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="q">4 <small>tbsp</small></span><span class="txt"><span class="main">Olive oil</span></span></button></li>
+</ul>
+<div class="head"><h2 id="sh">Method</h2></div>
+<ol class="list steps" aria-labelledby="sh">
+  <li><button type="button" class="row now" role="checkbox" aria-checked="false" aria-current="step"><span class="n">1</span><span class="txt"><span class="main">Boil the spaghetti in well-salted water until al dente.</span><span class="note">Save a cup of pasta water.</span></span></button></li>
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="n">2</span><span class="txt"><span class="main">Warm the oil and garlic over low heat until fragrant but not brown.</span><span class="note">3 minutes.</span></span></button></li>
+  <li><button type="button" class="row" role="checkbox" aria-checked="false"><span class="n">3</span><span class="txt"><span class="main">Toss the pasta with the garlic oil, lemon, Parmesan and a splash of pasta water until glossy.</span></span></button></li>
+</ol>
+<p class="hint">Tap a line to strike it off. The red bar marks the step you are on.</p>
+</main>
+<script>
+(function(){
+  var ing=[].slice.call(document.querySelectorAll('.ing .row')),
+      steps=[].slice.call(document.querySelectorAll('.steps .row')),
+      count=document.getElementById('count');
+  function on(r){return r.getAttribute('aria-checked')==='true'}
+  function update(){
+    var n=ing.filter(on).length;
+    count.textContent=n===ing.length?'All ready.':n+' of '+ing.length+' ready';
+    var cur=null;
+    steps.forEach(function(r){
+      var now=!cur&&!on(r);
+      if(now)cur=r;
+      r.classList.toggle('now',now);
+      if(now)r.setAttribute('aria-current','step');else r.removeAttribute('aria-current');
+    });
+  }
+  ing.concat(steps).forEach(function(r){
+    r.addEventListener('click',function(){r.setAttribute('aria-checked',on(r)?'false':'true');update()});
+  });
+  update();
+})();
+</script>
+</body></html>

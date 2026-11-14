@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" style="color-scheme: dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relay — on-call rotations for small teams</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-canvas text-ink font-sans antialiased selection:bg-board selection:text-canvas">
+  <nav class="max-w-5xl mx-auto flex items-center justify-between px-6 py-6 text-sm">
+    <a href="#" class="font-semibold text-base">Relay</a>
+    <div class="flex items-center gap-6 text-muted">
+      <a href="#pricing" class="py-2 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Pricing</a>
+      <a href="#" class="hidden sm:inline py-2 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Docs</a>
+      <a href="#" class="py-2 text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Sign in</a>
+    </div>
+  </nav>
+
+  <header class="max-w-5xl mx-auto px-6 pt-16 pb-12">
+    <h1 class="text-4xl md:text-6xl font-semibold tracking-tight leading-tight max-w-3xl">Know who’s on call, and hand off without dropping a page.</h1>
+    <p class="mt-6 text-lg text-muted max-w-prose">Relay runs your team’s rotation: who has the pager now, who’s next, and who gets paged if nobody answers in five minutes.</p>
+    <div class="mt-8 flex flex-wrap items-center gap-6">
+      <a href="#" class="px-6 py-3 rounded-full bg-ink text-canvas font-semibold transition-transform active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">Set up a rotation</a>
+      <a href="#pricing" class="text-muted underline underline-offset-4 hover:text-ink">See pricing</a>
+    </div>
+  </header>
+
+  <section aria-label="Rotation board" class="max-w-5xl mx-auto px-6">
+    <div class="rounded-xl bg-surface border border-rule font-mono text-sm overflow-hidden divide-y divide-rule">
+      <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[6rem_1fr_auto] gap-x-4 gap-y-1 px-5 py-4 items-baseline"><span class="text-board order-2 sm:order-none">On call</span><span class="text-ink text-base col-span-2 sm:col-span-1">Ana Ruiz <span class="text-muted">· Payments API</span></span><span class="text-board text-right order-3 sm:order-none">until Mon 9 Dec 09:00</span></div>
+      <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[6rem_1fr_auto] gap-x-4 gap-y-1 px-5 py-4 items-baseline"><span class="text-board order-2 sm:order-none">Next</span><span class="text-ink col-span-2 sm:col-span-1">Ben Okafor <span class="text-muted">· Payments API</span></span><span class="text-board text-right order-3 sm:order-none">until Mon 16 Dec 09:00</span></div>
+      <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[6rem_1fr_auto] gap-x-4 gap-y-1 px-5 py-4 items-baseline"><span class="text-board order-2 sm:order-none">Backup</span><span class="text-ink col-span-2 sm:col-span-1">Chen Li <span class="text-muted">· paged after 5 min</span></span><span class="text-board text-right order-3 sm:order-none">this week</span></div>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-6 py-20 grid gap-10 md:grid-cols-3">
+    <div><h2 class="font-semibold">Now</h2><p class="mt-2 text-muted">One name per service, on the board and in Slack. Swapping a shift is two taps, and the board updates for everyone.</p></div>
+    <div><h2 class="font-semibold">Next</h2><p class="mt-2 text-muted">The handoff comes with a note: open incidents, noisy alerts, what you muted. Nothing lives in someone’s head.</p></div>
+    <div><h2 class="font-semibold">If nobody answers</h2><p class="mt-2 text-muted">After five minutes the backup is paged, then the team lead. You set the steps; Relay keeps the times.</p></div>
+  </section>
+
+  <section id="pricing" class="max-w-5xl mx-auto px-6 pb-20">
+    <h2 class="text-2xl font-semibold">Pricing</h2>
+    <div class="mt-6 border-t border-rule">
+      <div class="grid grid-cols-[1fr_auto] gap-4 py-4 border-b border-rule"><span>Up to 5 people</span><span class="text-right">Free</span></div>
+      <div class="grid grid-cols-[1fr_auto] gap-4 py-4 border-b border-rule"><span>Each person after that</span><span class="text-right">$4 a month</span></div>
+      <div class="grid grid-cols-[1fr_auto] gap-4 py-4 border-b border-rule"><span class="text-muted">Phone and SMS paging</span><span class="text-muted text-right">included</span></div>
+    </div>
+  </section>
+
+  <footer class="max-w-5xl mx-auto px-6 py-10 text-sm text-muted border-t border-rule">© 2026 Relay</footer>
+</body>
+</html>

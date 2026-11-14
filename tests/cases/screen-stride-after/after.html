@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stride — Today</title>
+<style>
+  :root {
+    color-scheme: dark;
+    /* spacing 4 · 8 · 12 · 16 · 24 · 32 · 48 */
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px; --s12: 48px;
+    /* type 12 · 13 · 15 · 17 · 22 · 64 */
+    --t-cap: 12px; --t-meta: 13px; --t-body: 15px; --t-row: 17px; --t-title: 22px; --t-hero: 64px;
+    --canvas: #0e0f11; --ink: #f2f1ee; --muted: #9b9da3; --faint: #5d6066; --rule: #23252a;
+    --chrome: rgba(28,29,33,.82); --accent: #ff8a3d; --on-accent: #1b0d03; --done: #8fd19e;
+    --r-pill: 999px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--canvas); color: var(--ink);
+    padding: calc(env(safe-area-inset-top) + var(--s4)) var(--s6) calc(env(safe-area-inset-bottom) + 96px);
+    font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent); color: var(--on-accent); }
+  .meta { font-size: var(--t-meta); color: var(--muted); }
+  h1 { font-size: var(--t-title); font-weight: 600; letter-spacing: -0.01em; margin-top: var(--s1); }
+  .today { margin-top: var(--s8); }
+  .dist { display: flex; align-items: baseline; gap: var(--s2); margin-top: var(--s1); }
+  .dist b { font-size: var(--t-hero); font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+  .dist span { font-size: var(--t-title); color: var(--muted); font-weight: 400; }
+  .how { font-size: var(--t-body); color: var(--muted); line-height: 1.5; margin-top: var(--s3); max-width: 30ch; }
+  .start { display: flex; justify-content: center; align-items: center; gap: var(--s2); width: 100%; margin-top: var(--s6);
+    min-height: 56px; border: 0; border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent);
+    font: 600 var(--t-row)/1 inherit; font-family: inherit; transition: transform .12s ease-out; }
+  .start:active { transform: scale(.98); }
+  .start:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .week { margin-top: var(--s12); }
+  .week-head { display: flex; justify-content: space-between; font-size: var(--t-meta); color: var(--muted); padding-bottom: var(--s2); }
+  .day { display: grid; grid-template-columns: 44px 1fr auto; align-items: baseline; gap: var(--s3);
+    padding: var(--s3) 0; border-top: 1px solid var(--rule); font-size: var(--t-body); }
+  .day .d { color: var(--muted); font-size: var(--t-meta); }
+  .day .what { color: var(--ink); }
+  .day .km { text-align: right; color: var(--muted); }
+  .day.rest .what, .day.rest .km { color: var(--muted); }
+  .day.done .km b { color: var(--ink); font-weight: 600; }
+  .day.done .km i { font-style: normal; color: var(--done); margin-left: var(--s1); }
+  .day.now { font-weight: 600; }
+  .day.now .d, .day.now .km { color: var(--ink); }
+  .day.now .what::after { content: " · today"; color: var(--muted); font-weight: 400; }
+  .total { display: flex; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: var(--s3);
+    font-size: var(--t-meta); color: var(--muted); }
+  .total b { color: var(--ink); font-weight: 600; }
+  nav { position: fixed; left: var(--s4); right: var(--s4); bottom: calc(env(safe-area-inset-bottom) + var(--s2));
+    display: grid; grid-template-columns: repeat(4, 1fr); padding: var(--s2) var(--s2); border-radius: var(--r-pill);
+    background: var(--chrome); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  nav a { display: grid; justify-items: center; gap: 2px; color: var(--muted); text-decoration: none; font-size: var(--t-cap); padding: var(--s1) 0; }
+  nav a[aria-current] { color: var(--ink); }
+  nav svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+  <p class="meta">Thursday 14 November · Valencia Marathon in 23 days</p>
+  <h1>Week 9 of 12</h1>
+
+  <section class="today" aria-label="Today's run">
+    <p class="meta">Easy run</p>
+    <p class="dist"><b>8.0</b><span>km</span></p>
+    <p class="how">Zone 2, 5:50–6:10 per km. Easy enough to hold a conversation.</p>
+    <button class="start">Start easy run · 8 km</button>
+  </section>
+
+  <section class="week" aria-label="This week">
+    <div class="week-head"><span>This week</span><span>planned · done, km</span></div>
+    <div class="day rest"><span class="d">Mon</span><span class="what">Rest</span><span class="km">—</span></div>
+    <div class="day done"><span class="d">Tue</span><span class="what">Tempo</span><span class="km">8 · <b>8.3</b><i aria-label="done">✓</i></span></div>
+    <div class="day done"><span class="d">Wed</span><span class="what">Easy</span><span class="km">6 · <b>6.1</b><i aria-label="done">✓</i></span></div>
+    <div class="day now"><span class="d">Thu</span><span class="what">Easy</span><span class="km">8</span></div>
+    <div class="day rest"><span class="d">Fri</span><span class="what">Rest</span><span class="km">—</span></div>
+    <div class="day"><span class="d">Sat</span><span class="what">Easy + strides</span><span class="km">6</span></div>
+    <div class="day"><span class="d">Sun</span><span class="what">Long run</span><span class="km">18</span></div>
+    <div class="total"><span>Week so far</span><span><b>14.4</b> of 46 km</span></div>
+  </section>
+
+  <nav aria-label="Main">
+    <a href="#" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Today</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Plan</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 18c3-8 6-8 8-4s5 4 8-4"/></svg>Runs</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.5"/><path d="M5.5 19c1.2-3.3 3.6-5 6.5-5s5.3 1.7 6.5 5"/></svg>You</a>
+  </nav>
+</body>
+</html>

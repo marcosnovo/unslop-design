@@ -1,0 +1,242 @@
+{
+  "scan": {
+    "audit-faded-icons": {
+      "raw-color": 5
+    },
+    "audit-root-200": {},
+    "audit-typographic-marks": {
+      "emoji": 1,
+      "raw-color": 1
+    },
+    "canvas-react-leaflet": {
+      "canvas-tabbar": 1
+    },
+    "canvas-swiftui-map-tabview": {
+      "canvas-tabbar": 1
+    },
+    "canvas-two-screens-one-file": {},
+    "canvas-web-new-map": {},
+    "caps-tracked": {
+      "native-literal": 2,
+      "tracked-caps": 2
+    },
+    "cards-grid-button-outside": {
+      "card-sameness": 1
+    },
+    "cards-jsx-style-objects": {
+      "card-sameness": 2
+    },
+    "cards-mapped": {},
+    "cards-mixed-parents": {
+      "card-sameness": 1
+    },
+    "cards-pricing-tiers": {},
+    "cards-stacked-divs": {},
+    "cards-swiftui-declared-first": {
+      "card-sameness": 1
+    },
+    "cards-swiftui-grid": {
+      "card-sameness": 1
+    },
+    "cards-swiftui-vstack-list": {},
+    "cards-tailwind-stat-row": {
+      "card-sameness": 1
+    },
+    "claims-split-lines": {
+      "unverified-claim": 2
+    },
+    "copy-false-positives": {
+      "exclaim": 1,
+      "greeting": 2,
+      "native-literal": 1
+    },
+    "nav-faq-details": {
+      "hidden-nav": 1
+    },
+    "nav-menu-inside": {},
+    "nav-menu-outside-target": {},
+    "screen-mise-after": {},
+    "screen-mise-before": {
+      "card-sameness": 1,
+      "emoji": 17,
+      "exclaim": 3,
+      "glow": 3,
+      "gradient": 7,
+      "greeting": 1,
+      "hype-copy": 1,
+      "off-scale": 22,
+      "raw-color": 25,
+      "title-case": 2,
+      "tracked-caps": 1,
+      "transition-all": 1
+    },
+    "screen-relay-after": {},
+    "screen-relay-before": {
+      "ai-palette": 9,
+      "blur-content": 1,
+      "card-sameness": 1,
+      "emoji": 7,
+      "glow": 3,
+      "gradient": 8,
+      "gradient-text": 1,
+      "hidden-nav": 1,
+      "hype-copy": 4,
+      "raw-color": 1,
+      "title-case": 5,
+      "tracked-caps": 1,
+      "transition-all": 6,
+      "unverified-claim": 4
+    },
+    "screen-stride-after": {
+      "blur-content": 1
+    },
+    "screen-stride-before": {
+      "blur-content": 2,
+      "card-sameness": 1,
+      "emoji": 11,
+      "exclaim": 1,
+      "glow": 2,
+      "gradient": 4,
+      "gradient-text": 1,
+      "greeting": 1,
+      "hype-copy": 2,
+      "off-scale": 13,
+      "raw-color": 16,
+      "title-case": 2,
+      "tracked-caps": 1,
+      "transition-all": 1
+    },
+    "screen-subscriptions-after": {},
+    "screen-subscriptions-before": {
+      "card-sameness": 2,
+      "emoji": 10,
+      "exclaim": 7,
+      "glow": 2,
+      "gradient": 4,
+      "greeting": 2,
+      "hype-copy": 2,
+      "native-literal": 25,
+      "off-scale": 13,
+      "raw-color": 14,
+      "title-case": 7,
+      "tracked-caps": 1
+    },
+    "screen-trail-after": {},
+    "screen-trail-before": {
+      "canvas-tabbar": 2,
+      "card-sameness": 1,
+      "emoji": 6,
+      "exclaim": 4,
+      "glow": 1,
+      "gradient": 2,
+      "greeting": 2,
+      "hype-copy": 4,
+      "native-literal": 13,
+      "off-scale": 10,
+      "raw-color": 14,
+      "stock-kit": 1,
+      "title-case": 2,
+      "tracked-caps": 1
+    },
+    "stock-kit-compose-template": {
+      "stock-kit": 1
+    },
+    "stock-kit-shadcn-kept-grays": {},
+    "stock-kit-shadcn-v3-zinc": {
+      "stock-kit": 1
+    },
+    "stock-kit-shadcn-v4-customized": {},
+    "stock-kit-shadcn-v4-default": {
+      "stock-kit": 1
+    },
+    "tokens-dangling-rename": {
+      "undefined-token": 9
+    },
+    "tokens-jsx-def-and-min": {},
+    "tokens-var-fallback": {
+      "raw-color": 1
+    }
+  },
+  "audit": {
+    "audit-faded-icons": {
+      "page": "faded.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 3,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false
+      }
+    },
+    "audit-typographic-marks": {
+      "page": "check.html",
+      "expect": {
+        "contrast": 3,
+        "graphics": 0,
+        "emoji": 1,
+        "glow": 0,
+        "text_scales": true
+      }
+    },
+    "audit-root-200": {
+      "page": "root200.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true
+      }
+    },
+    "screen-mise-before": {
+      "page": "library.html",
+      "expect": {
+        "contrast": 10,
+        "graphics": 0,
+        "emoji": 15,
+        "glow": 1,
+        "text_scales": false
+      }
+    },
+    "screen-mise-after": {
+      "page": "recipe.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true
+      }
+    },
+    "screen-relay-after": {
+      "page": "index.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true
+      }
+    },
+    "screen-stride-after": {
+      "page": "after.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false
+      }
+    },
+    "screen-trail-after": {
+      "page": "mock-light-approach.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 1,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false
+      }
+    }
+  }
+}

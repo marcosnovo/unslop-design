@@ -29,6 +29,22 @@ release renumbers deliberately (noted in `CHANGELOG.md`).
 - Concrete over abstract: a value, a component name, a before/after.
 - No new jargon when a plain word works.
 
+## Change a script
+
+Every rule in `slop-scan.py` and every check in `web-audit.mjs` has cases in
+`tests/cases`: one folder per case, scanned as a unit, with the exact hits
+per rule in `tests/expected.json` (a rule not listed must give zero).
+
+```bash
+python3 scripts/test.py            # the scanner rules, standard library only
+python3 scripts/test.py --audit    # also the rendered checks (needs Playwright)
+```
+
+A new rule or a fixed false positive comes with a case that fails before
+the change and passes after: the hit it should give, and the near miss it
+must not. When a behavior change is intended, run `--update` and read the
+diff of `expected.json`: that diff is the change, and it goes in the PR.
+
 ## Releasing
 
 Bump `metadata.version` in `SKILL.md` and `version` in
