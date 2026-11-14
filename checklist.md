@@ -29,8 +29,13 @@ cite them ("#14") in their boards.
    chips; don't mix square and rounded corners.
 6. **A chosen personality, not an inherited one.** Font, radius, color and
    copy tone say the same thing (serious/friendly/technical). Default to the
-   system font; a custom font only if it has ≥ 5 weights and a good
-   x-height.
+   system font for text; a custom body font only if it has ≥ 5 weights and
+   a good x-height. One display face for the hero numeral or title only is
+   a signature, not a body font (#47). A component kit left at its
+   defaults (shadcn's zinc neutrals and 0.5rem radius, Material's baseline
+   purple) is an inherited personality: set radius, gray temperature and
+   accent from the product (#3-#5). In a concept-led app the personality is
+   the concept's consequence (`process.md` § 2b), still one voice.
 
 ## Spacing
 7. **Start with too much white space and remove.** What looks like "a bit
@@ -154,7 +159,12 @@ cite them ("#14") in their boards.
 ## Images and charts
 35. **Good images or none.** Generic clip art, template illustrations or
     filler phone photos = slop. A quality photo or render from the domain,
-    or nothing.
+    or nothing. An illustration is allowed when it's an object of the
+    concept (`process.md` § 2b) drawn with its rules, and it earns its
+    height: it carries data (a fill level, a state, progress) or stays
+    under about a quarter of the screen and gives way first at the largest
+    text size. If the layout still reads as a template without it, it was
+    decoration.
 36. **Text over images with consistent contrast**: dark/light overlay,
     lower the image contrast, colorize it with one hue, or a text glow with
     no offset. Never text straight on a photo with light and dark areas.
@@ -176,6 +186,9 @@ cite them ("#14") in their boards.
     every screen answering its question; a single entity row for every
     list. No horizontal carousels hiding content
     (`ScrollView(.horizontal)` of cards): stack them. No card inside a card.
+    "The same everywhere" is for entity rows and answer cards, not for
+    every section: if each section is a rounded card of one fill, the
+    screen has a single building block (#58, #65).
 41. **Action pyramid.** One primary per screen/sheet: an **ink** capsule
     (by default the accent stops being a button color; it can fill the
     primary only when that is its single use on the screen and the label
@@ -211,7 +224,9 @@ cite them ("#14") in their boards.
     of details from it — cut-out photo shapes, hand-drawn rank numbers, a
     taped caption, a sticker instead of the 📷 emoji — each with one role,
     and nothing else decorative. Still principle 7: from the domain,
-    degrading where it doesn't apply.
+    degrading where it doesn't apply. A concept (`process.md` § 2b) is this
+    family at a larger scope; the surface mode caps it, and its "stops at"
+    line lists what stays plain.
 48. **Real content in every mock.** Real photos, names, places and times
     ("williamsburg · 2m") in proposals and screenshots. Gray boxes and lorem
     ipsum hide whether the layout survives a long name or a dark photo.
@@ -251,7 +266,7 @@ cite them ("#14") in their boards.
     their own container. Check with `scripts/web-audit.mjs`.
 
 ## Beyond clean: distinctive
-Everything above gets a screen to *clean*. These two are the next step,
+Everything above gets a screen to *clean*. These are the next step,
 once it holds up in grayscale; skip them on a screen that isn't clean yet.
 58. **Objects before boxes.** Boxes have a purpose — grouping things you
     act on together — but they shouldn't be the only building block. Before
@@ -268,6 +283,19 @@ once it holds up in grayscale; skip them on a screen that isn't clean yet.
     the tab bar where the app is several equal sections (#46). Test that
     every destination is still reachable in two taps and by VoiceOver /
     TalkBack.
+65. **A skeleton from the job, not from the template.** The default AI
+    screen is a greeting → hero stat card → 2×2 tile grid → list → five-tab
+    bar. Each block can be right (#11, #40); the *sequence* is the tell.
+    Before laying out, write the screen's one job and what the user does in
+    ten seconds: a run screen is a pace and a Start button, not four stat
+    tiles; a savings screen can be a jar (#58). Then make at least two of
+    these come from the domain: the blocks themselves, the palette (hue and
+    value, not only the accent), a display face for the hero (#6), the
+    shape language, tab labels in the domain's words ("Jars", "Tonight",
+    not "Home" and "More"). Keep the platform chrome (#46, principle 7):
+    different apps differ in structure, object and voice, not in skin.
+    Check: the ten-app lineup (`process.md` § 2). Operate and Read
+    screens: one signature is enough.
 
 ## Craft floor
 Small things a careful team gets right and a generated UI gets wrong.

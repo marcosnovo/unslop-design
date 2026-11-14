@@ -23,6 +23,12 @@ COLOR                           SIGNATURE (from the domain, #47)
 [ ] Shadows  soft, 2 levels max           [ ] e.g. price with small last digit
 [ ] Photos   real, fixed frames
 
+CONCEPT (only if one was chosen, process § 2b)
+[ ] Sentence  "a sleep app as a village going to sleep"
+[ ] Borrows   windows lit = tasks still pending
+[ ] Reach     type · layout · one interaction, all three named
+[ ] Stops at  tab bar, settings, sheets stay native
+
 CHROME                          STATES
 [ ] Top bar   floating pill, line icons   [ ] Empty   drawn + one action
 [ ] Tab bar   floating, create apart      [ ] Long    longest language

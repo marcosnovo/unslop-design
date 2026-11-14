@@ -2,14 +2,14 @@
 
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
-  It reviews your UI, shows you the before/after, and applies 64 numbered design fixes one at a time.<br>
+  It reviews your UI, shows you the before/after, and applies 65 numbered design fixes one at a time.<br>
   Works with Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.
 </p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#the-64-fixes">The 64 fixes</a> ·
+  <a href="#the-65-fixes">The 65 fixes</a> ·
   <a href="#web-and-dashboards">Web</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#faq">FAQ</a>
@@ -23,7 +23,7 @@
 
 **What you get**
 
-- **A review you can read.** Numbered fixes (#1-#64), each with its reason, so
+- **A review you can read.** Numbered fixes (#1-#65), each with its reason, so
   you accept or reject them one by one.
 - **A before/after first.** Nothing in your code changes until you approve it.
 - **A number, not a vibe.** Scripts measure your UI and score it from 0 to 100:
@@ -227,7 +227,7 @@ not a judge: a 95 can still have a flat hierarchy. `--min 80` makes it exit
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
 
-## The 64 fixes
+## The 65 fixes
 
 Every fix has a number so reviewers can cite it ("#20 badge is too loud")
 and you can accept or reject them one by one. A few of them:
@@ -256,7 +256,7 @@ and you can accept or reject them one by one. A few of them:
 | 55 | Ink headline on a neutral canvas | gradient text over a purple glow |
 
 <details>
-<summary><b>All 64, by section</b></summary>
+<summary><b>All 65, by section</b></summary>
 
 **System** · 1 spacing scale · 2 type scale and two weights · 3 palette with
 shades defined up front · 4 grays with one temperature · 5 named elevation
@@ -296,7 +296,7 @@ states drawn · 54 shortcuts as keys · 55 no gradient text, no page glow ·
 56 a data voice · 57 works at 390, 768 and 1280 px
 
 **Beyond clean** · 58 objects before boxes · 59 when the content is a canvas,
-chrome floats
+chrome floats · 65 a skeleton from the job, not from the template
 
 **Craft floor** · 60 structure carries information or goes · 61 real
 typography characters · 62 system surfaces wear the theme · 63 motion is
@@ -352,7 +352,7 @@ before/after without the whole team.
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles, quick mode and the full flow (what the agent reads first) |
-| [`checklist.md`](checklist.md) | The 64 fixes, each with what to do and why |
+| [`checklist.md`](checklist.md) | The 65 fixes, each with what to do and why |
 | [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |

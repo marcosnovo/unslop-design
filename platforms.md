@@ -1,5 +1,13 @@
 # Platform notes
 
+**Mocks of native screens** (HTML boards, the winning proposal) are judged
+at device size, not in a desktop tab: `web-audit.mjs <mock.html> --device
+iphone,iphone-se,pixel`. Declare `viewport-fit=cover` and pad with
+`env(safe-area-inset-*)` so the status bar and home indicator land where
+they will. The fonts are stand-ins off a Mac (the report names them): judge
+size, weight and wrapping there, the face itself on a device. Dynamic Type
+and Android font scale aren't emulated: draw the largest size in the mock.
+
 ## SwiftUI
 - Tokens in a `Theme` (Colors by role, Fonts, Spacing, Radius, Elevation);
   button styles (`ButtonStyle`) for primary/secondary/tertiary; a custom

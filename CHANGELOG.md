@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.8.0 — 2026-11-14
+
+What "How to stop making your apps look like AI slop" (concept →
+directions → design → render → critique → refine) adds, reviewed by four
+specialist agents and adapted so "different" never buys lower contrast or
+decoration:
+- Find the concept (`process.md` § 2b): one sentence from the domain's
+  physical world that decides type, layout, color and motion; tests
+  (reach, competitor, legibility, honesty, dullest screen), a mandatory
+  "stops at", and the new template to watch for: concept slop. Its size is
+  set by the surface mode: a signature for Operate and Read, one idea for
+  Persuade, a world for Experience. Principle 7 now points to it.
+- Three directions before committing (§ 2c): different sources, not three
+  palettes; one card each on the same key screen; one safe control; the
+  user picks. Quick mode: three one-liners, render the pick.
+- A second critic (§ 4): a fresh agent judges the render only (blind
+  read, ten-app lineup, skeleton, sameness, six axes, three findings),
+  at most two refine rounds with a mechanical stop.
+- Critique pass 6, the ten-app lineup, and #65 "A skeleton from the job,
+  not from the template". #6 allows one display face for the hero and
+  names stock kits left at defaults; #35 lets a concept's illustration in
+  when it earns its height; #40 and #47 clarified.
+- `web-audit.mjs --device iphone,iphone-se,pixel`: real phone viewport,
+  pixel density, touch and safe areas, and which font really rendered (SF
+  Pro isn't on Linux/CI; the report names the fallback).
+- Spec card: CONCEPT rows. References: case 8, with what not to copy.
+
 ## 1.7.0 — 2026-11-04
 
 What the best design skills do that this one didn't (a review of

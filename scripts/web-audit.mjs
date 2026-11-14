@@ -3,6 +3,7 @@
 //
 //   node scripts/web-audit.mjs <url-or-file> [--out dir] [--widths 390,768,1280]
 //        [--scale 0,2,4,8,12,16,20,24,32,40,48,64,80,96] [--dark] [--wait ms]
+//        [--device iphone,iphone-se,pixel]
 //
 // Needs Playwright in the project (`npm i -D playwright`); it uses the
 // bundled Chromium and falls back to the installed Chrome. It writes, per
@@ -17,6 +18,16 @@
 //   - emoji used in visible text                                     (#33)
 //   - distinct left edges text starts on                              (#43)
 //   - craft floor: color-scheme, ::selection, transition: all, "..."  (#61-#63)
+//
+// --device renders at real phone size (viewport, device pixel ratio, touch,
+// mobile viewport, safe areas) instead of bare widths: `iphone` 393×852 @3x
+// (Dynamic Island, 59/34 pt insets), `iphone-se` 375×667 @2x, `pixel`
+// 412×915 @2.625x, or any Playwright device name ("iPhone 16 Pro"). Per
+// device: a first-screen and a full-page shot, overflow, and which font
+// family the text really rendered in (CDP platform fonts), so a fallback
+// for -apple-system / SF Pro on Linux or CI is reported, not hidden. Without
+// --device nothing changes. SF Pro is not installed on Linux and can't be
+// redistributed: the report names the stand-in; judge metrics, not looks.
 // It measures; it doesn't judge taste. Read the report next to the
 // screenshots.
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -34,7 +45,7 @@ for (let i = 0; i < args.length; i++) {
 const opt = (name, dflt) => flags[name] ?? dflt;
 const target = positional[0];
 if (!target) {
-  console.error("usage: web-audit.mjs <url-or-file> [--out dir] [--widths 390,768,1280] [--scale …] [--dark] [--wait ms]");
+  console.error("usage: web-audit.mjs <url-or-file> [--out dir] [--widths 390,768,1280] [--scale …] [--dark] [--wait ms] [--device iphone,iphone-se,pixel]");
   process.exit(2);
 }
 const url = /^https?:|^file:/.test(target) ? target : pathToFileURL(resolve(target)).href;
@@ -43,6 +54,15 @@ const widths = opt("widths", "390,768,1280").split(",").map(Number);
 const scale = opt("scale", "0,2,4,8,12,16,20,24,32,40,48,64,80,96").split(",").map(Number);
 const dark = !!flags.dark;
 const wait = Number(opt("wait", "500"));
+const deviceArg = opt("device", "");
+// name -> Playwright descriptor, full-screen viewport (the descriptor's own
+// height subtracts browser chrome), safe-area insets in CSS px.
+const PRESETS = {
+  "iphone": { base: "iPhone 15 Pro", viewport: { width: 393, height: 852 }, insets: { top: 59, bottom: 34, left: 0, right: 0 } },
+  "iphone-se": { base: "iPhone SE (3rd gen)", viewport: { width: 375, height: 667 }, insets: { top: 20, bottom: 0, left: 0, right: 0 } },
+  "pixel": { base: "Pixel 7", viewport: { width: 412, height: 915 }, insets: { top: 24, bottom: 24, left: 0, right: 0 } },
+};
+const devices = deviceArg ? deviceArg.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
 let pw;
 try {
@@ -62,6 +82,7 @@ try { browser = await pw.chromium.launch(); } catch {
   }
 }
 mkdirSync(out, { recursive: true });
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 // Runs inside the page. Returns plain data only.
 function measure(scaleValues) {
@@ -275,6 +296,50 @@ async function focusCheck(page, limit = 40) {
   }, limit);
 }
 
+// Which font actually painted the text. CSS says what was asked; Chromium
+// (CDP CSS.getPlatformFontsForNode) says what was used. A stack that starts
+// with -apple-system / SF Pro resolves to a fallback on Linux and CI.
+async function fontCheck(page) {
+  const probes = await page.evaluate(() => {
+    document.querySelectorAll("[data-unslop-font]").forEach((e) => e.removeAttribute("data-unslop-font"));
+    const seen = new Set(), picked = [];
+    const cands = [...document.querySelectorAll("h1, h2, p, button, a, li, td, span, div")].filter((el) => {
+      const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      return r.width > 0 && r.height > 0 && cs.visibility !== "hidden" && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 2);
+    });
+    // The first heading and the most common body family/size pair.
+    const h = document.querySelector("h1, h2");
+    const order = h && cands.includes(h) ? [h, ...cands] : cands;
+    for (const el of order) {
+      const cs = getComputedStyle(el), key = cs.fontFamily + "|" + (el === h ? "h" : "b");
+      if (seen.has(key) || picked.length >= 4) continue;
+      seen.add(key);
+      el.setAttribute("data-unslop-font", String(picked.length));
+      picked.push({ role: el === h ? "heading" : el.tagName.toLowerCase(), stack: cs.fontFamily, size: cs.fontSize, weight: cs.fontWeight,
+        sample: (el.innerText || "").trim().replace(/\s+/g, " ").slice(0, 30) });
+    }
+    return picked;
+  });
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("DOM.enable"); await cdp.send("CSS.enable");
+  const { root } = await cdp.send("DOM.getDocument", { depth: 0 });
+  const rows = [];
+  for (let i = 0; i < probes.length; i++) {
+    const { nodeId } = await cdp.send("DOM.querySelector", { nodeId: root.nodeId, selector: `[data-unslop-font="${i}"]` });
+    const { fonts } = await cdp.send("CSS.getPlatformFontsForNode", { nodeId });
+    const used = fonts.map((f) => f.familyName);
+    const first = probes[i].stack.split(",")[0].replace(/["']/g, "").trim();
+    const system = /^(-apple-system|blinkmacsystemfont|system-ui|sf pro.*|\.sf.*|ui-sans-serif)$/i.test(first);
+    // A named stack head that isn't among the used fonts fell back; system-ui /
+    // -apple-system resolve to whatever the OS has, which on Linux is never SF.
+    const sf = used.some((u) => /^(sf pro|\.sf|sf ui|san francisco)/i.test(u));
+    const fellBack = system ? !sf : !used.some((u) => u.toLowerCase() === first.toLowerCase());
+    rows.push({ ...probes[i], used, fellBack, asksForSF: /-apple-system|sf pro|system-ui|blinkmacsystemfont/i.test(probes[i].stack) });
+  }
+  await cdp.detach();
+  return rows;
+}
+
 const results = { url, widths: {}, generated: new Date().toISOString() };
 const context = await browser.newContext({ colorScheme: dark ? "dark" : "light", deviceScaleFactor: 1 });
 const page = await context.newPage();
@@ -285,6 +350,37 @@ for (const w of widths) {
   const shot = join(out, `w${w}${dark ? "-dark" : ""}.png`);
   await page.screenshot({ path: shot, fullPage: true });
   results.widths[w] = { screenshot: shot, overflow: await page.evaluate(overflow) };
+}
+// Real device renders (opt-in).
+results.devices = {};
+for (const name of devices) {
+  const preset = PRESETS[name.toLowerCase()];
+  const desc = pw.devices[preset ? preset.base : name];
+  if (!desc) { console.error(`Unknown device "${name}". Presets: ${Object.keys(PRESETS).join(", ")}; or a Playwright name like "iPhone 16 Pro".`); process.exit(2); }
+  const { defaultBrowserType, ...d } = desc;
+  if (preset) d.viewport = preset.viewport;
+  const ctx = await browser.newContext({ ...d, colorScheme: dark ? "dark" : "light" });
+  const dp = await ctx.newPage();
+  let safeArea = false;
+  if (preset) {
+    try {
+      const s = await ctx.newCDPSession(dp);
+      await s.send("Emulation.setSafeAreaInsetsOverride", { insets: preset.insets });
+      safeArea = true;
+    } catch { /* older Chromium: env(safe-area-inset-*) stays 0 */ }
+  }
+  await dp.goto(url, { waitUntil: "networkidle" }).catch(() => dp.goto(url));
+  await dp.waitForTimeout(wait);
+  const id = slug(name), tag = dark ? "-dark" : "";
+  const fold = join(out, `device-${id}${tag}.png`), full = join(out, `device-${id}${tag}-full.png`);
+  await dp.screenshot({ path: fold });
+  await dp.screenshot({ path: full, fullPage: true });
+  results.devices[name] = {
+    viewport: d.viewport, dpr: d.deviceScaleFactor, insets: preset ? preset.insets : null, safeAreaApplied: safeArea,
+    screenshot: fold, fullPage: full, overflow: await dp.evaluate(overflow), fonts: await fontCheck(dp).catch(() => []),
+    textScaleNote: "Dynamic Type / Android font scale are not emulated: re-run with html{font-size} raised or check on device",
+  };
+  await ctx.close();
 }
 const widest = Math.max(...widths);
 await page.setViewportSize({ width: widest, height: 900 });
@@ -358,6 +454,20 @@ L.push(``, `## Craft floor [#61-#63]`, ``,
   `- ::selection: ${cf.selectionThemed ? "themed" : "browser default"}`,
   `- \`transition: all\`: ${cf.transitionAll && cf.transitionAll.length ? `**${cf.transitionAll.length}** — ${cf.transitionAll.slice(0, 6).join(", ")}` : "none"}`,
   `- three dots instead of …: ${cf.dots && cf.dots.length ? cf.dots.slice(0, 6).map((x) => `${x.el} ("${x.text}")`).join("; ") : "none"}`);
+if (devices.length) {
+  L.push(``, `## Device renders`, ``);
+  for (const [name, r] of Object.entries(results.devices)) {
+    const o = r.overflow;
+    L.push(`### ${name}: ${r.viewport.width}×${r.viewport.height} @${r.dpr}x${r.insets ? `, safe area top ${r.insets.top} / bottom ${r.insets.bottom}${r.safeAreaApplied ? "" : " (not applied: Chromium too old)"}` : ""}`, ``,
+      o.scrollWidth > o.viewport ? `- **horizontal scroll** (page ${o.scrollWidth} px wide). Starts at: ${o.culprits.join("; ") || "?"}` : `- no horizontal scroll`);
+    for (const f of r.fonts) {
+      const used = f.used.join(", ") || "?";
+      L.push(`- ${f.role} \`${f.size}/${f.weight}\`: asked \`${f.stack.slice(0, 60)}\`, rendered **${used}**${f.fellBack ? ` — ${f.asksForSF ? "SF/system font not available here: fallback, judge metrics not looks" : "stack head not used: fallback"}` : ""}`);
+    }
+    L.push(`- ${r.screenshot} (first screen) · ${r.fullPage}`, ``);
+  }
+  L.push(`- Dynamic Type / font scale: not emulated. Check the largest size by hand.`);
+}
 L.push(``, `## Screenshots`, ``, ...widths.map((w) => `- ${results.widths[w].screenshot}`), `- ${gray} (grayscale: does the hierarchy hold without color? [principle 2])`, ``);
 writeFileSync(join(out, "report.md"), L.join("\n"));
 writeFileSync(join(out, "report.json"), JSON.stringify(results, null, 2));

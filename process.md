@@ -20,7 +20,8 @@ style (`references.md`).
   about, who uses it, the one job of each key screen, and one thing only
   this product has (a price board, a route, a scrapbook). Plus the surface
   mode (`SKILL.md` § Surface modes). A proposal that would fit any other
-  product starts from here, not from the checklist.
+  product starts from here, not from the checklist. The fourth line is
+  the seed of the concept (§ 2b).
 - Before judging screens, check the scales (`checklist.md` § System):
   spacing, type and weights, palette with shades, elevation, radii. Whatever
   is missing goes into an infrastructure PR 1.
@@ -39,9 +40,116 @@ style (`references.md`).
      A composed screen reuses two to four; a new edge per block means it
      was placed piece by piece (#43; `web-audit.mjs` lists them).
   5. *Gray*: the grayscale pass above.
+  6. *Ten-app lineup*: blur the text and logo and set the screen in a row
+     of nine generic AI app screens (greeting, hero stat card, 2×2 tiles,
+     list, tab bar, purple-blue accent, rounded cards). Can you pick it
+     out, and by which two attributes (structure, palette, type, shape,
+     object)? "No" means it's a template (#65). Cover-the-logo asks whether
+     a *competitor* could ship it; this asks whether *any* AI app could.
+     Operate and Read: one attribute is enough.
+- **Render at device size.** Native screens mocked in HTML are judged at
+  the device's points and pixel density (393×852 @3x, 375×667 for the
+  small phone, 412×915 for Android), with the status bar and home
+  indicator drawn, the system font stack, and once at the largest text
+  size. `web-audit.mjs --device` does it and says which font actually
+  rendered: SF Pro isn't installed on Linux or CI and can't be
+  redistributed, so a fallback is fine for critique as long as the report
+  says so.
 - **Start with the feature, not the shell.** For a new screen, design the
   functionality (search a flight: fields + button) before the navigation;
   the smallest shippable version, without implying what doesn't exist yet.
+
+## 2b. Find the concept
+A concept is **one sentence that makes design decisions**: "a running app
+built around an athletics track", "a sleep app as a village going to
+sleep", "a plant app as a paper cut-out", "Italian lessons on Neapolitan
+playing cards". "Clean", "minimal" and "premium" are not concepts: they
+describe a result and decide nothing. Principle 7 and #47 are what a
+concept looks like when the budget is small.
+
+**Scope by surface mode** (`SKILL.md` § Surface modes): Operate and Read
+get a signature (one detail family on a native shell; never a fill);
+Persuade, one bold idea in the hero and one more place; Experience, a
+world (type, layout, color, illustration and motion all come from it).
+
+**Procedure (ten minutes):**
+1. List 5-8 candidates from the domain's physical world, not from other
+   apps: tools of the trade (stopwatch, jar, seed packet), places (track,
+   village, market stall), rituals (lights out, watering day, dealing
+   cards), printed things (playing cards, timetables, race bibs, ledger
+   paper), ways of making (paper cut-out, woodblock, enamel sign).
+2. Name each one's **rules**, not its look: lanes and a ruler on the left
+   rail; a jar that fills; a suit and a corner index; windows going dark.
+   Rules become layout and data; looks become skins.
+3. Drop whatever fails a test:
+   - *Reach*: it explains at least the type, the layout and one
+     interaction or data display. Only a palette and an illustration = a
+     skin.
+   - *Competitor*: it would fit the leading competitor unchanged
+     (cover the logo).
+   - *Legibility*: in grayscale the screen still reads (principle 2);
+     every text/fill pair passes the contrast floor, secondary text
+     included, light and dark (principle 5, #21, #22); the answer is still
+     the first thing you read (principle 3); it survives the largest text
+     size and the platform's own controls.
+   - *Honesty*: a jar that fills, fills from real data; no lux, calories
+     or pace the app can't measure (principle 6, #64).
+   - *Dullest screen*: it can still be shown on settings, an empty state,
+     an error, a 2,000-row list and the longest language. If it only works
+     on the hero shot, it's a poster, not a design.
+4. Write the survivor as: *sentence · the rules it borrows · its
+   consequences for type, layout, color and motion · where it stops* (the
+   parts that stay native: tab bar, sheets, settings) · *dark variant or
+   "one appearance"*. "Where it stops" is mandatory.
+
+**Concept slop** (the new template, watch for it):
+- *Theme park*: the metaphor leaks into the copy ("Your lane awaits,
+  champion!"). Copy stays plain (#25, #26); the concept lives in form.
+- *Metaphor over the answer*: the jar hides the exact amount, the village
+  hides the alarm time. The number stays first and exact; the metaphor
+  shows what it means.
+- *Skin on a template*: a paper-cut leaf above a standard card list, or
+  the same layout in red and in blue. Delete the illustration: if the
+  layout reads as a template, the concept never reached it (#35, #65).
+- *Every screen a poster*: a saturated full-bleed fill plus a second
+  accent, secondary text at 3:1 on it. World color is one canvas or one
+  gesture, never both (#19).
+- *Stock metaphor*: a rocket for launch, a trophy for streaks, a sprout
+  for growth. Fails *Competitor* by construction.
+
+## 2c. Three directions (before anything is polished)
+The first idea is the most generic one. For a new product, a redesign or
+any Persuade or Experience screen, explore **three directions that differ
+in concept**, compare them and continue with one.
+
+- **Different means a different source** (object, place, ritual, printed
+  thing), so type, layout and color differ by consequence. Three palettes
+  on one layout is one direction. Keep one *safe* direction (a signature on
+  a native shell) as the control: it shows what the bolder ones cost.
+- **One card each**, all on the same key screen (the answer screen), drawn
+  with real content (#48) and its grayscale:
+
+```text
+Direction A · <name>
+Concept     one sentence
+Borrows     the object's 2-3 rules
+Type        face + how numbers look
+Layout      the one structural consequence
+Color       2-4 values, roles named (#19), contrast measured
+Motion      one named interaction (#63)
+Stops at    what stays native
+Risk        the hardest test it faces (long text, dark, density)
+```
+- **Compare** with the six axes of § 4 plus *Reach* and *Cost* (how much
+  must be redrawn or illustrated and maintained). Hierarchy or Honesty
+  under 3 disqualifies a direction. Don't average: recommend one, name what
+  you'd steal from the others, and **the user picks**. The pick goes into
+  the spec card's CONCEPT rows.
+- **Quick mode**: three one-line concepts, the pick and why in one
+  sentence, render only the pick. **Full flow**: after the system check and
+  before the area reviewers, one agent per direction in parallel, blind to
+  each other, all drawing the same key screen. Never one set of directions
+  per screen: one key screen decides and the card carries the rest.
 
 ## 3. Parallel reviewers (senior product designers)
 3-4 agents, one per area (e.g. Home · Detail · Search · Profile, or Shared
@@ -58,6 +166,9 @@ Each brief includes:
 - the screenshots/frames for THEIR area and the code paths;
 - `checklist.md` and the principles from `SKILL.md`;
 - the project's current design system (tokens, roles, components);
+- the chosen direction's card (concept, rules, "stops at"): reviewers apply
+  it to their area and flag where it fails a § 2b test; they don't reopen
+  the choice;
 - the deliverable: an HTML board (before/after drawn with the system's CSS,
   not descriptions) + a numbered list of decisions with their reason
   (citing the checklist #) + what NOT to change;
@@ -93,12 +204,39 @@ axes, honestly, and put the scores on the page:
 |---|---|
 | Hierarchy | Is the first thing you read the answer, in gray too? |
 | Restraint | Did anything get added that a removal would have solved? |
-| Specificity | Covering the logo, is it still this product? |
+| Specificity | Covering the logo, is it still this product? Does the concept reach type, layout and one interaction? |
 | Execution | Every value from a token; states, long text, dark mode drawn? |
 | Honesty | Only real data, features and numbers (#64, principle 6)? |
-| Fit | Right ambition for the surface mode (operate, persuade, read)? |
+| Fit | Right ambition for the surface mode (operate and read: a signature; persuade: one idea; experience: a world)? Does it survive the dullest screen? |
 
 Any axis under 3 means revise before the user sees it, not after.
+
+**Second critic (two rounds at most).** Your own scores run optimistic.
+Before the user sees the proposal, a separate agent that didn't design it
+judges the **render** only: light, grayscale and dark if drawn, plus the
+four grounding lines and the surface mode. Not the spec card, the
+rationale, the code or script output. (No subagents: answer 1-3 from the
+image alone before rereading your own card.) It answers, in order:
+1. *Blind read*: what is this app, what's the screen's one job, what do
+   you see first?
+2. *Lineup*: among nine generic AI screens, can you pick it out? By which
+   attributes?
+3. *Skeleton*: the blocks top to bottom, six words each. Which exist only
+   because templates have them (#60, #65)?
+4. *Sameness*: how many siblings share one container? Which could be an
+   object or plain type on the canvas (#58)?
+5. *Score* the six axes, one line of evidence each.
+6. *Findings*: three at most, each with where · checklist # · the smallest
+   change that removes or replaces (never "add"). Verdict PASS or REVISE.
+
+The designer applies the findings one at a time and re-renders; a
+**fresh** critic (no memory of round 1) asks the same questions; the
+orchestrator checks round 1's findings are gone. **Stop** when every axis
+is ≥ 3 with Specificity ≥ 4 for Persuade and Experience and the lineup
+answer is yes, when the critic says PASS, when a round raised no axis
+(keep the better render), or after two refines (list what's open under
+"owner decides"). The lower of the designer's and the critic's score wins
+per axis; a fix can't add a block unless it replaces one.
 
 Combine the boards into ONE HTML page (an artifact in Claude Code, a local
 file in Codex) with: principles,

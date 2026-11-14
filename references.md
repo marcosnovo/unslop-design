@@ -73,6 +73,23 @@ stack of cards would (#58, #18, #11). In the developer's words: boxes have
 their purpose, but an app shouldn't be built only from them. Used with
 permission.
 
+**8. Concept-first apps ("How to stop making your apps look like AI
+slop", eight phone screens: a finance dashboard, a coin-jar budget, two
+running apps on an athletics track, a sleep app as a village going to
+sleep, two paper-cut plant apps, Italian lessons on Neapolitan playing
+cards).** What to take: the method, concept → three directions → design →
+render → critique → refine (`process.md` § 2b, § 2c, § 4). The best
+screens derive type, layout and one data display from an object's rules:
+the jar's fill level *is* the money left, the flashcard *is* the lesson,
+the village's lit windows *are* the evening checklist (#58, #65). The dark
+finance dashboard is the control: competent and template-shaped. What not
+to take: the saturated full-bleed fills (five of eight, against #19),
+semi-transparent white secondary text on red and blue (about 3.5:1,
+against #22), illustration with no data role, and the red and blue running
+apps being the same layout in two skins. None of the eight shows a list,
+an empty state, dark mode or the largest text: a concept is proven on the
+dullest screen, not the hero shot.
+
 ## Refactoring UI (Wathan & Schoger): what it adds to the checklist
 | Chapter | Idea | # |
 |---|---|---|
