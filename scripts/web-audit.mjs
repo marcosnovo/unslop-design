@@ -13,6 +13,8 @@
 //   - token census: distinct font sizes, weights, colors, radii,
 //     shadows, spacing values, and which spacing is off the scale   (#1-#5)
 //   - text contrast computed from the real colors, failures listed  (principle 5)
+//     (SVG text by its fill; text on a gradient against its worst stop, estimated)
+//   - text drawn under 11 px at each width (SVG text at its drawn size) (#2)
 //   - icon and small-graphic contrast (SVG ≤ 64 px), under 3:1       (WCAG 1.4.11)
 //   - text scale: whether type grows with the reader's text size     (#2)
 //   - reading: lines over ~85 characters, justified/centered long text (#27, #28)
