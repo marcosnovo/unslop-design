@@ -87,11 +87,6 @@ RULES = [
                 r"Cutting-edge|Next-level|Elevate your|Transform your|Take your \w+ to the next level|"
                 r"Crush (it|your)|You'?ve got this|You got this|Let'?s (go|do this|crush)|Beast mode|Level up|"
                 r"Unlock your|Smash (it|your))\b", re.I), "all"),
-    ("unverified-claim", "#64", "Social proof or metric to source (\"Trusted by 10,000+ teams\", \"10x faster\") — is it real?",
-     re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by\s+(?:over\s+|more than\s+)?[\d,.]+\s*[km]?\+?\s+\w+)|"
-                r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:teams|users|customers|companies|developers|engineers|businesses|people|creators))|"
-                r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>)+(?i:faster|better|more|quicker|cheaper|productiv)|"
-                r"\b99\.9+%(?:\s|<[^<>]+>)+(?i:uptime|reliab|sla)"), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
 ]
@@ -129,6 +124,12 @@ NUMBER_CHILD = re.compile(r">\s*[$€£¥+\-−]?\d[\d.,:]*\s*(%|k|K|M|km|h|min|
                           r"class(?:Name)?=[\"'][^\"']*\b(num|number|value|metric|stat|kpi)\b")
 CAPS_LITERAL = re.compile(r"\b(?:Text)\(\s*(?:text\s*=\s*)?\"([A-Z][A-Z0-9 &·'’/-]{3,})\"")
 TRACKING = re.compile(r"\.tracking\(|\.kerning\(|letterSpacing\s*=")
+# Invented social proof and metrics (#64). File-level, so a figure and its label on
+# separate lines ("<div>10x</div>" then "<div>Faster</div>") still read as one claim.
+UNVERIFIED_CLAIM = re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by\s+(?:over\s+|more than\s+)?[\d,.]+\s*[km]?\+?\s+\w+)|"
+                r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:teams|users|customers|companies|developers|engineers|businesses|people|creators))|"
+                r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>){1,12}(?i:faster|better|more|quicker|cheaper|productiv)|"
+                r"\b99\.9+%(?:\s|<[^<>]+>){1,12}(?i:uptime|reliab|sla)")
 CTA = re.compile(r"<(button|Button)\b|<a\b[^>]*\bhref")
 NATIVE_ROW = re.compile(r"\b(LazyVGrid|LazyHGrid|Grid|GridRow|HStack|LazyVerticalGrid|LazyHorizontalGrid|Row|FlowRow)\s*[({]")
 NATIVE_CARD_CALL = re.compile(r"\b([A-Z]\w*(?:Card|Tile))\(")
@@ -259,11 +260,22 @@ def file_checks(path, text, kind, hits):
     if len({v.upper() for _, v in found}) >= 2:
         hits.setdefault(kit_key, []).append((path, found[0][0], f"Compose template colors: {', '.join(v for _, v in found[:3])}"))
 
+    for m in UNVERIFIED_CLAIM.finditer(text):
+        n = line_of(m.start())
+        if n not in ignored:
+            claim = re.sub(r"<[^<>]+>", " ", m.group(0))
+            hits.setdefault(("unverified-claim", "#64", "Social proof or metric to source (\"Trusted by 10,000+ teams\", \"10x faster\") — is it real?"), []).append(
+                (path, n, " ".join(claim.split())[:80]))
+
     if kind == "web":
         # A row of nav links hidden on small screens with no menu button: the phone loses navigation (#57).
-        menu = re.search(r"aria-expanded|aria-controls|<details\b|popovertarget", text)
+        toggle = re.compile(r"aria-expanded|aria-controls|<details\b|popovertarget")
         for nav in re.finditer(r"<nav\b", text):
             block = element_at(text, nav.start())
+            # A menu counts only if it's inside this nav or points at it (or at the hidden links) by id.
+            ids = re.findall(r"""\bid\s*=\s*["']([^"']+)""", block)
+            targets = set(re.findall(r"""(?:aria-controls|popovertarget)\s*=\s*["']([^"']+)""", text))
+            menu = toggle.search(block) or (set(ids) & targets)
             for h in re.finditer(r"""<[\w.]+\b[^<>]*?\bclass(?:Name)?\s*=\s*["'{`]+[^"'`}]*\bhidden\s+(?:[^"'`}]*\s)?(?:sm|md|lg|xl):(?:flex|block|inline-flex|grid|inline)\b""", block):
                 n = line_of(nav.start() + h.start())
                 if not menu and n not in ignored and len(re.findall(r"<a\b", element_at(block, h.start()))) >= 2:
@@ -387,7 +399,7 @@ def main():
     if not hits:
         print("nothing found")
         return 0
-    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav"]
+    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav", "unverified-claim"]
     for (rid, ref, desc), where in sorted(hits.items(), key=lambda kv: (-len(kv[1]), order.index(kv[0][0]))):
         print(f"\n[{ref}] {desc} — {len(where)} hit(s)")
         for path, n, snippet in where[: a.max]:
