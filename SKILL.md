@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.8.4"
+  version: "1.8.5"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -28,7 +28,8 @@ Three scripts measure instead of guessing:
 - `node scripts/web-audit.mjs <url>` — the rendered page at 390/768/1280 px:
   horizontal scroll, a census of every size/color/radius/shadow/spacing in
   use, computed contrast, focus states, emoji, glows, plus a grayscale
-  screenshot. `--device iphone,iphone-se,pixel` renders at real phone
+  screenshot, and icon contrast (3:1, WCAG 1.4.11) for small SVG.
+  `--device iphone,iphone-se,pixel` renders at real phone
   size and density with safe areas and reports which font really
   rendered. Needs Playwright.
 - `python3 scripts/unslop-score.py <paths> [--audit report.json]` — both

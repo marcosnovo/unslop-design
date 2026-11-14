@@ -247,7 +247,12 @@ answer is yes, when the critic says PASS, when a round raised no axis
 "owner decides"). The lower of the designer's and the critic's score wins
 per axis; a fix can't add a block unless it replaces one. A finding that
 contradicts a checklist rule (dropping the destination from the primary
-button against #41) is rejected, with the number, not applied.
+button against #41) is rejected, with the number, not applied. Before
+applying the rest, check two things the critic can't: that the rule it
+cites says what the finding claims (read the fix, not just its title),
+and that a contrast finding holds against the audit's measurement, since
+eyes misjudge gray on dark (principle 5). A claim the numbers refute is
+rejected with the ratio.
 
 Combine the boards into ONE HTML page (an artifact in Claude Code, a local
 file in Codex) with: principles,

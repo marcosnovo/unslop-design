@@ -285,7 +285,8 @@ once it holds up in grayscale; skip them on a screen that isn't clean yet.
     the top and a sheet for the selected item can carry the navigation. Keep
     the tab bar where the app is several equal sections (#46). Test that
     every destination is still reachable in two taps and by VoiceOver /
-    TalkBack.
+    TalkBack. `slop-scan.py` flags a map or camera and a permanent tab bar
+    in the same screen.
 65. **A skeleton from the job, not from the template.** The default AI
     screen is a greeting → hero stat card → 2×2 tile grid → list → five-tab
     bar. Each block can be right (#11, #40); the *sequence* is the tell.

@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.8.5 — 2026-11-14
+
+Found by a fourth end-to-end run, on a Jetpack Compose map screen in
+Experience mode (hiking navigation, Pixel, light and dark: code 70 →
+100). It also confirmed 1.8.4: with the interaction's second frame, the
+critic gave Specificity 4 and the loop exited in round 1.
+- `web-audit.mjs` measures **icon and small-graphic contrast** (WCAG
+  1.4.11): every visible inline SVG up to 64 px, its best fill or stroke
+  against the real background, under 3:1 reported with the element that
+  holds it. The run's light theme had a yellow trail mark on a cream card
+  at 1.41:1 that neither the text audit nor the critic saw.
+  `unslop-score.py` weighs it (1 per icon, cap 6).
+- The second critic's findings are checked before they're applied
+  (`process.md` § 4): the cited rule has to say what the finding claims,
+  and a contrast finding has to hold against the audit. In the run the
+  critic called gray-on-dark text a #22 failure; it measured 7.9:1.
+- New `canvas-tabbar` rule (#59): a map or camera (`GoogleMap`, `Map`,
+  `MapView`, `…Map(`, `CameraPreview`, `<canvas>`, `class="map"`) and a
+  permanent tab bar (`NavigationBar`, `TabView`, a fixed bottom `<nav>`) in
+  the same composable, view or web page. Two screens in one file don't
+  count.
+- `hype-copy` (#64) knows the adventure clichés: "your adventure awaits",
+  "your journey starts here", "ready when you are", "like never before",
+  "at your fingertips", "the future of …".
+
 ## 1.8.4 — 2026-11-14
 
 Found by a third end-to-end run, on a Tailwind landing page in Persuade

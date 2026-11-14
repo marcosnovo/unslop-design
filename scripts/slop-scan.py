@@ -86,6 +86,8 @@ RULES = [
      re.compile(r"[\"'>`][^\"'<`\n]*\b(Supercharge|Unleash|Revolutioni[sz]e|Seamless(ly)?|Effortless(ly)?|Game-changing|"
                 r"Cutting-edge|Next-level|Elevate your|Transform your|Take your \w+ to the next level|"
                 r"Crush (it|your)|You'?ve got this|You got this|Let'?s (go|do this|crush)|Beast mode|Level up|"
+                r"(?:adventure|journey|story|future|next chapter|\w+ experience) awaits|Your (?:journey|adventure) (?:starts|begins)|"
+                r"Ready when you are|Like never before|At your fingertips|The future of \w+|"
                 r"Unlock your|Smash (it|your))\b", re.I), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
@@ -130,6 +132,15 @@ UNVERIFIED_CLAIM = re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by
                 r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:teams|users|customers|companies|developers|engineers|businesses|people|creators))|"
                 r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>){1,12}(?i:faster|better|more|quicker|cheaper|productiv)|"
                 r"\b99\.9+%(?:\s|<[^<>]+>){1,12}(?i:uptime|reliab|sla)")
+# A map, camera or canvas with a permanent tab bar under it (#59): the chrome eats the
+# canvas's bottom edge. Heuristic and cheap in the score: one canvas and one bottom bar
+# in the same file.
+CANVAS = re.compile(r"\b(?:GoogleMap|MapView|MapboxMap|Map|[A-Z]\w*Map|CameraPreview|CameraView|ARView|SceneView)\s*\(|"
+                    r"\bMap\s*\{|maplibregl|mapboxgl|\bL\.map\(|<canvas\b|<(?:svg|div)\b[^<>]*\bclass=[\"'][^\"']*\bmap\b")
+BOTTOM_BAR = re.compile(r"\bNavigationBar\s*[({]|\bBottomNavigation\w*\s*[({]|\bTabView\s*[({]|\.tabItem\s*\{|"
+                        r"<nav\b[^<>]*\bclass=[\"'][^\"']*\bfixed\b[^\"']*\bbottom-0|"
+                        r"\bnav\s*\{[^}]*position\s*:\s*fixed[^}]*bottom\s*:\s*0")
+COMPONENT = re.compile(r"@Composable\b|\bstruct\s+\w+\s*:\s*(?:some\s+)?\w*View\b")
 CTA = re.compile(r"<(button|Button)\b|<a\b[^>]*\bhref")
 NATIVE_ROW = re.compile(r"\b(LazyVGrid|LazyHGrid|Grid|GridRow|HStack|LazyVerticalGrid|LazyHorizontalGrid|Row|FlowRow)\s*[({]")
 NATIVE_CARD_CALL = re.compile(r"\b([A-Z]\w*(?:Card|Tile))\(")
@@ -259,6 +270,14 @@ def file_checks(path, text, kind, hits):
     found = [f for f in found if f[0] not in ignored]
     if len({v.upper() for _, v in found}) >= 2:
         hits.setdefault(kit_key, []).append((path, found[0][0], f"Compose template colors: {', '.join(v for _, v in found[:3])}"))
+
+    # Native: the map and the bar must be in the same composable / view, not two screens in one file.
+    starts = [0] + ([m.start() for m in COMPONENT.finditer(text)] if kind == "native" else []) + [len(text)]
+    for a, b in zip(starts, starts[1:]):
+        canvas, bar = CANVAS.search(text, a, b), BOTTOM_BAR.search(text, a, b)
+        if canvas and bar and line_of(bar.start()) not in ignored:
+            hits.setdefault(("canvas-tabbar", "#59", "Map or camera with a permanent tab bar under it (let the chrome float)"), []).append(
+                (path, line_of(bar.start()), f"canvas: {canvas.group(0).strip()[:30]}"))
 
     for m in UNVERIFIED_CLAIM.finditer(text):
         n = line_of(m.start())
@@ -399,7 +418,7 @@ def main():
     if not hits:
         print("nothing found")
         return 0
-    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav", "unverified-claim"]
+    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav", "unverified-claim", "canvas-tabbar"]
     for (rid, ref, desc), where in sorted(hits.items(), key=lambda kv: (-len(kv[1]), order.index(kv[0][0]))):
         print(f"\n[{ref}] {desc} — {len(where)} hit(s)")
         for path, n, snippet in where[: a.max]:

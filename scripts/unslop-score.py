@@ -40,6 +40,7 @@ CODE = {
     "hype-copy": ("Hype copy", "#64", 2, 6),
     "unverified-claim": ("Unsourced social proof / metrics", "#64", 2, 6),
     "hidden-nav": ("Nav hidden on phones", "#57", 3, 3),
+    "canvas-tabbar": ("Tab bar over a map or camera", "#59", 1, 2),
     "tracked-caps": ("Tracked caps labels", "#45", 1, 4),
     "stock-kit": ("Starter kit at its defaults", "#6", 3, 3),
     "card-sameness": ("Repeated stat cards", "#65", 1, 3),
@@ -53,6 +54,7 @@ CODE = {
 PAGE = {
     "overflow": ("Horizontal scroll", "#57", 5, 10),
     "contrast": ("Text under WCAG AA", "P5", 1, 15),
+    "graphics-contrast": ("Icons/graphics under 3:1", "P5", 1, 6),
     "focus": ("No visible focus", "#53", None, 10),
     "targets": ("Targets under 24 px", "#53", 0.5, 5),
     "spacing-sprawl": ("Distinct spacing values > 8", "#1", 0.5, 8),
@@ -91,6 +93,7 @@ def score_page(report):
     c = m["census"]
     rows["overflow"] = sum(1 for w in report["widths"].values() if w["overflow"]["scrollWidth"] > w["overflow"]["viewport"])
     rows["contrast"] = len(m["contrastFails"])
+    rows["graphics-contrast"] = len(m.get("graphicsFails", []))
     rows["targets"] = len(m["smallTargets"])
     rows["spacing-sprawl"] = max(0, len(c["spacing"]) - 8)
     rows["size-sprawl"] = max(0, len(c["fontSizes"]) - 6)

@@ -13,6 +13,7 @@
 //   - token census: distinct font sizes, weights, colors, radii,
 //     shadows, spacing values, and which spacing is off the scale   (#1-#5)
 //   - text contrast computed from the real colors, failures listed  (principle 5)
+//   - icon and small-graphic contrast (SVG ≤ 64 px), under 3:1       (WCAG 1.4.11)
 //   - focus: focusable elements with no visible focus style         (#53)
 //   - targets smaller than 24×24 px                                  (Also)
 //   - emoji used in visible text                                     (#33)
@@ -235,6 +236,31 @@ function measure(scaleValues) {
       }
     }
   }
+  // Non-text contrast (WCAG 1.4.11): an icon or small graphic that carries meaning needs 3:1
+  // against what's behind it. Icon-sized inline SVG only (≤ 64 px); the best-contrasting
+  // fill or stroke of each one counts, so an outline around a pale fill passes.
+  const graphicsFails = [];
+  for (const svg of document.querySelectorAll("svg")) {
+    if (!vis(svg)) continue;  // aria-hidden icons still mean something to people who see them
+    const box = svg.getBoundingClientRect();
+    if (box.width > 64 || box.height > 64 || box.width < 6 || box.height < 6) continue;
+    const bg = bgOf(svg);
+    if (!bg) continue;
+    const fade = opacityOf(svg);
+    let best = 0, color = "";
+    for (const s of svg.querySelectorAll("rect, circle, ellipse, path, polygon, polyline, line")) {
+      const scs = getComputedStyle(s);
+      for (const paint of [scs.fill, scs.stroke]) {
+        const c = paint && paint !== "none" && !paint.startsWith("url(") ? parse(paint) : null;
+        if (!c || c.a === 0) continue;
+        const ca = { ...c, a: c.a * fade * Number(scs.opacity || 1) };
+        const r = ratio(ca.a < 1 ? blend(ca, bg) : ca, bg);
+        if (r > best) { best = r; color = paint; }
+      }
+    }
+    const where = svg.closest("button, a, [aria-label], section, li, nav, header, footer");
+    if (best && best < 3) graphicsFails.push({ el: (where ? label(where) + " > " : "") + label(svg), ratio: Math.round(best * 100) / 100, color });
+  }
   const focusables = [...document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"]')].filter(vis);
   for (const el of focusables) {
     const r = el.getBoundingClientRect();
@@ -247,7 +273,7 @@ function measure(scaleValues) {
       textColors: toList(colors), backgrounds: toList(bgs), radii: toList(radii), shadows: toList(shadows),
       letterSpacing: toList(tracking), spacing: toList(spacing), offScaleSpacing: toList(offScale),
     },
-    contrastFails, contrastUnknown: contrastUnknown.length, emoji, smallTargets, gradientText, glow,
+    contrastFails, contrastUnknown: contrastUnknown.length, graphicsFails, emoji, smallTargets, gradientText, glow,
     focusableCount: focusables.length,
     leftEdges: toList(edges).sort((a, b) => a.value - b.value),
     craft: {
@@ -435,6 +461,10 @@ L.push(m.contrastFails.length
   ? m.contrastFails.slice(0, 30).map((x) => `- **${x.ratio}:1** (needs ${x.need}) ${x.el} — ${x.color}, ${x.size}`).join("\n")
   : `- No text below AA among the ones measurable.`);
 if (m.contrastUnknown) L.push(`- ${m.contrastUnknown} text element(s) sit on a gradient or image: check those by eye [#36].`);
+L.push(``, `## Icons and graphics under 3:1 [principle 5, WCAG 1.4.11]`, ``,
+  m.graphicsFails.length
+    ? m.graphicsFails.slice(0, 20).map((x) => `- **${x.ratio}:1** (needs 3) ${x.el} — ${x.color}`).join("\n")
+    : `- none among icon-sized SVG (≤ 64 px). Larger graphics, images and icon fonts: check by eye.`);
 L.push(``, `## Focus [#53]`, ``,
   results.focus.missing.length
     ? `${results.focus.missing.length} of ${results.focus.checked} focusable elements look the same focused and unfocused:\n\n` + results.focus.missing.slice(0, 20).map((x) => `- ${x}`).join("\n")
