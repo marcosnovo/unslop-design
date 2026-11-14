@@ -34,6 +34,7 @@ CODE = {
     "gradient": ("Gradient fills", "#30", 2, 8),
     "shouting": ("Exclamation marks", "#52", 3, 6),
     "exclaim": ("Exclamation in UI text", "#25", 1, 4),
+    "title-case": ("Title Case in UI text", "#25", 0.5, 3),
     "blur-content": ("Backdrop blur", "#46", 2, 6),
     "transition-all": ("transition: all", "#63", 2, 6),
     "hype-copy": ("Hype copy", "#64", 2, 6),

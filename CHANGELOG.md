@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.8.3 — 2026-11-14
+
+Found by a second end-to-end run, on a SwiftUI screen in Operate mode (a
+budget app's subscriptions: 72 → 100 rendered). The web rules were ahead
+of the native ones; the code alone scored a plainly sloppy screen 74:
+- Greetings with a name: "Hey Maya! 👋", `Hi {user.name}`,
+  `"Hey \(name)"`, not only the fixed phrases (#26).
+- Exclamation marks in SwiftUI/Compose strings (`Text("Renews soon!")`),
+  not only in HTML text (#25).
+- A literal ALL CAPS `Text("…")` with `.tracking`, `.kerning` or
+  `letterSpacing` on it (#45, #60), not only `.textCase(.uppercase)`.
+- Title Case in UI strings, new `title-case` rule (#25): two to six
+  capitalized words with at least one common word ("Your Subscriptions",
+  "Recent Activity", "🚀 Start Run"), so brand, product and place names
+  ("Spotify Family", "New York Times") pass. Text nodes and
+  `Text`/`Button`/`Label`/`navigationTitle`/`Section`/`Tab` strings; it
+  weighs little in the score.
+- `platforms.md`: the system secondary gray is about 3.4:1 on white and
+  3.1:1 on the grouped-list gray, under AA for small text; it used to
+  recommend `.foregroundStyle(.secondary)` for secondary text.
+- The test screen's code now scores 64 before (was 74) and 100 after.
+
 ## 1.8.2 — 2026-11-14
 
 Found by running the skill end to end on a new screen (a running app's

@@ -18,9 +18,14 @@ and Android font scale aren't emulated: draw the largest size in the mock.
   (`PriceNumeral`) and have VoiceOver read the whole number. Number + unit
   in `HStack(alignment: .firstTextBaseline)`, never centered.
 - Line spacing and tracking as tokens: `.lineSpacing` for body, positive
-  `.tracking` on all-caps overlines, slightly negative on large headlines.
-  Secondary text with `.foregroundStyle(.secondary)` / roles, not
-  `.opacity` over white.
+  `.tracking` on all-caps overlines (only when they're a deliberate
+  signature, #45), slightly negative on large headlines.
+- Secondary text through a role, not `.opacity` over white, and not the
+  system gray below 17 pt: `.secondary` / `secondaryLabel` is about
+  **3.4:1 on white** and **3.1:1 on the grouped-list gray** (`#F2F2F7`),
+  under AA for footnotes, captions and list subtitles. A role color such as
+  `#6C6C70` light / `#AEAEB2` dark clears 4.5:1 on both. Measure it
+  (principle 5); "it's Apple's" isn't a contrast ratio.
 - Elevation: `.shadow` only from the token; in dark mode, a lighter surface
   instead of a shadow.
 - A `body` with more than ~10 multi-statement closures gets split into

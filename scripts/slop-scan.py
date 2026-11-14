@@ -29,6 +29,18 @@ PX_PROP = re.compile(r"\b(padding|margin|gap|row-gap|column-gap|font-size|border
                      r"(-[a-z]+)?\s*:\s*([^;}{]+)", re.I)
 PX = re.compile(r"(-?\d+(?:\.\d+)?)px")
 
+# Title Case: two to six capitalized words with at least one common word, so
+# brand, product and place names ("Spotify Family", "New York Times") pass and "Your Subscriptions",
+# "Recent Activity", "Start Run" don't. Only whole UI strings: a text node,
+# or the string in Text/Button/Label/navigationTitle/Section/Tab.
+_COMMON = ("Your|My|All|Of|For|To|And|With|In|On|At|By|From|Add|Edit|View|Get|Start|Stop|Save|"
+           "Create|Delete|Remove|Manage|Recent|Next|Total|Today|This|Upcoming|Soon|Now|More|See|Show|Go|"
+           "Back|Sign|Log|Up|Out|Learn|Try|Unlock|Upgrade|Activity|Settings|Account|Details|Overview")
+_TC_WORDS = r"(?=[^\"<\n]*\b(?:" + _COMMON + r")\b)[A-Z][\w'’+-]*(?:\s+[A-Z][\w'’+-]*){1,5}"
+_LEAD = r"(?:[\U0001F300-\U0001FAFF☀-➿]\uFE0F?\s*)?"  # an emoji in front doesn't hide it
+TITLE_CASE = re.compile(r">\s*" + _LEAD + _TC_WORDS + r"[!?.]?\s*<|"
+                        r"\b(?:Text|Button|Label|navigationTitle|Section|Tab)\(\s*(?:text\s*=\s*)?\"" + _LEAD + _TC_WORDS + r"[!?.]?\"")
+
 # (id, checklist ref, description, regex, applies to: "web" | "native" | "all")
 RULES = [
     ("gradient-text", "#55", "Gradient text",
@@ -56,9 +68,13 @@ RULES = [
     ("shouting", "#52", "Exclamation marks in UI copy",
      re.compile(r"[\"'>`][^\"'<`\n]{2,}!!"), "all"),
     ("exclaim", "#25", "Exclamation mark in UI text (say it plainly)",
-     re.compile(r">[^<>{}\n]*[A-Za-z][!¡](?=[\s\U0001F300-\U0001FAFF☀-➿]*<)"), "web"),
+     re.compile(r">[^<>{}\n]*[A-Za-z][!¡](?=[\s\U0001F300-\U0001FAFF☀-➿]*<)|"
+                r"\b(?:Text|Button|Label|navigationTitle)\(\s*(?:text\s*=\s*)?\"[^\"\n]*[A-Za-z][!¡][\s\U0001F300-\U0001FAFF☀-➿]*\""), "all"),
+    ("title-case", "#25", "Title Case in UI text (sentence case: \"Your subscriptions\")",
+     TITLE_CASE, "all"),
     ("greeting", "#26", "Greeting as a title (name what the screen is)",
-     re.compile(r"\b(Welcome back|Hey there|Hello there|Good (morning|afternoon|evening)),?\b", re.I), "all"),
+     re.compile(r"(?i:\b(Welcome back|Hey there|Hello there|Good (morning|afternoon|evening)),?\b)|"
+                r"[\"'>`]\s*(?i:Hey|Hi|Hello|Welcome back|Welcome),?\s+(?:[A-Z][a-z]+\b|\{|\$\{|\\\()"), "all"),
     ("transition-all", "#63", "transition: all (animate transform and opacity, named)",
      re.compile(r"transition\s*:\s*all\b|transition-property\s*:\s*all\b|\btransition-all\b"), "web"),
     ("tracked-caps", "#45 #60", "Small tracked all-caps label (eyebrow/kicker) — does it carry information?",
@@ -104,6 +120,8 @@ UTILITY_FILL = re.compile(r"\b(bg-\S+|border\b|border-\S+|shadow(-\S+)?)")
 CSS_RULE = re.compile(r"\.([\w-]+)\s*\{([^}]*)\}")
 NUMBER_CHILD = re.compile(r">\s*[$€£¥+\-−]?\d[\d.,:]*\s*(%|k|K|M|km|h|min)?\s*<|\btext-([2-6]xl)\b|"
                           r"class(?:Name)?=[\"'][^\"']*\b(num|number|value|metric|stat|kpi)\b")
+CAPS_LITERAL = re.compile(r"\b(?:Text)\(\s*(?:text\s*=\s*)?\"([A-Z][A-Z0-9 &·'’/-]{3,})\"")
+TRACKING = re.compile(r"\.tracking\(|\.kerning\(|letterSpacing\s*=")
 CTA = re.compile(r"<(button|Button)\b|<a\b[^>]*\bhref")
 NATIVE_ROW = re.compile(r"\b(LazyVGrid|LazyHGrid|Grid|GridRow|HStack|LazyVerticalGrid|LazyHorizontalGrid|Row|FlowRow)\s*[({]")
 NATIVE_CARD_CALL = re.compile(r"\b([A-Z]\w*(?:Card|Tile))\(")
@@ -225,6 +243,13 @@ def file_checks(path, text, kind, hits):
             if with_number >= 3 and with_action * 2 < len(blocks):  # cards with a button are offers (pricing), not stat tiles
                 hits.setdefault(key, []).append((path, n, f'class "{cls[:50]}" ×{len(starts)}, {with_number} with a number'))
     else:
+        for m in CAPS_LITERAL.finditer(text):
+            n = line_of(m.start())
+            following = text[m.end(): m.end() + 240]
+            following = following.split("Text(", 1)[0]  # only this Text's own modifiers
+            if n not in ignored and len(m.group(1).split()) <= 5 and TRACKING.search(following):
+                hits.setdefault(("tracked-caps", "#45 #60", "Small tracked all-caps label (eyebrow/kicker) — does it carry information?"), []).append(
+                    (path, n, f'"{m.group(1)}" + tracking'))
         calls = {}
         for m in NATIVE_CARD_CALL.finditer(text):
             if re.search(r"\b(struct|fun|class|func|init)\s+$", text[max(0, m.start() - 20):m.start()]):
