@@ -228,7 +228,7 @@ function measure(scaleValues) {
     }
     return null;
   };
-  const edges = new Map(), transitionAll = [], dots = [];
+  const edges = new Map(), transitionAll = [], dots = [], defaultMargins = new Set();
   const all = [...document.body.querySelectorAll("*")].filter(vis);
   // Controls the author never padded keep the browser's own 1px 6px: not a spacing decision.
   const uaPadded = (el, cs) => el.matches("button, input, select, textarea")
@@ -245,7 +245,13 @@ function measure(scaleValues) {
       // A margin far past the scale is layout (margin: auto resolves to px), not a spacing step.
       if (p.startsWith("margin") && px > Math.max(...scaleValues) * 2) continue;
       count(spacing, px, el);
-      if (!scaleValues.includes(px)) count(offScale, px, el);
+      if (!scaleValues.includes(px)) {
+        count(offScale, px, el);
+        // 1em block margins on p, ul, dl, h1… are the browser's default, not a value anyone typed.
+        if (p.startsWith("margin") && el.matches("p, ul, ol, dl, dd, blockquote, figure, h1, h2, h3, h4, h5, h6, pre, hr")
+            && Math.abs(parseFloat(v) - parseFloat(cs.fontSize) * (/^h1$/i.test(el.tagName) ? 0.67 : /^h2$/i.test(el.tagName) ? 0.83 : 1)) < 0.6)
+          defaultMargins.add(px);
+      }
     }
     const rad = cs.borderTopLeftRadius;
     if (rad && rad !== "0px") count(radii, rad, el);
@@ -385,7 +391,7 @@ function measure(scaleValues) {
       letterSpacing: toList(tracking), spacing: toList(spacing), offScaleSpacing: toList(offScale),
     },
     contrastFails, contrastUnknown: contrastUnknown.length, graphicsFails, emoji, smallTargets, gradientText, glow,
-    longLines, alignedText, emptyBlocks,
+    longLines, alignedText, emptyBlocks, defaultMargins: [...defaultMargins],
     focusableCount: focusables.length,
     leftEdges: toList(edges).sort((a, b) => a.value - b.value),
     craft: {
@@ -585,12 +591,17 @@ if (c.textColors.length > 8) warn.push(`${c.textColors.length} text colors: 2-3 
 if (warn.length) L.push(...warn.map((x) => `- ⚠ ${x}`), ``);
 L.push(`**Off-scale spacing** (scale: ${scale.join(", ")}):`, ``);
 L.push(c.offScaleSpacing.length
-  ? c.offScaleSpacing.slice(0, 15).map((x) => `- \`${x.value}px\` ×${x.n} — e.g. ${x.sample}`).join("\n")
+  ? c.offScaleSpacing.slice(0, 15).map((x) => `- \`${x.value}px\` ×${x.n} — e.g. ${x.sample}`
+      + ((m.defaultMargins || []).includes(x.value) ? " (likely the browser's default 1em margin: set the margin from the scale)" : "")).join("\n")
   : `- none`);
 L.push(``, `## Contrast [principle 5]`, ``);
 L.push(m.contrastFails.length
-  ? m.contrastFails.slice(0, 30).map((x) => `- **${x.ratio}:1** (needs ${x.need}) ${x.el} — ${x.color}, ${x.size}${x.estimated ? " (on a gradient: its worst stop, estimated)" : ""}`).join("\n")
-  : `- No text below AA among the ones measurable.`);
+  ? (() => {  // one line per distinct failure, so eleven axis labels in one color read as one fix
+      const g = new Map();
+      for (const x of m.contrastFails) { const k = [x.ratio, x.el, x.color, x.size, !!x.estimated].join("|"); g.set(k, { ...x, n: (g.get(k)?.n || 0) + 1 }); }
+      return [...g.values()].slice(0, 30).map((x) => `- **${x.ratio}:1** (needs ${x.need}) ${x.el}${x.n > 1 ? ` ×${x.n}` : ""} — ${x.color}, ${x.size}${x.estimated ? " (on a gradient: its worst stop, estimated)" : ""}`).join("\n");
+    })()
+  : `- No text below AA among the ones measurable (SVG text included, by its fill).`);
 if (m.contrastUnknown) L.push(`- ${m.contrastUnknown} text element(s) sit on an image: check those by eye [#36]. Text on gradients is estimated against the worst stop.`);
 L.push(``, `## Icons and graphics under 3:1 [principle 5, WCAG 1.4.11]`, ``,
   m.graphicsFails.length

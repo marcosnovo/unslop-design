@@ -33,6 +33,9 @@ Web audit (`web-audit.mjs`):
   `color`), and a new check lists text drawn under 11 px at each width,
   with a score row (**tiny-text**). A chart whose viewBox shrinks to a
   phone took its 12-unit labels down to 5 px with nothing reported.
+- The report groups identical contrast failures (eleven axis labels in
+  one color are one line, ×11) and marks off-scale values that are the
+  browser's default 1em margin on `p`, `ul`, `dl` or a heading.
 
 Process (`SKILL.md`, `checklist.md`):
 - A scanner hit is fixed by changing the value, not by hiding it (a
