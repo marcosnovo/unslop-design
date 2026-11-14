@@ -195,6 +195,44 @@ def side_by_side(text, start, cls):
     return bool(row), parent
 
 
+def balanced(text, i):
+    """Index just past the parenthesis group that opens at text[i] ("(")."""
+    depth, quote = 0, None
+    for j in range(i, len(text)):
+        c = text[j]
+        if quote:
+            if c == "\\":
+                continue
+            if c == quote:
+                quote = None
+        elif c == '"':
+            quote = c
+        elif c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                return j + 1
+    return len(text)
+
+
+MODIFIER = re.compile(r"\s*\.(\w+)")
+
+
+def own_call_and_modifiers(text, start):
+    """The call opening at `start` (its arguments) plus its own modifier chain:
+    `.font(…).tracking(…)` across lines, nothing after the chain ends."""
+    end = balanced(text, text.index("(", start))
+    while True:
+        m = MODIFIER.match(text, end)
+        if not m:
+            break
+        end = m.end()
+        if end < len(text) and text[end] == "(":
+            end = balanced(text, end)
+    return text[start:end]
+
+
 def file_checks(path, text, kind, hits):
     lines = text.splitlines()
     ignored = {n for n, l in enumerate(lines, 1) if "unslop-ignore" in l}
@@ -245,9 +283,7 @@ def file_checks(path, text, kind, hits):
     else:
         for m in CAPS_LITERAL.finditer(text):
             n = line_of(m.start())
-            following = text[m.end(): m.end() + 240]
-            following = following.split("Text(", 1)[0]  # only this Text's own modifiers
-            if n not in ignored and len(m.group(1).split()) <= 5 and TRACKING.search(following):
+            if n not in ignored and len(m.group(1).split()) <= 5 and TRACKING.search(own_call_and_modifiers(text, m.start())):
                 hits.setdefault(("tracked-caps", "#45 #60", "Small tracked all-caps label (eyebrow/kicker) — does it carry information?"), []).append(
                     (path, n, f'"{m.group(1)}" + tracking'))
         calls = {}
