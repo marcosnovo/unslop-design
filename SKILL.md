@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.8.8"
+  version: "1.8.9"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -20,7 +20,7 @@ web apps and dashboards have their own playbook in `web.md`. Read the one
 you need, not all of them.
 
 Three scripts measure instead of guessing:
-- `python3 scripts/slop-scan.py <paths>` — slop patterns in source (web,
+- `python3 scripts/slop-scan.py <paths> [--scale …] [--allow rules]` — slop patterns in source (web,
   SwiftUI, Compose) with file, line and fix number, including starter-kit
   defaults (#6), rows of identical stat cards (#65), pep-talk copy, Title
   Case and greetings with a name (#25, #26, #64), in SwiftUI and Compose
@@ -118,6 +118,17 @@ subagents, no jury, one pass you can finish in a few minutes.
 4. On "yes", apply them as tokens (principle 1), rerun the score and report
    "score X → Y" and what's still left.
 
+End the proposal with this report, filled honestly, so a skipped step shows:
+
+```text
+Render looked at   yes / no (which widths, light/dark)
+Passes             one second · squint · logo · edges · gray · lineup
+Six axes           H _  R _  S _  E _  Honesty _  Fit _
+Spec card rows     the rows the after uses
+Score              X → Y (same script version, --allow if any)
+Not checked        largest text, dark, long data, … (say which)
+```
+
 Switch to the full flow below when there are several screens or videos,
 no design system yet, platforms to ship together, or the user asks for a
 full review.
@@ -181,4 +192,18 @@ world. A concept the product's content doesn't ask for stays a signature.
 
 Use it for concrete tokens and components; this one brings the method and
 the general checklist. If a rule here clashes with a written project
-decision, the project wins and the proposal points it out.
+decision, the project wins and the proposal points it out: a base-6 grid
+beats #1, a brand face beats #6, tracked caps as the brand's signature beat
+#45.
+
+Two things a project decision can't settle: **contrast** (principle 5) and
+**invented or unsourced claims** (principle 6). They aren't taste. White on
+the brand green at 3.4:1 is a blocker, reported with the measured ratio and
+a fix inside the brand (a darker green that passes, or dark ink on it), not
+an option to keep. The owner can still overrule it, knowingly.
+
+Run the scripts with the project's own values: `--scale` (and
+`--type-scale`) from its spacing and type tokens, and `--allow` with the rule
+ids its written decisions cover (`--allow tracked-caps,off-scale`). Allowed
+rules are listed apart and not scored; contrast and unverified claims can't
+be allowed.

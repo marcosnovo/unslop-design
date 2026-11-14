@@ -85,7 +85,7 @@ RULES = [
     ("hype-copy", "#64", "Hype copy (say what it does, with a number if there is one)",
      re.compile(r"[\"'>`][^\"'<`\n]*\b(Supercharge|Unleash|Revolutioni[sz]e|Seamless(ly)?|Effortless(ly)?|Game-changing|"
                 r"Cutting-edge|Next-level|Elevate your|Transform your|Take your \w+ to the next level|"
-                r"Crush (it|your)|You'?ve got this|You got this|Let'?s (go|do this|crush)|Beast mode|Level up|"
+                r"Crush(?:ing)? (it|your)|You'?ve got this|You got this|Let'?s (go|do this|crush)|Beast mode|Level up|"
                 r"(?:adventure|journey|story|future|next chapter|\w+ experience) awaits|Your (?:journey|adventure) (?:starts|begins)|"
                 r"Ready when you are|Like never before|At your fingertips|The future of \w+|"
                 r"Unlock your|Smash (it|your))\b", re.I), "all"),
@@ -395,6 +395,21 @@ def token_checks(paths, hits):
             hits.setdefault(key, []).append((path, n, f"var({name})"))
 
 
+# A written project decision can allow a taste rule (a base-6 grid, tracked caps as the
+# brand's signature). It can't allow the floors: contrast (principle 5) and invented
+# claims (principle 6). Shared with unslop-score.py.
+NEVER_ALLOW = {"contrast", "graphics-contrast", "unverified-claim"}
+
+
+def parse_allow(value):
+    allow = {r.strip() for r in (value or "").split(",") if r.strip()}
+    refused = allow & NEVER_ALLOW
+    if refused:
+        sys.exit(f"--allow can't include {', '.join(sorted(refused))}: contrast and invented claims are floors "
+                 f"(principles 5 and 6), not taste. Report them as blockers with the measured value instead.")
+    return allow
+
+
 def files(paths):
     for p in paths:
         if os.path.isfile(p):
@@ -496,7 +511,11 @@ def main():
                     help="allowed font sizes in px; match your type tokens")
     ap.add_argument("--max", type=int, default=8, help="locations shown per rule")
     ap.add_argument("--strict", action="store_true", help="exit 1 if anything is found")
+    ap.add_argument("--allow", metavar="RULES",
+                    help="rule ids a written project decision allows (e.g. tracked-caps,off-scale); "
+                         "listed apart, not counted. Never contrast or invented claims")
     a = ap.parse_args()
+    allow = parse_allow(a.allow)
     scale = {float(x) for x in a.scale.split(",")}
     type_scale = {float(x) for x in a.type_scale.split(",")}
     hits, count, seen = {}, 0, []
@@ -505,7 +524,11 @@ def main():
         seen.append(f)
         scan(f, scale, hits, type_scale)
     token_checks(seen, hits)
+    allowed = {k: v for k, v in hits.items() if k[0] in allow}
+    hits = {k: v for k, v in hits.items() if k[0] not in allow}
     print(f"unslop scan: {count} files")
+    if allowed:
+        print("allowed by the project (--allow): " + ", ".join(f"{k[0]} ×{len(v)}" for k, v in sorted(allowed.items())))
     if not hits:
         print("nothing found")
         return 0

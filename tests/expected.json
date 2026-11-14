@@ -155,6 +155,14 @@
     "tokens-jsx-def-and-min": {},
     "tokens-var-fallback": {
       "raw-color": 1
+    },
+    "copy-hype-crushing": {
+      "exclaim": 1,
+      "hype-copy": 1
+    },
+    "project-decisions": {
+      "off-scale": 2,
+      "tracked-caps": 1
     }
   },
   "audit": {
@@ -238,5 +246,79 @@
         "text_scales": false
       }
     }
-  }
+  },
+  "cli": [
+    {
+      "name": "allow-project-decisions",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--scale",
+        "0,1,2,6,12,18,24,36,48",
+        "--allow",
+        "tracked-caps",
+        "--strict"
+      ],
+      "exit": 0,
+      "contains": [
+        "allowed by the project (--allow): tracked-caps ×1",
+        "nothing found"
+      ]
+    },
+    {
+      "name": "default-scale-flags-base-6",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--strict"
+      ],
+      "exit": 1,
+      "contains": [
+        "off the scale",
+        "tracked all-caps"
+      ]
+    },
+    {
+      "name": "allow-refuses-contrast",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--allow",
+        "contrast"
+      ],
+      "exit": 1,
+      "contains": [
+        "can't include contrast"
+      ]
+    },
+    {
+      "name": "allow-refuses-claims",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--allow",
+        "off-scale,unverified-claim"
+      ],
+      "exit": 1,
+      "contains": [
+        "can't include unverified-claim"
+      ]
+    },
+    {
+      "name": "score-lists-allowed",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--scale",
+        "0,1,2,6,12,18,24,36,48",
+        "--allow",
+        "tracked-caps"
+      ],
+      "exit": 0,
+      "contains": [
+        "unslop score: 100/100",
+        "allowed by the project (--allow, not scored): tracked-caps ×1"
+      ]
+    }
+  ]
 }
