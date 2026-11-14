@@ -214,7 +214,9 @@ Any axis under 3 means revise before the user sees it, not after.
 **Second critic (two rounds at most).** Your own scores run optimistic.
 Before the user sees the proposal, a separate agent that didn't design it
 judges the **render** only: light, grayscale and dark if drawn, plus the
-four grounding lines and the surface mode. Not the spec card, the
+four grounding lines and the surface mode, and the checklist's fix titles
+only, so findings can cite a number:
+`grep -E '^[0-9]+\. \*\*' checklist.md`. Not the spec card, the
 rationale, the code or script output. (No subagents: answer 1-3 from the
 image alone before rereading your own card.) It answers, in order:
 1. *Blind read*: what is this app, what's the screen's one job, what do
@@ -236,7 +238,9 @@ is ≥ 3 with Specificity ≥ 4 for Persuade and Experience and the lineup
 answer is yes, when the critic says PASS, when a round raised no axis
 (keep the better render), or after two refines (list what's open under
 "owner decides"). The lower of the designer's and the critic's score wins
-per axis; a fix can't add a block unless it replaces one.
+per axis; a fix can't add a block unless it replaces one. A finding that
+contradicts a checklist rule (dropping the destination from the primary
+button against #41) is rejected, with the number, not applied.
 
 Combine the boards into ONE HTML page (an artifact in Claude Code, a local
 file in Codex) with: principles,

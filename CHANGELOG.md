@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.8.2 — 2026-11-14
+
+Found by running the skill end to end on a new screen (a running app's
+Today screen in the AI template: 31 → 94, the ten-app lineup passed, the
+second critic gave Specificity 4):
+- `card-sameness` only counts cards that sit side by side: a multi-column
+  grid, a flex row or `flex: 1` cards (SwiftUI/Compose: inside a grid,
+  `HStack` or `Row`). A stacked list of rows is #40's entity row, not a
+  row of tiles, and was a false positive.
+- The emoji rule no longer counts typographic marks (✓ ✔ ✕ ✗ ★ ☆).
+- Pep-talk copy is caught: a single "!" in UI text (#25, new `exclaim`
+  rule) and motivational hype ("crush it", "you've got this", "let's go",
+  "level up", "beast mode"…) under #64.
+- The second critic (`process.md` § 4) gets the checklist's fix titles,
+  so its findings can cite a number, and a finding that contradicts a rule
+  is rejected rather than applied. In the test it proposed dropping the
+  destination from the primary button, against #41.
+- The example dashboard scores 24 before (its "Welcome back, Damir!" now
+  counts) and 100 after.
+
 ## 1.8.1 — 2026-11-14
 
 Two `slop-scan.py` detectors left out of 1.8.0, now checked against the

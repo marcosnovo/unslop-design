@@ -295,7 +295,7 @@ once it holds up in grayscale; skip them on a screen that isn't clean yet.
     not "Home" and "More"). Keep the platform chrome (#46, principle 7):
     different apps differ in structure, object and voice, not in skin.
     Check: the ten-app lineup (`process.md` § 2); `slop-scan.py` flags a
-    card repeated three times with a number in each. Operate and Read
+    card repeated three times side by side with a number in each. Operate and Read
     screens: one signature is enough.
 
 ## Craft floor

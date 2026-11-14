@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.8.1"
+  version: "1.8.2"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -22,7 +22,8 @@ you need, not all of them.
 Three scripts measure instead of guessing:
 - `python3 scripts/slop-scan.py <paths>` — slop patterns in source (web,
   SwiftUI, Compose) with file, line and fix number, including starter-kit
-  defaults (#6) and rows of identical stat cards (#65). Standard library only.
+  defaults (#6), rows of identical stat cards (#65) and pep-talk copy
+  (#25, #64). Standard library only.
 - `node scripts/web-audit.mjs <url>` — the rendered page at 390/768/1280 px:
   horizontal scroll, a census of every size/color/radius/shadow/spacing in
   use, computed contrast, focus states, emoji, glows, plus a grayscale
