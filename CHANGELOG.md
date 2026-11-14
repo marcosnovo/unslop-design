@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.8.7 — 2026-11-14
+
+The first run of the **implementation stage** of the full flow
+(`process.md` § 5-6) on the test recipe app: a tokens PR 1, two devs in
+their own worktrees from closed briefs (each started with
+`git merge --ff-only`), a temporary integration branch, then the checks.
+Library 22 → 100, recipe 31 → 100, settings 31 → 100, light and dark. Four
+gaps:
+- **The spec card didn't take the jury's values.** A dev built the
+  quantity unit at 15 px from the reviewer's card after the jury had set
+  0.875rem; no script can tell, both values are valid. The redraw after
+  the jury now covers boards, spec cards and decision lists (§ 3).
+- **Parallel devs invented duplicate tokens.** Both added 1 px and 2 px
+  line widths under different names (`--bw`, `--hair`) at the end of
+  `tokens.css`, a certain merge conflict. The tokens file now has one
+  owner, the orchestrator; devs ask for what's missing in their report
+  (§ 5).
+- **Nothing checked that every `var(--name)` resolves.** After unifying
+  the names, a dangling one falls back in silence. New `undefined-token`
+  rule in `slop-scan.py` (across all scanned files, only when some token
+  is defined in scope; a `var()` with a fallback is left alone), weighed by
+  `unslop-score.py`, and a line in § 6.
+- **The before moved with the scripts.** The same untouched screen scored
+  35 under 1.8.5 and 22 under 1.8.6. "Score X → Y" now requires both
+  numbers from the same version of the scripts (§ 6).
+
 ## 1.8.6 — 2026-11-14
 
 The first run of the **full flow** end to end (a three-screen recipe app:

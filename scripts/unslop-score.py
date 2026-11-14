@@ -40,6 +40,7 @@ CODE = {
     "hype-copy": ("Hype copy", "#64", 2, 6),
     "unverified-claim": ("Unsourced social proof / metrics", "#64", 2, 6),
     "hidden-nav": ("Nav hidden on phones", "#57", 3, 3),
+    "undefined-token": ("Tokens used but never defined", "#1", 2, 6),
     "canvas-tabbar": ("Tab bar over a map or camera", "#59", 1, 2),
     "tracked-caps": ("Tracked caps labels", "#45", 1, 4),
     "stock-kit": ("Starter kit at its defaults", "#6", 3, 3),
@@ -81,10 +82,12 @@ def cost(n, per, cap):
 
 def score_code(paths, scale):
     scan = load_scanner()
-    hits, files = {}, 0
+    hits, files, seen = {}, 0, []
     for f in scan.files(paths):
         files += 1
+        seen.append(f)
         scan.scan(f, scale, hits)
+    scan.token_checks(seen, hits)
     counts = {rid: len(where) for (rid, _ref, _desc), where in hits.items()}
     return files, counts
 

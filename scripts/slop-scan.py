@@ -366,6 +366,33 @@ def file_checks(path, text, kind, hits):
                 hits.setdefault(key, []).append((path, n, f"{name}(…) ×{len(starts)}"))
 
 
+# Custom properties across the scanned files: a var(--name) nobody defines falls back in
+# silence (after a rename, a merge, a typo). Only when some token is defined in scope.
+TOKEN_DEF = re.compile(r"(?<![\w-])(--[\w-]+)\s*:|setProperty\(\s*[\"'](--[\w-]+)")
+TOKEN_USE = re.compile(r"var\(\s*(--[\w-]+)\s*\)")  # a var() with a fallback is deliberate
+
+
+def token_checks(paths, hits):
+    defined, uses = set(), []
+    for path in paths:
+        if os.path.splitext(path)[1].lower() not in WEB:
+            continue
+        try:
+            text = open(path, encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue
+        defined |= {a or b for a, b in TOKEN_DEF.findall(text)}
+        for n, line in enumerate(text.splitlines(), 1):
+            if "unslop-ignore" not in line:
+                uses += [(path, n, m.group(1)) for m in TOKEN_USE.finditer(line)]
+    if not defined:
+        return  # the token file isn't in what was scanned: nothing to compare against
+    key = ("undefined-token", "#1", "Token used but defined nowhere in the scanned files")
+    for path, n, name in uses:
+        if name not in defined:
+            hits.setdefault(key, []).append((path, n, f"var({name})"))
+
+
 def files(paths):
     for p in paths:
         if os.path.isfile(p):
@@ -470,15 +497,17 @@ def main():
     a = ap.parse_args()
     scale = {float(x) for x in a.scale.split(",")}
     type_scale = {float(x) for x in a.type_scale.split(",")}
-    hits, count = {}, 0
+    hits, count, seen = {}, 0, []
     for f in files(a.paths):
         count += 1
+        seen.append(f)
         scan(f, scale, hits, type_scale)
+    token_checks(seen, hits)
     print(f"unslop scan: {count} files")
     if not hits:
         print("nothing found")
         return 0
-    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav", "unverified-claim", "canvas-tabbar"]
+    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav", "unverified-claim", "canvas-tabbar", "undefined-token"]
     for (rid, ref, desc), where in sorted(hits.items(), key=lambda kv: (-len(kv[1]), order.index(kv[0][0]))):
         print(f"\n[{ref}] {desc} — {len(where)} hit(s)")
         for path, n, snippet in where[: a.max]:

@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.8.6"
+  version: "1.8.7"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -168,8 +168,8 @@ world. A concept the product's content doesn't ask for stays a signature.
    Operate app with an established signature skips this.
 4. Grayscale pass + parallel reviewers (3-4, one per area) against
    `checklist.md`, applying fixes **one at a time**.
-5. Jury, then redraw: the boards take the jury's values (`process.md`
-   § 3). Winning proposal: one HTML page with before/after, the spec card
+5. Jury, then redraw: the boards, spec cards and decisions take the
+   jury's values (`process.md` § 3). Winning proposal: one HTML page with before/after, the spec card
    and the list of decisions, checked by the second critic (§ 4); the user
    chooses.
 6. Devs per area in isolated worktrees with a closed brief; integrate,

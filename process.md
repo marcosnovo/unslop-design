@@ -213,11 +213,14 @@ table, fixes inconsistent numbers across mockups and leaves a "owner
 decides" list per PR. The winner comes from there, not from the prettiest.
 
 **Redraw after the jury.** The jury's table changes values on paper; the
-boards still show the old ones. Before the second critic (§ 4) and before
-the owner sees anything, each area reviewer (or one agent for all) applies
-the jury's table to its board and re-renders it. Otherwise the critic
-judges values already replaced and the proposal shows them: in a test run
-two of the critic's three findings were exactly those.
+boards, spec cards and decision lists still show the old ones. Before the
+second critic (§ 4) and before the owner sees anything, each area reviewer
+(or one agent for all) applies the jury's table to all three and
+re-renders the board. Otherwise the critic judges values already replaced
+and the proposal shows them (in a test run, two of the critic's three
+findings), and the devs, who implement the spec card row by row, build
+them: a quantity unit shipped at 15 px from a stale card after the jury
+had set 14 (0.875rem). No script catches it, both values are valid.
 
 ## 4. Winning proposal
 **Score the plan before showing it.** Rate the merged proposal 1-5 on six
@@ -278,6 +281,12 @@ risks (measured contrast, long languages, states). Hand it to the user and
 wait for their "yes" or changes: design is their call.
 
 ## 5. Devs per area (senior, in worktrees)
+- **The tokens file has one owner: the orchestrator.** Devs don't add
+  tokens; a value their screen needs that isn't a token goes in their
+  report, and the orchestrator adds it (to PR 1, or one infra commit on the
+  integration branch) and tells the others. Two devs adding tokens in
+  parallel invent the same value twice under two names (`--bw` and
+  `--hair`, both 1px) and collide at the end of the file.
 - One agent per area, each in its own git worktree, **commit without push**; a
   closed brief: numbered decisions to implement, files, tokens/components to
   use or create, platforms (iOS + Android/web), languages, tests to touch,
@@ -319,7 +328,13 @@ wait for their "yes" or changes: design is their call.
   § 6); attach both reports to the PR.
 - `scripts/unslop-score.py` before and after (with `--audit` on the web):
   "score X → Y" goes at the top of the PR, with the rows still costing
-  points.
+  points. Both numbers come from **the same version of the scripts**: when
+  they change, measure the before again (check it out, rerun it). A test
+  screen's before went from 35 to 22 between two releases while nothing in
+  it changed.
+- Tokens resolve: `slop-scan.py` flags a `var(--name)` that no scanned file
+  defines (after a rename, a dangling one falls back in silence). Scan the
+  token file together with the screens.
 - Grep every changed string and symbol in UI tests, previews and
   showcase/demo code too: they don't run in CI and go stale.
 - Audits in parallel with CI: one for **compilation** and one for
