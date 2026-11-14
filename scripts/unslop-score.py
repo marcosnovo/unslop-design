@@ -37,6 +37,8 @@ CODE = {
     "transition-all": ("transition: all", "#63", 2, 6),
     "hype-copy": ("Hype copy", "#64", 2, 6),
     "tracked-caps": ("Tracked caps labels", "#45", 1, 4),
+    "stock-kit": ("Starter kit at its defaults", "#6", 3, 3),
+    "card-sameness": ("Repeated stat cards", "#65", 1, 3),
     "three-dots": ("Three dots instead of …", "#61", 1, 3),
     "raw-color": ("Raw colors outside tokens", "#3", 0.5, 8),
     "arbitrary-value": ("Tailwind arbitrary values", "#1", 0.5, 8),

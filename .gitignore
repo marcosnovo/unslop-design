@@ -1,2 +1,3 @@
 .installed-by-unslop-design
 .DS_Store
+__pycache__/

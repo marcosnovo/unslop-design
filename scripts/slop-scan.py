@@ -71,6 +71,86 @@ RULES = [
 ]
 
 
+# Starter-kit values nobody changed (#6). Checked against the shadcn registry
+# (apps/v4/public/r/colors: neutral, zinc, slate; v4 oklch and v3 HSL) and
+# Android Studio's Compose template (ui/theme/Color.kt). Only the values that
+# carry the kit's identity count; two or more in one file = the personality
+# was inherited. A team that set its own radius and accent isn't flagged for
+# keeping the kit's grays.
+SHADCN_DEFAULTS = {
+    "radius": {"0.625rem", "0.5rem"},
+    "primary": {"oklch(0.205 0 0)", "oklch(0.21 0.006 285.885)", "oklch(0.208 0.042 265.755)",
+                "222.2 47.4% 11.2%", "240 5.9% 10%", "0 0% 9%"},
+    "foreground": {"oklch(0.145 0 0)", "oklch(0.141 0.005 285.823)", "oklch(0.129 0.042 264.695)",
+                   "222.2 84% 4.9%", "240 10% 3.9%", "0 0% 3.9%"},
+    "ring": {"oklch(0.708 0 0)", "oklch(0.705 0.015 286.067)", "oklch(0.704 0.04 256.788)",
+             "222.2 84% 4.9%", "240 10% 3.9%", "0 0% 3.9%"},
+}
+SHADCN_DECL = re.compile(r"--(radius|primary|foreground|ring)\s*:\s*([^;]+);")
+COMPOSE_TEMPLATE = re.compile(r"0xFF(D0BCFF|CCC2DC|EFB8C8|6650A4|625B71|7D5260)\b", re.I)
+
+# Repeated surfaces (#40, #58, #65): the same card markup three or more times
+# in one file, each holding a number = a row of stat tiles. Literal repeats
+# only: a card rendered by .map()/ForEach appears once and isn't counted.
+# The element and its class, block-level only: a pill or badge (<span>) isn't a card.
+CLASS_ATTR = re.compile(r"""<(?!(?:span|small|i|b|em|strong|code|kbd|label|svg|img)\b)([\w.]+)\b[^<>]*?\bclass(?:Name)?\s*=\s*["'{`]+([^"'`}]+)["'`}]""")
+UTILITY_SURFACE = re.compile(r"\brounded(-\w+)?\b")
+UTILITY_FILL = re.compile(r"\b(bg-\S+|border\b|border-\S+|shadow(-\S+)?)")
+CSS_RULE = re.compile(r"\.([\w-]+)\s*\{([^}]*)\}")
+NUMBER_CHILD = re.compile(r">\s*[$€£¥+\-−]?\d[\d.,:]*\s*(%|k|K|M|km|h|min)?\s*<|\btext-([2-6]xl)\b|"
+                          r"class(?:Name)?=[\"'][^\"']*\b(num|number|value|metric|stat|kpi)\b")
+CTA = re.compile(r"<(button|Button)\b|<a\b[^>]*\bhref")
+NATIVE_CARD_CALL = re.compile(r"\b([A-Z]\w*(?:Card|Tile))\(")
+
+
+def file_checks(path, text, kind, hits):
+    lines = text.splitlines()
+    ignored = {n for n, l in enumerate(lines, 1) if "unslop-ignore" in l}
+
+    def line_of(pos):
+        return text.count("\n", 0, pos) + 1
+
+    kit_key = ("stock-kit", "#6", "Starter kit left at its defaults (set radius, grays and accent from the product)")
+    found = [(line_of(m.start()), f"--{m.group(1)}: {m.group(2).strip()}") for m in SHADCN_DECL.finditer(text)
+             if m.group(2).strip() in SHADCN_DEFAULTS[m.group(1)]]
+    found = [f for f in found if f[0] not in ignored]
+    if len({v.split(":")[0] for _, v in found}) >= 2:
+        hits.setdefault(kit_key, []).append((path, found[0][0], f"shadcn: {', '.join(v for _, v in found[:3])}"))
+    found = [(line_of(m.start()), m.group(0)) for m in COMPOSE_TEMPLATE.finditer(text)]
+    found = [f for f in found if f[0] not in ignored]
+    if len({v.upper() for _, v in found}) >= 2:
+        hits.setdefault(kit_key, []).append((path, found[0][0], f"Compose template colors: {', '.join(v for _, v in found[:3])}"))
+
+    key = ("card-sameness", "#40 #65", "Same card repeated with a number inside (a row of stat tiles?)")
+    if kind == "web":
+        surfaces = {m.group(1) for m in CSS_RULE.finditer(text)
+                    if re.search(r"border-radius", m.group(2)) and re.search(r"background|box-shadow|border\s*:", m.group(2))}
+        groups = {}
+        for m in CLASS_ATTR.finditer(text):
+            cls = " ".join(m.group(2).split())
+            names = set(cls.split())
+            is_surface = (UTILITY_SURFACE.search(cls) and UTILITY_FILL.search(cls)) or names & surfaces
+            if is_surface:
+                groups.setdefault(cls, []).append(m.start())
+        for cls, starts in groups.items():
+            n = line_of(starts[0])
+            if len(starts) < 3 or n in ignored:
+                continue
+            blocks = [text[s: (text.find("\n", s + 400) + 1 or len(text))] for s in starts]
+            with_number = sum(1 for b in blocks if NUMBER_CHILD.search(b))
+            with_action = sum(1 for b in blocks if CTA.search(b))
+            if with_number >= 3 and with_action * 2 < len(blocks):  # cards with a button are offers (pricing), not stat tiles
+                hits.setdefault(key, []).append((path, n, f'class "{cls[:50]}" ×{len(starts)}, {with_number} with a number'))
+    else:
+        calls = {}
+        for m in NATIVE_CARD_CALL.finditer(text):
+            calls.setdefault(m.group(1), []).append(m.start())
+        for name, starts in calls.items():
+            n = line_of(starts[0])
+            if len(starts) >= 3 and n not in ignored and not re.search(rf"\b(struct|fun|class)\s+{name}\b", text[:starts[0]]):
+                hits.setdefault(key, []).append((path, n, f"{name}(…) ×{len(starts)}"))
+
+
 def files(paths):
     for p in paths:
         if os.path.isfile(p):
@@ -94,6 +174,7 @@ def scan(path, scale, hits):
     if path.endswith(".min.js") or path.endswith(".min.css") or len(text) > 2_000_000:
         return
     has_focus_visible = "focus-visible" in text
+    file_checks(path, text, kind, hits)
     in_root = False
     for n, line in enumerate(text.splitlines(), 1):
         if "unslop-ignore" in line:
@@ -142,7 +223,7 @@ def main():
     if not hits:
         print("nothing found")
         return 0
-    order = [r[0] for r in RULES] + ["off-scale"]
+    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness"]
     for (rid, ref, desc), where in sorted(hits.items(), key=lambda kv: (-len(kv[1]), order.index(kv[0][0]))):
         print(f"\n[{ref}] {desc} — {len(where)} hit(s)")
         for path, n, snippet in where[: a.max]:

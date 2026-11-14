@@ -34,7 +34,7 @@ cite them ("#14") in their boards.
    a signature, not a body font (#47). A component kit left at its
    defaults (shadcn's zinc neutrals and 0.5rem radius, Material's baseline
    purple) is an inherited personality: set radius, gray temperature and
-   accent from the product (#3-#5). In a concept-led app the personality is
+   accent from the product (#3-#5); `slop-scan.py` flags those defaults. In a concept-led app the personality is
    the concept's consequence (`process.md` § 2b), still one voice.
 
 ## Spacing
@@ -294,7 +294,8 @@ once it holds up in grayscale; skip them on a screen that isn't clean yet.
     shape language, tab labels in the domain's words ("Jars", "Tonight",
     not "Home" and "More"). Keep the platform chrome (#46, principle 7):
     different apps differ in structure, object and voice, not in skin.
-    Check: the ten-app lineup (`process.md` § 2). Operate and Read
+    Check: the ten-app lineup (`process.md` § 2); `slop-scan.py` flags a
+    card repeated three times with a number in each. Operate and Read
     screens: one signature is enough.
 
 ## Craft floor

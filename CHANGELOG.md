@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.8.1 — 2026-11-14
+
+Two `slop-scan.py` detectors left out of 1.8.0, now checked against the
+real defaults:
+- `stock-kit` (#6): a starter kit left as generated. shadcn's identity
+  values (`--radius`, `--primary`, `--foreground`, `--ring`) for the
+  neutral, zinc and slate bases, v4 oklch and v3 HSL, taken from the
+  shadcn registry; and Android Studio's Compose template colors
+  (`Purple80`… `Pink40`). Two or more in one file to count; a team that set
+  its own radius and accent isn't flagged for keeping the kit's grays.
+  Token files are scanned for this one, since it's about them.
+- `card-sameness` (#40, #65): the same card markup three or more times in
+  one file with a number in each, i.e. a row of stat tiles. Block elements
+  only (a `<span>` pill isn't a card) and not when the cards carry a button
+  or link (pricing tiers). SwiftUI/Compose: the same `…Card(`/`…Tile(`
+  called three or more times. Cards rendered by `.map()`/`ForEach` appear
+  once in the source and aren't seen.
+- `unslop-score.py` weighs both (3 points for the kit, 1 per card row, cap
+  3). The example dashboard scores 25 before (was 26) and 100 after.
+
 ## 1.8.0 — 2026-11-14
 
 What "How to stop making your apps look like AI slop" (concept →
