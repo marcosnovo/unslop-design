@@ -368,20 +368,22 @@ def file_checks(path, text, kind, hits):
 
 # Custom properties across the scanned files: a var(--name) nobody defines falls back in
 # silence (after a rename, a merge, a typo). Only when some token is defined in scope.
-TOKEN_DEF = re.compile(r"(?<![\w-])(--[\w-]+)\s*:|setProperty\(\s*[\"'](--[\w-]+)")
+TOKEN_DEF = re.compile(r"(?<![\w-])(--[\w-]+)\s*:|setProperty\(\s*[\"'](--[\w-]+)|[\"'](--[\w-]+)[\"']\s*:")
 TOKEN_USE = re.compile(r"var\(\s*(--[\w-]+)\s*\)")  # a var() with a fallback is deliberate
 
 
 def token_checks(paths, hits):
     defined, uses = set(), []
     for path in paths:
-        if os.path.splitext(path)[1].lower() not in WEB:
+        if os.path.splitext(path)[1].lower() not in WEB or path.endswith((".min.js", ".min.css")):
             continue
         try:
             text = open(path, encoding="utf-8", errors="replace").read()
         except OSError:
             continue
-        defined |= {a or b for a, b in TOKEN_DEF.findall(text)}
+        if len(text) > 2_000_000:  # same limits as scan(): bundles aren't ours to judge
+            continue
+        defined |= {a or b or c for a, b, c in TOKEN_DEF.findall(text)}
         for n, line in enumerate(text.splitlines(), 1):
             if "unslop-ignore" not in line:
                 uses += [(path, n, m.group(1)) for m in TOKEN_USE.finditer(line)]
