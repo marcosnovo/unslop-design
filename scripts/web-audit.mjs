@@ -14,6 +14,7 @@
 //     shadows, spacing values, and which spacing is off the scale   (#1-#5)
 //   - text contrast computed from the real colors, failures listed  (principle 5)
 //   - icon and small-graphic contrast (SVG ≤ 64 px), under 3:1       (WCAG 1.4.11)
+//   - text scale: whether type grows with the reader's text size     (#2)
 //   - focus: focusable elements with no visible focus style         (#53)
 //   - targets smaller than 24×24 px                                  (Also)
 //   - emoji used in visible text                                     (#33)
@@ -187,11 +188,11 @@ function measure(scaleValues) {
     if (rad && rad !== "0px") count(radii, rad, el);
     if (cs.boxShadow && cs.boxShadow !== "none") {
       count(shadows, cs.boxShadow, el);
-      // A glow: a colored (non-gray) shadow with no vertical offset or a big blur.
+      // A glow: a colored (non-gray) shadow at any offset. A shadow means height, so it's neutral (#32).
       for (const s of cs.boxShadow.split(/,(?![^(]*\))/)) {
-        const col = parse(s), nums = s.replace(/rgba?\([^)]*\)/, "").trim().split(/\s+/).map(parseFloat);
-        const colored = col && (Math.max(col.r, col.g, col.b) - Math.min(col.r, col.g, col.b)) > 40;
-        if (colored && (nums[1] === 0 || nums[2] >= 30)) { glow.push(label(el)); break; }
+        const col = parse((s.match(/(?:rgba?|hsla?|oklch|oklab|lab|lch|color)\([^)]*\)|#[0-9a-f]{3,8}\b/i) || [])[0]);
+        const colored = col && col.a >= 0.2 && (Math.max(col.r, col.g, col.b) - Math.min(col.r, col.g, col.b)) > 40;
+        if (colored) { glow.push(label(el)); break; }
       }
     }
     if (/(^|,\s*)all\b/.test(cs.transitionProperty) && cs.transitionDuration.split(",").some((d) => parseFloat(d) > 0)) transitionAll.push(label(el));
@@ -220,6 +221,8 @@ function measure(scaleValues) {
       if (emojiRe.test(ownText)) emoji.push({ el: label(el), text: ownText.slice(0, 40) });
       const clip = cs.webkitBackgroundClip || cs.backgroundClip;
       if (clip === "text" && cs.backgroundImage !== "none") { gradientText.push(label(el)); continue; }
+      // Emoji are color bitmaps: CSS color doesn't paint them, so an emoji-only span isn't text to measure.
+      if (!ownText.replace(/[\p{Extended_Pictographic}\uFE0F\u200D\s]/gu, "")) continue;
       const fg = parse(cs.color);
       const bg = bgOf(el);
       const fade = opacityOf(el);
@@ -421,6 +424,23 @@ await page.goto(url, { waitUntil: "networkidle" }).catch(() => page.goto(url));
 await page.waitForTimeout(wait);
 results.measure = await page.evaluate(measure, scale);
 results.focus = await focusCheck(page);
+// Does the type follow the reader's text size? Double the root size and see whether text grows.
+// Type set in px ignores it (Dynamic Type, browser zoom of text only, Android font scale).
+results.textScale = await page.evaluate(() => {
+  const els = [...document.body.querySelectorAll("*")].filter((el) => {
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
+  }).slice(0, 80);
+  const before = els.map((el) => parseFloat(getComputedStyle(el).fontSize));
+  const root = document.documentElement, old = root.style.fontSize;
+  root.style.fontSize = "200%";
+  const after = els.map((el) => parseFloat(getComputedStyle(el).fontSize));
+  root.style.fontSize = old;
+  const grew = els.filter((_, i) => after[i] > before[i] * 1.1).length;
+  const fixed = els.map((el, i) => (after[i] > before[i] * 1.1 ? null : el)).filter(Boolean).slice(0, 6)
+    .map((el) => (el.tagName.toLowerCase() + (el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/)[0] : "")));
+  return { checked: els.length, grew, fixed };
+});
 await page.addStyleTag({ content: "html{filter:grayscale(1)!important}" });
 const gray = join(out, `w${widest}${dark ? "-dark" : ""}-grayscale.png`);
 await page.screenshot({ path: gray, fullPage: true });
@@ -486,6 +506,14 @@ L.push(``, `## Left edges [#43]`, ``,
   `Left-aligned text blocks start on ${edgesList.length} distinct x positions at ${widest} px; ${edgesList.filter((x) => x.n === 1).length} are used by a single block. A composed page reuses a few rails; many one-off edges mean it was placed piece by piece. Draw them over the screenshot.`, ``,
   edgesList.length ? edgesList.map((x) => `\`${x.value}px\` ×${x.n}`).join(" · ") : `—`);
 const cf = m.craft || {};
+{
+  const ts = results.textScale;
+  L.push(``, `## Text scale [#2]`, ``,
+    !ts || !ts.checked ? `- no text measured`
+      : ts.grew / ts.checked >= 0.5
+        ? `- ${ts.grew} of ${ts.checked} text elements grow with the reader's text size (root at 200%).`
+        : `- **${ts.checked - ts.grew} of ${ts.checked} text elements stay the same size** with the root at 200%: type in px ignores the reader's text size. Set the type scale in rem. e.g. ${ts.fixed.join(", ")}`);
+}
 L.push(``, `## Craft floor [#61-#63]`, ``,
   `- color-scheme: ${cf.colorScheme && cf.colorScheme !== "normal" ? `\`${cf.colorScheme}\`` : "**not set** (native controls and scrollbars won't follow dark mode)"}`,
   `- ::selection: ${cf.selectionThemed ? "themed" : "browser default"}`,

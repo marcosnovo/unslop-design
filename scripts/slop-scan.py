@@ -68,7 +68,7 @@ RULES = [
     ("shouting", "#52", "Exclamation marks in UI copy",
      re.compile(r"[\"'>`][^\"'<`\n]{2,}!!"), "all"),
     ("exclaim", "#25", "Exclamation mark in UI text (say it plainly)",
-     re.compile(r">[^<>{}\n]*[A-Za-z][!¡](?=[\s\U0001F300-\U0001FAFF☀-➿]*<)|"
+     re.compile(r">[^<>{}\n]*[A-Za-z][!¡](?=[\s\U0001F300-\U0001FAFF☀-➿<])|"
                 r"\b(?:Text|Button|Label|navigationTitle)\(\s*(?:text\s*=\s*)?\"[^\"\n]*[A-Za-z][!¡][\s\U0001F300-\U0001FAFF☀-➿]*\""), "all"),
     ("title-case", "#25", "Title Case in UI text (sentence case: \"Your subscriptions\")",
      TITLE_CASE, "all"),
@@ -168,6 +168,23 @@ TAG = re.compile(r"<(/?)([\w.]+)\b([^<>]*?)(/?)>")
 ROW_UTILITY = re.compile(r"\bgrid-cols-([2-9]|1[0-2])\b|\bflex\b(?![^\"']*\bflex-col\b)|\bflex-row\b")
 
 
+LINK_CSS = re.compile(r"""<link\b[^>]*\brel=["']?stylesheet[^>]*>""", re.I)
+
+
+def linked_css(path, text):
+    """Local stylesheets the page links: the card and layout rules often live there, not inline."""
+    out = []
+    for tag in LINK_CSS.findall(text):
+        href = re.search(r"""\bhref=["']([^"'#?]+)""", tag)
+        if href and not re.match(r"^(?:[a-z]+:)?//", href.group(1)):
+            f = os.path.normpath(os.path.join(os.path.dirname(path), href.group(1)))
+            try:
+                out.append(open(f, encoding="utf-8", errors="replace").read())
+            except OSError:
+                pass
+    return "\n" + "\n".join(out)
+
+
 def css_rules(text, names):
     return " ".join(m.group(2) for m in CSS_RULE.finditer(text) if m.group(1) in names)
 
@@ -186,9 +203,9 @@ def jsx_style(attrs):
     return " ".join(out)
 
 
-def side_by_side(text, start, cls):
+def side_by_side(text, start, cls, css=""):
     """(True when the card sits in a multi-column grid or a flex row, its parent's offset)."""
-    own_row = bool(re.search(r"flex\s*:\s*1\b|flex-grow\s*:\s*1", css_rules(text, set(cls.split()))))
+    own_row = bool(re.search(r"flex\s*:\s*1\b|flex-grow\s*:\s*1", css_rules(text + css, set(cls.split()))))
     stack = []
     for m in TAG.finditer(text, 0, start):
         closing, name, attrs, selfclose = m.groups()
@@ -206,7 +223,7 @@ def side_by_side(text, start, cls):
         return True, parent
     pc = re.search(r"""\bclass(?:Name)?\s*=\s*["'{`]+([^"'`}]+)""", attrs)
     pcls = pc.group(1) if pc else ""
-    rules = css_rules(text, set(pcls.split())) + " " + jsx_style(attrs)
+    rules = css_rules(text + css, set(pcls.split())) + " " + jsx_style(attrs)
     if ROW_UTILITY.search(pcls):
         return True, parent
     cols = re.search(r"grid-template-columns\s*:\s*([^;}]+)", rules)
@@ -305,7 +322,8 @@ def file_checks(path, text, kind, hits):
 
     key = ("card-sameness", "#40 #65", "Same card repeated with a number inside (a row of stat tiles?)")
     if kind == "web":
-        surfaces = {m.group(1) for m in CSS_RULE.finditer(text)
+        css = linked_css(path, text)
+        surfaces = {m.group(1) for m in CSS_RULE.finditer(text + css)
                     if re.search(r"border-radius", m.group(2)) and re.search(r"background|box-shadow|border\s*:", m.group(2))}
         groups = {}
         for m in CLASS_ATTR.finditer(text):
@@ -319,7 +337,7 @@ def file_checks(path, text, kind, hits):
             if len(all_starts) < 3:
                 continue
             for s in all_starts:
-                inline, parent = side_by_side(text, s, cls)
+                inline, parent = side_by_side(text, s, cls, css)
                 if inline:  # a stacked list of rows is #40's entity row, not tiles
                     rows.setdefault((cls, parent), []).append(s)
         for (cls, _parent), starts in rows.items():
@@ -360,7 +378,29 @@ def files(paths):
                     yield os.path.join(root, n)
 
 
-def scan(path, scale, hits):
+DEFAULT_TYPE_SCALE = {11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 44, 48, 56, 64, 72, 80, 96}
+# Colored shadows in CSS, any offset: "0 10px 30px rgba(255,107,107,.45)" is a glow too (#32).
+SHADOW_DECL = re.compile(r"box-shadow\s*:\s*([^;}]+)", re.I)
+SHADOW_COLOR = re.compile(r"rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)(?:[\s,/]+([\d.]+%?))?\s*\)|#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b")
+
+
+def colored_shadow(value):
+    for m in SHADOW_COLOR.finditer(value):
+        if m.group(5):
+            h = m.group(5)
+            h = "".join(c * 2 for c in h) if len(h) == 3 else h
+            r, g, b, a = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), 1.0
+        else:
+            r, g, b = (int(m.group(i)) for i in (1, 2, 3))
+            a = m.group(4)
+            a = 1.0 if a is None else (float(a[:-1]) / 100 if a.endswith("%") else float(a))
+        if max(r, g, b) - min(r, g, b) > 40 and a >= 0.2:
+            return m.group(0)
+    return None
+
+
+def scan(path, scale, hits, type_scale=None):
+    type_scale = type_scale or DEFAULT_TYPE_SCALE
     ext = os.path.splitext(path)[1].lower()
     kind = "native" if ext in NATIVE else "web"
     is_token_file = bool(TOKEN_FILE.search(os.path.basename(path)))
@@ -393,11 +433,26 @@ def scan(path, scale, hits):
                 continue
             if rx.search(line):
                 hits.setdefault((rid, ref, desc), []).append((path, n, stripped[:110]))
+        if kind == "web":
+            glow_key = next((r[0], r[1], r[2]) for r in RULES if r[0] == "glow")
+            already = any(w[0] == path and w[1] == n for w in hits.get(glow_key, []))
+            for m in SHADOW_DECL.finditer(line):
+                c = colored_shadow(m.group(1))
+                if c and not already:
+                    hits.setdefault(glow_key, []).append((path, n, f"box-shadow with {c}"))
+                    already = True
         if kind == "web" and not is_token_file and not in_root:
             for m in PX_PROP.finditer(line):
                 if "var(" in m.group(3) or "calc(" in m.group(3):
                     continue
-                off = [v for v in PX.findall(m.group(3)) if abs(float(v)) not in scale]
+                prop = m.group(1).lower()
+                if prop == "font-size":       # type has its own scale (#2), not the spacing one
+                    allowed = type_scale
+                elif prop == "border-radius":  # a capsule or circle (999px) is "full", not a step
+                    allowed = scale | {v for v in map(float, PX.findall(m.group(3))) if abs(v) >= 100}
+                else:
+                    allowed = scale
+                off = [v for v in PX.findall(m.group(3)) if abs(float(v)) not in allowed]
                 if off:
                     key = ("off-scale", "#1", "Spacing / type / radius value off the scale")
                     hits.setdefault(key, []).append((path, n, f"{m.group(1)}{m.group(2) or ''}: {', '.join(o + 'px' for o in off)}"))
@@ -408,14 +463,17 @@ def main():
     ap.add_argument("paths", nargs="*", default=["."])
     ap.add_argument("--scale", default="0,1,2,4,8,12,16,20,24,32,40,48,64,80,96",
                     help="allowed px values (1 for hairlines); match your tokens")
+    ap.add_argument("--type-scale", default=",".join(str(v) for v in sorted(DEFAULT_TYPE_SCALE)),
+                    help="allowed font sizes in px; match your type tokens")
     ap.add_argument("--max", type=int, default=8, help="locations shown per rule")
     ap.add_argument("--strict", action="store_true", help="exit 1 if anything is found")
     a = ap.parse_args()
     scale = {float(x) for x in a.scale.split(",")}
+    type_scale = {float(x) for x in a.type_scale.split(",")}
     hits, count = {}, 0
     for f in files(a.paths):
         count += 1
-        scan(f, scale, hits)
+        scan(f, scale, hits, type_scale)
     print(f"unslop scan: {count} files")
     if not hits:
         print("nothing found")

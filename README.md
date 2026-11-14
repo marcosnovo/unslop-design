@@ -170,7 +170,7 @@ On the example above, `web-audit.mjs` goes from 19 spacing values (15 off
 the scale), 5 weights, 6 radii, 6 shadows, a page that scrolls sideways
 on a phone and 11 links with no focus style, to 6 spacing values, all on the scale, 2
 weights, 1 shadow, no sideways scroll and a focus ring on everything.
-`slop-scan.py` finds 93 hits in the before and none in the after, and
+`slop-scan.py` finds 88 hits in the before and none in the after, and
 `unslop-score.py` goes from 25 to 100 on the code alone. Details
 in [`web.md`](web.md).
 

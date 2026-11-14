@@ -55,6 +55,7 @@ PAGE = {
     "overflow": ("Horizontal scroll", "#57", 5, 10),
     "contrast": ("Text under WCAG AA", "P5", 1, 15),
     "graphics-contrast": ("Icons/graphics under 3:1", "P5", 1, 6),
+    "text-scale": ("Type ignores the reader's text size", "#2", 3, 3),
     "focus": ("No visible focus", "#53", None, 10),
     "targets": ("Targets under 24 px", "#53", 0.5, 5),
     "spacing-sprawl": ("Distinct spacing values > 8", "#1", 0.5, 8),
@@ -94,6 +95,8 @@ def score_page(report):
     rows["overflow"] = sum(1 for w in report["widths"].values() if w["overflow"]["scrollWidth"] > w["overflow"]["viewport"])
     rows["contrast"] = len(m["contrastFails"])
     rows["graphics-contrast"] = len(m.get("graphicsFails", []))
+    ts = report.get("textScale") or {}
+    rows["text-scale"] = 1 if ts.get("checked") and ts.get("grew", 0) / ts["checked"] < 0.5 else 0
     rows["targets"] = len(m["smallTargets"])
     rows["spacing-sprawl"] = max(0, len(c["spacing"]) - 8)
     rows["size-sprawl"] = max(0, len(c["fontSizes"]) - 6)

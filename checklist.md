@@ -13,7 +13,11 @@ cite them ("#14") in their boards.
 2. **Hand-picked type scale**, not modular or relative: 6-8 sizes (e.g.
    12/14/16/18/20/24/30/36/48) and **two weights** (regular 400-500,
    emphasis 600-700). Nothing below 400 in UI: to de-emphasize, use color or
-   size, not a thin weight.
+   size, not a thin weight. On the web the scale is in `rem`, so type
+   follows the reader's text size (Dynamic Type, Android font scale, the
+   browser's text-only zoom); a scale in `px` ignores it.
+   `scripts/web-audit.mjs` doubles the root size and reports text that
+   doesn't grow.
 3. **Palette with shades defined up front.** Grays: 8-10 shades from the
    darkest text (never pure black) to an almost-white background. Accent and
    roles: 5-10 shades each (100-900; 500 works as a button background, 900

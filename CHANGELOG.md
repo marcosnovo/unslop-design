@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.8.6 — 2026-11-14
+
+The first run of the **full flow** end to end (a three-screen recipe app:
+three blind directions, three area reviewers plus a numbers-only one, a
+jury, the second critic and a published winning proposal) found four
+process gaps and five tool bugs:
+
+Process (`process.md`, `checklist.md`):
+- **Directions converged.** The grounding's "one thing only this product
+  has" seeded every agent, and the control ended up as one of the bold
+  directions. The orchestrator now assigns each direction its source, and
+  the control's brief leaves that line out (§ 2c).
+- **Nobody redrew after the jury.** It corrected 23 values on paper; the
+  boards kept the old ones, and two of the critic's three findings were
+  values already replaced. Each board now takes the jury's table and is
+  re-rendered before the critic (§ 3, SKILL.md full flow step 5).
+- **Shared components had no owner.** Two reviewers redesigned the same
+  tab bar. Each brief names one owner per shared component (§ 3).
+- **Type in px.** It ignores the reader's text size; the skill didn't say
+  so. #2 asks for a `rem` scale on the web, and `web-audit.mjs` now
+  doubles the root font size and reports text that doesn't grow.
+
+Tools:
+- `web-audit.mjs` never reported a glow: it parsed the whole shadow
+  string as a color. It now reads the color inside the shadow and counts
+  any colored shadow (#32). `slop-scan.py` only knew `0 0 Npx` glows; it
+  now flags colored `box-shadow` at any offset.
+- `slop-scan.py` checked `font-size` and `border-radius` against the
+  spacing scale. Font sizes have their own `--type-scale`, and a full
+  radius (999px) isn't a step.
+- Emoji-only text is no longer a contrast failure (CSS color doesn't
+  paint it), which also removes the double count with its link.
+- `card-sameness` reads the local stylesheets a page links, not only the
+  CSS in the same file.
+- An exclamation mark mid-sentence ("Ready in 30 minutes! Your…") is
+  caught, not only at the end of a text.
+- `unslop-score.py` weighs type that ignores the text size (3 points).
+  The example dashboard still scores 25 → 100, with 88 hits (font sizes no
+  longer count as off the spacing scale).
+
 ## 1.8.5 — 2026-11-14
 
 Found by a fourth end-to-end run, on a Jetpack Compose map screen in

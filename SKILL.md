@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.8.5"
+  version: "1.8.6"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -28,7 +28,8 @@ Three scripts measure instead of guessing:
 - `node scripts/web-audit.mjs <url>` — the rendered page at 390/768/1280 px:
   horizontal scroll, a census of every size/color/radius/shadow/spacing in
   use, computed contrast, focus states, emoji, glows, plus a grayscale
-  screenshot, and icon contrast (3:1, WCAG 1.4.11) for small SVG.
+  screenshot, icon contrast (3:1, WCAG 1.4.11) for small SVG, and whether
+  the type follows the reader's text size.
   `--device iphone,iphone-se,pixel` renders at real phone
   size and density with safe areas and reports which font really
   rendered. Needs Playwright.
@@ -167,8 +168,9 @@ world. A concept the product's content doesn't ask for stays a signature.
    Operate app with an established signature skips this.
 4. Grayscale pass + parallel reviewers (3-4, one per area) against
    `checklist.md`, applying fixes **one at a time**.
-5. Winning proposal: one HTML page with before/after, the spec card and
-   the list of decisions, checked by the second critic (§ 4); the user
+5. Jury, then redraw: the boards take the jury's values (`process.md`
+   § 3). Winning proposal: one HTML page with before/after, the spec card
+   and the list of decisions, checked by the second critic (§ 4); the user
    chooses.
 6. Devs per area in isolated worktrees with a closed brief; integrate,
    compile, audit, PR, answer review bots, merge when green.

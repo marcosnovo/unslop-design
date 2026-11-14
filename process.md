@@ -123,9 +123,15 @@ any Persuade or Experience screen, explore **three directions that differ
 in concept**, compare them and continue with one.
 
 - **Different means a different source** (object, place, ritual, printed
-  thing), so type, layout and color differ by consequence. Three palettes
+  thing), so type, layout and color differ by consequence. **The
+  orchestrator assigns the sources**, one per agent, before they start: the
+  grounding's fourth line (the one thing only this product has) seeds every
+  agent toward the same idea otherwise. In a test run the control and one
+  bold direction both turned the ingredients into the same checklist. Three palettes
   on one layout is one direction. Keep one *safe* direction (a signature on
-  a native shell) as the control: it shows what the bolder ones cost.
+  a native shell) as the control: it shows what the bolder ones cost. The
+  control's brief leaves out the fourth grounding line, so it stays a
+  control.
 - **One card each**, all on the same key screen (the answer screen), drawn
   with real content (#48) and its grayscale:
 
@@ -170,6 +176,10 @@ scripts.
 
 Each brief includes:
 - the screenshots/frames for THEIR area and the code paths;
+- **one owner for each shared component** (tab bar, navigation, buttons,
+  switches, the type and color tokens): the reviewer whose area owns it
+  redesigns it, and the others draw it as it is. Two reviewers redesigning
+  the same tab bar is a conflict the jury then has to undo;
 - `checklist.md` and the principles from `SKILL.md`;
 - the project's current design system (tokens, roles, components);
 - the chosen direction's card (concept, rules, "stops at"): reviewers apply
@@ -201,6 +211,13 @@ and tick only what's visible on screen.
 **Jury:** one more agent merges the proposals: a "conflict → winner → why"
 table, fixes inconsistent numbers across mockups and leaves a "owner
 decides" list per PR. The winner comes from there, not from the prettiest.
+
+**Redraw after the jury.** The jury's table changes values on paper; the
+boards still show the old ones. Before the second critic (§ 4) and before
+the owner sees anything, each area reviewer (or one agent for all) applies
+the jury's table to its board and re-renders it. Otherwise the critic
+judges values already replaced and the proposal shows them: in a test run
+two of the critic's three findings were exactly those.
 
 ## 4. Winning proposal
 **Score the plan before showing it.** Rate the merged proposal 1-5 on six
