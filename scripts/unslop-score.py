@@ -39,6 +39,7 @@ CODE = {
     "transition-all": ("transition: all", "#63", 2, 6),
     "hype-copy": ("Hype copy", "#64", 2, 6),
     "unverified-claim": ("Unsourced social proof / metrics", "#64", 2, 6),
+    "pressure": ("Pressure copy (countdowns, scarcity, badges)", "#64", 2, 6),
     "hidden-nav": ("Nav hidden on phones", "#57", 3, 3),
     "undefined-token": ("Tokens used but never defined", "#1", 2, 6),
     "canvas-tabbar": ("Tab bar over a map or camera", "#59", 1, 2),

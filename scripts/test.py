@@ -69,6 +69,10 @@ def audit_case(script, html, widths="390"):
         "long_lines": len(m.get("longLines", [])),
         "aligned_text": len(m.get("alignedText", [])),
         "empty_blocks": len(m.get("emptyBlocks", [])),
+        "estimated": sum(1 for x in m["contrastFails"] if x.get("estimated")),
+        "unknown": m.get("contrastUnknown", 0),
+        "off_scale": len(m["census"]["offScaleSpacing"]),
+        "edges": len(m.get("leftEdges", [])),
     }
 
 

@@ -101,6 +101,10 @@ RULES = [
     ("empty-action", "#64", "A control whose action is empty (it implies a feature that doesn't exist: principle 6)",
      re.compile(r"\bonClick\s*=\s*\{\s*\}|\bonClick=\{\s*\(\s*\)\s*=>\s*\{\s*\}\s*\}|"
                 r"\bButton\s*\(\s*(?:action:\s*)?\{\s*\}|\bButton\s*\{\s*\}\s*label|\baction:\s*\{\s*\}"), "all"),
+    ("pressure", "#64", "Pressure copy (countdown, scarcity, \"most popular\", \"save N%\"): true, computed and sourced?",
+     re.compile(r"(?i:\boffer ends in\b|\bends in \d|\blimited[- ]time (?:offer|deal|only)\b|\bonly \d+ (?:left|spots?|seats?)\b|"
+                r"\bhurry\b|\bact now\b|\blast chance\b|\bmost popular\b|\bbest (?:value|seller)\b|"
+                r"\bsave \d+\s?%(?!(?:\s|<[^<>]+>)*(?:vs\.?|versus|compared|than)\b))"), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
 ]
@@ -141,7 +145,8 @@ TRACKING = re.compile(r"\.tracking\(|\.kerning\(|letterSpacing\s*=")
 # Invented social proof and metrics (#64). File-level, so a figure and its label on
 # separate lines ("<div>10x</div>" then "<div>Faster</div>") still read as one claim.
 UNVERIFIED_CLAIM = re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by\s+(?:over\s+|more than\s+)?[\d,.]+\s*[km]?\+?\s+\w+)|"
-                r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:teams|users|customers|companies|developers|engineers|businesses|people|creators))|"
+                r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:[a-z]+\s+){0,2}(?:teams|users|customers|companies|developers|engineers|"
+                r"businesses|people|creators|members|readers|subscribers))|"
                 r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>){1,12}(?i:faster|better|more|quicker|cheaper|productiv|[a-z]{3,}er\b)|"
                 r"\b100\s?%(?:\s|<[^<>]+>){1,12}(?i:waterproof|secure|safe|guaranteed|satisfaction|natural|organic|accurate|"
                 r"reliable|effective|confidence|private|free\b)|"

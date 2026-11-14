@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Order status after</title>
+<style>
+:root{color-scheme:light;
+ --canvas:#FFF6EE;--surface:#FFFFFF;--ink:#2B2420;--muted:#6B5F58;--accent:#E8590C;--accent-text:#C2410C;--line:#D9CFC8;
+ --s-4:4px;--s-8:8px;--s-12:12px;--s-16:16px;--s-24:24px;--s-32:32px;--s-48:48px;
+ --t-14:.875rem;--t-16:1rem;--t-20:1.25rem;--t-64:4rem;--t-24:1.5rem;
+ --r-panel:16px;--r-pill:999px}
+*{box-sizing:border-box;margin:0}
+::selection{background:#FFD9BF}
+body{background:var(--canvas);color:var(--ink);font-family:-apple-system,"Inter",system-ui,sans-serif;font-size:var(--t-16);line-height:1.5;
+ min-height:100vh;display:flex;flex-direction:column;padding:var(--s-16) var(--s-24) max(var(--s-24),env(safe-area-inset-bottom))}
+h1{font-size:var(--t-20);font-weight:600;line-height:1.2;margin-bottom:var(--s-48)}
+.eta .label{font-size:var(--t-14);color:var(--muted)}
+.eta .num{font-size:var(--t-64);font-weight:600;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:var(--s-8);margin:var(--s-8) 0 var(--s-8)}
+.eta .num span{font-size:var(--t-24);letter-spacing:0}
+.eta .sub{color:var(--muted);font-size:var(--t-16)}
+.steps{list-style:none;padding:0;margin:var(--s-48) 0 var(--s-32);display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+.steps::before{content:"";position:absolute;left:0;right:25%;top:6px;height:2px;background:var(--line)}
+.steps li{position:relative;font-size:var(--t-14);color:var(--muted);padding-top:var(--s-24)}
+.steps li::before{content:"";position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--canvas);border:2px solid var(--line)}
+.steps li.done{color:var(--ink)}
+.steps li.done::before{background:var(--ink);border-color:var(--ink)}
+.steps li.now{color:var(--ink);font-weight:600}
+.steps li.now::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--canvas)}
+.steps li.done+li::after{}
+.sum{background:var(--surface);border-radius:var(--r-panel);padding:var(--s-16);display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.sum span:last-child{font-weight:600}
+.cta{margin-top:auto;display:block;width:100%;min-height:52px;border:0;border-radius:var(--r-pill);background:var(--ink);color:var(--canvas);font:inherit;font-weight:600;cursor:pointer}
+.cta:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px}
+.cta:hover{background:#403731}
+@media (prefers-reduced-motion:no-preference){.cta{transition:background-color .15s}}
+</style></head><body>
+<h1>Order status</h1>
+<section class="eta" aria-label="Arrival estimate">
+ <p class="label">Arriving in</p>
+ <p class="num" aria-label="12 minutes">12<span>min</span></p>
+ <p class="sub">2.4&nbsp;km away</p>
+</section>
+<ol class="steps" aria-label="Order progress">
+ <li class="done">Placed</li><li class="done">Cooking</li><li class="now" aria-current="step">On the way</li><li>Delivered</li>
+</ol>
+<div class="sum"><span>3 items</span><span>$24.80</span></div>
+<button class="cta" type="button">Contact rider</button>
+</body></html>

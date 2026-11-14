@@ -55,7 +55,7 @@ if (!target) {
 const url = /^https?:|^file:/.test(target) ? target : pathToFileURL(resolve(target)).href;
 const out = resolve(opt("out", "unslop-audit"));
 const widths = opt("widths", "390,768,1280").split(",").map(Number);
-const scale = opt("scale", "0,2,4,8,12,16,20,24,32,40,48,64,80,96").split(",").map(Number);
+const scale = opt("scale", "0,1,2,4,8,12,16,20,24,32,40,48,64,80,96").split(",").map(Number);
 const dark = !!flags.dark;
 const wait = Number(opt("wait", "500"));
 const deviceArg = opt("device", "");
@@ -174,15 +174,49 @@ function measure(scaleValues) {
   const contrastFails = [], contrastUnknown = [], emoji = [], smallTargets = [], gradientText = [], glow = [];
   // © ® ™ and typographic marks (✓ ✔ ✕ ✗ ★ ☆) are Extended_Pictographic but they're characters, not emoji.
   const emojiRe = /(?![©®™✓✔✕✖✗✘★☆])\p{Extended_Pictographic}/u;
+  // Text in the second and later column of a multi-column grid or a flex row starts on that
+  // column's own rail: not a stray left edge.
+  const inColumn = (el) => {
+    for (let n = el; n && n !== document.body; n = n.parentElement) {
+      const p = n.parentElement;
+      if (!p) break;
+      const ps = getComputedStyle(p);
+      const row = (ps.display.includes("grid") && ps.gridTemplateColumns.split(" ").filter(Boolean).length > 1)
+        || (ps.display.includes("flex") && !ps.flexDirection.startsWith("column"));
+      if (row && n.getBoundingClientRect().left > p.getBoundingClientRect().left + parseFloat(ps.paddingLeft) + 1) return true;
+    }
+    return false;
+  };
+  // A text over a gradient: estimate against each stop and keep the worst (marked as estimated).
+  const gradientStops = (el) => {
+    for (let n = el; n; n = n.parentElement) {
+      const bi = getComputedStyle(n).backgroundImage;
+      if (!bi || bi === "none") continue;
+      if (/url\(/.test(bi) || !/gradient\(/.test(bi)) return null;
+      const stops = (bi.match(/(?:rgba?|hsla?|oklch|oklab|lab|lch|color)\([^)]*\)|#[0-9a-f]{3,8}\b/gi) || []).map(parse).filter(Boolean);
+      if (!stops.length) return null;
+      if (stops.every((c) => c.a >= 1)) return stops;  // opaque stops: what's underneath doesn't show
+      const under = n.parentElement ? bgOf(n.parentElement) : { r: 255, g: 255, b: 255, a: 1 };
+      return under ? stops.map((c) => (c.a < 1 ? blend(c, under) : c)) : null;
+    }
+    return null;
+  };
   const edges = new Map(), transitionAll = [], dots = [];
   const all = [...document.body.querySelectorAll("*")].filter(vis);
+  // Controls the author never padded keep the browser's own 1px 6px: not a spacing decision.
+  const uaPadded = (el, cs) => el.matches("button, input, select, textarea")
+    && cs.paddingTop === "1px" && cs.paddingBottom === "1px" && cs.paddingLeft === "6px" && cs.paddingRight === "6px";
   for (const el of all) {
     const cs = getComputedStyle(el);
+    const ua = uaPadded(el, cs);
     for (const p of ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "marginTop", "marginBottom", "rowGap", "columnGap"]) {
+      if (ua && p.startsWith("padding")) continue;
       const v = cs[p];
       if (!v || v === "normal" || v === "auto") continue;
       const px = Math.round(parseFloat(v));
       if (!px || px < 0) continue;
+      // A margin far past the scale is layout (margin: auto resolves to px), not a spacing step.
+      if (p.startsWith("margin") && px > Math.max(...scaleValues) * 2) continue;
       count(spacing, px, el);
       if (!scaleValues.includes(px)) count(offScale, px, el);
     }
@@ -211,7 +245,7 @@ function measure(scaleValues) {
       // Left edges: block-level, left-aligned text only (inline runs, table cells, chart labels and
       // centered or right-aligned numbers start wherever their neighbors end).
       if (ownText.length > 1 && !cs.display.startsWith("inline") && cs.display !== "table-cell" && !el.closest("svg")
-          && /^(start|left|-webkit-left|justify)$/.test(cs.textAlign)) {
+          && !inColumn(el) && /^(start|left|-webkit-left|justify)$/.test(cs.textAlign)) {
         // Where the glyphs start, not the border box: padding, borders and text-indent move the text.
         const node = [...el.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
         const range = document.createRange();
@@ -237,6 +271,14 @@ function measure(scaleValues) {
         const large = size >= 24 || (bold && size >= 18.66);
         const need = large ? 3 : 4.5;
         if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: cs.color, size: cs.fontSize });
+      } else if (fg) {
+        const stops = gradientStops(el);
+        if (stops) {
+          const r = Math.min(...stops.map((s) => { const fga = { ...fg, a: fg.a * fade }; return ratio(fga.a < 1 ? blend(fga, s) : fga, s); }));
+          const size = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
+          const need = size >= 24 || (bold && size >= 18.66) ? 3 : 4.5;
+          if (r < need) contrastFails.push({ el: label(el), ratio: Math.round(r * 100) / 100, need, color: cs.color, size: cs.fontSize, estimated: true });
+        } else contrastUnknown.push(label(el));
       } else {
         contrastUnknown.push(label(el));
       }
@@ -461,7 +503,7 @@ results.focus = await focusCheck(page);
 results.textScale = await page.evaluate(() => {
   const els = [...document.body.querySelectorAll("*")].filter((el) => {
     const r = el.getBoundingClientRect();
-    return r.width > 0 && r.height > 0 && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
+    return r.width > 0 && r.height > 0 && !el.closest("svg") && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
   }).slice(0, 80);
   const before = els.map((el) => parseFloat(getComputedStyle(el).fontSize));
   // Twice the root's current size, whatever the page set it to (a page already at 200% must still grow).
@@ -517,9 +559,9 @@ L.push(c.offScaleSpacing.length
   : `- none`);
 L.push(``, `## Contrast [principle 5]`, ``);
 L.push(m.contrastFails.length
-  ? m.contrastFails.slice(0, 30).map((x) => `- **${x.ratio}:1** (needs ${x.need}) ${x.el} — ${x.color}, ${x.size}`).join("\n")
+  ? m.contrastFails.slice(0, 30).map((x) => `- **${x.ratio}:1** (needs ${x.need}) ${x.el} — ${x.color}, ${x.size}${x.estimated ? " (on a gradient: its worst stop, estimated)" : ""}`).join("\n")
   : `- No text below AA among the ones measurable.`);
-if (m.contrastUnknown) L.push(`- ${m.contrastUnknown} text element(s) sit on a gradient or image: check those by eye [#36].`);
+if (m.contrastUnknown) L.push(`- ${m.contrastUnknown} text element(s) sit on an image: check those by eye [#36]. Text on gradients is estimated against the worst stop.`);
 L.push(``, `## Icons and graphics under 3:1 [principle 5, WCAG 1.4.11]`, ``,
   m.graphicsFails.length
     ? m.graphicsFails.slice(0, 20).map((x) => `- **${x.ratio}:1** (needs 3) ${x.el} — ${x.color}`).join("\n")

@@ -1,7 +1,7 @@
 {
   "name": "unslop-design",
   "displayName": "Unslop Design",
-  "version": "1.8.9",
+  "version": "1.9.0",
   "description": "Make your app or site stop looking AI-generated: 64 numbered design fixes, a quick five-fix mode, scripts that scan your UI and score it 0-100, and a before/after you approve.",
   "author": {
     "name": "Marcos Novo",

@@ -1,0 +1,6 @@
+Text("Offer ends in 9:59")
+Text("Only 3 left at this price")
+Text("SAVE 88% · MOST POPULAR")
+Text("Best value")
+Text("Save changes")
+Text("Popular recipes this week")

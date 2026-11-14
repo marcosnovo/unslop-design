@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.8.9"
+  version: "1.9.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -115,11 +115,19 @@ subagents, no jury, one pass you can finish in a few minutes.
    code or it can't run here (native without a simulator: the mock at
    device size is the render, and the report says so), with the filled
    `spec-card.md` rows it uses. Audit each state as its own page, not the
-   side-by-side board, or the census mixes before and after.
+   side-by-side board, or the census mixes before and after; a phone mock
+   with `--device` and `--widths 390` (its text-scale line says nothing
+   about native Dynamic Type: draw the largest size instead). For a
+   desktop page, "same width" means its real width: stack the two, don't
+   shrink them into half-width frames.
+   **Only a screenshot, no code:** rebuild the before as an HTML mock from
+   it, sample the colors (say they're approximate) and score the two
+   mocks, labeled as mocks: never quote them as the app's score.
    Score it on the six axes of `process.md` § 4 first; under 3 on any
    axis, revise before showing. For Persuade and Experience screens run
-   the second critic of § 4 once; for Operate and Read, answer its
-   questions 1-3 yourself.
+   the second critic of § 4 once (with no subagents: answer its questions
+   1-3 from the image alone, before rereading your own notes); for Operate
+   and Read, answer questions 1-3 yourself.
 4. On "yes", apply them as tokens (principle 1), rerun the score and report
    "score X → Y" and what's still left.
 

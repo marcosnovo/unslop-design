@@ -81,6 +81,7 @@
       "gradient-text": 1,
       "hidden-nav": 1,
       "hype-copy": 4,
+      "pressure": 1,
       "raw-color": 1,
       "title-case": 5,
       "tracked-caps": 1,
@@ -233,6 +234,54 @@
     "audit-css-image-hero": {
       "gradient": 1,
       "raw-color": 2
+    },
+    "audit-gradient-text": {
+      "gradient": 2,
+      "raw-color": 3
+    },
+    "audit-grid-edges": {},
+    "audit-svg-text": {},
+    "audit-ua-button": {},
+    "claims-adjective": {
+      "unverified-claim": 1
+    },
+    "copy-pressure": {
+      "pressure": 5
+    },
+    "screen-dash-after": {},
+    "screen-dash-before": {
+      "card-sameness": 1,
+      "emoji": 2,
+      "exclaim": 1,
+      "gradient": 1,
+      "off-scale": 8,
+      "raw-color": 12,
+      "title-case": 2
+    },
+    "screen-order-after": {},
+    "screen-order-before": {
+      "card-sameness": 1,
+      "emoji": 5,
+      "exclaim": 2,
+      "glow": 1,
+      "gradient": 2,
+      "greeting": 1,
+      "off-scale": 7,
+      "raw-color": 7,
+      "title-case": 2
+    },
+    "screen-paywall-before": {
+      "emoji": 4,
+      "empty-action": 1,
+      "exclaim": 2,
+      "glow": 1,
+      "gradient": 1,
+      "hype-copy": 1,
+      "native-literal": 15,
+      "pressure": 3,
+      "title-case": 1,
+      "translucent-text": 2,
+      "unverified-claim": 1
     }
   },
   "audit": {
@@ -246,7 +295,11 @@
         "text_scales": false,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 0
       }
     },
     "audit-typographic-marks": {
@@ -259,7 +312,11 @@
         "text_scales": true,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
       }
     },
     "audit-root-200": {
@@ -272,20 +329,28 @@
         "text_scales": true,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 1,
+        "edges": 1
       }
     },
     "screen-mise-before": {
       "page": "library.html",
       "expect": {
-        "contrast": 10,
+        "contrast": 14,
         "graphics": 0,
         "emoji": 15,
         "glow": 1,
         "text_scales": false,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 4,
+        "unknown": 0,
+        "off_scale": 7,
+        "edges": 4
       }
     },
     "screen-mise-after": {
@@ -298,7 +363,11 @@
         "text_scales": true,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
       }
     },
     "screen-relay-after": {
@@ -311,7 +380,11 @@
         "text_scales": true,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 3
       }
     },
     "screen-stride-after": {
@@ -324,7 +397,11 @@
         "text_scales": false,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 2
       }
     },
     "screen-trail-after": {
@@ -337,20 +414,28 @@
         "text_scales": false,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
       }
     },
     "audit-reading": {
       "page": "layering.html",
       "expect": {
-        "contrast": 11,
+        "contrast": 14,
         "graphics": 0,
         "emoji": 10,
         "glow": 1,
         "text_scales": false,
         "long_lines": 4,
         "aligned_text": 4,
-        "empty_blocks": 1
+        "empty_blocks": 1,
+        "estimated": 3,
+        "unknown": 0,
+        "off_scale": 4,
+        "edges": 1
       },
       "widths": "1280"
     },
@@ -364,7 +449,11 @@
         "text_scales": true,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 0
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
       },
       "widths": "1280"
     },
@@ -378,7 +467,115 @@
         "text_scales": true,
         "long_lines": 0,
         "aligned_text": 0,
-        "empty_blocks": 1
+        "empty_blocks": 1,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
+      }
+    },
+    "audit-gradient-text": {
+      "page": "page.html",
+      "expect": {
+        "contrast": 1,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "estimated": 1,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
+      }
+    },
+    "audit-ua-button": {
+      "page": "page.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 0
+      }
+    },
+    "audit-svg-text": {
+      "page": "page.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
+      }
+    },
+    "audit-grid-edges": {
+      "page": "page.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
+      },
+      "widths": "1280"
+    },
+    "screen-dash-after": {
+      "page": "analytics.after.html",
+      "expect": {
+        "contrast": 0,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": true,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "estimated": 0,
+        "unknown": 0,
+        "off_scale": 0,
+        "edges": 1
+      },
+      "widths": "1280"
+    },
+    "screen-order-before": {
+      "page": "before.html",
+      "expect": {
+        "contrast": 13,
+        "graphics": 0,
+        "emoji": 8,
+        "glow": 1,
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "estimated": 4,
+        "unknown": 0,
+        "off_scale": 2,
+        "edges": 3
       }
     }
   },

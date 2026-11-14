@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Analytics</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#0f0e1a;color:#e8e6f5}
+.side{position:fixed;top:0;bottom:0;left:0;width:220px;background:#16142a;padding:20px}.side a{display:block;color:#9a96c2;padding:10px 12px;border-radius:10px;text-decoration:none;font-size:14px}.side a.on{background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff}
+main{margin-left:220px;padding:28px}
+h1{font-size:28px;margin:0 0 4px}.sub{color:#8a86b0;margin:0 0 24px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi{background:#1b1933;border:1px solid #2c2950;border-radius:16px;padding:18px}.kpi .l{font-size:13px;color:#8a86b0}.kpi .v{font-size:28px;font-weight:800;margin:6px 0}.kpi .d{font-size:13px;color:#22c55e}
+.chart{background:#1b1933;border:1px solid #2c2950;border-radius:16px;padding:20px}
+.chart h2{font-size:16px;margin:0 0 12px}
+.legend{display:flex;gap:14px;font-size:12px;color:#8a86b0;margin-bottom:8px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+</style></head><body>
+<nav class="side"><a class="on" href="#">📊 Dashboard</a><a href="#">👥 Users</a><a href="#">💰 Revenue</a><a href="#">⚙️ Settings</a></nav>
+<main>
+<h1>Analytics Overview</h1><p class="sub">Here's what's happening with your business today! 🚀</p>
+<div class="kpis">
+<div class="kpi"><p class="l">Total Revenue</p><p class="v">$48,295</p><p class="d">▲ 12.5%</p></div>
+<div class="kpi"><p class="l">Active Users</p><p class="v">2,847</p><p class="d">▲ 8.2%</p></div>
+<div class="kpi"><p class="l">Conversion</p><p class="v">3.24%</p><p class="d">▲ 2.1%</p></div>
+<div class="kpi"><p class="l">Churn</p><p class="v">1.8%</p><p class="d">▲ 0.4%</p></div>
+</div>
+<div class="chart"><h2>Revenue Over Time</h2>
+<div class="legend"><span><i style="background:#a855f7"></i>Revenue</span><span><i style="background:#3b82f6"></i>Expenses</span><span><i style="background:#ec4899"></i>Profit</span></div>
+<svg viewBox="0 0 800 260" width="100%" role="img" aria-label="Revenue chart">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a855f7" stop-opacity=".6"/><stop offset="1" stop-color="#a855f7" stop-opacity="0"/></linearGradient></defs>
+<g stroke="#2c2950">
+<line x1="40" y1="20" x2="790" y2="20"/><line x1="40" y1="70" x2="790" y2="70"/><line x1="40" y1="120" x2="790" y2="120"/><line x1="40" y1="170" x2="790" y2="170"/><line x1="40" y1="220" x2="790" y2="220"/>
+<line x1="100" y1="20" x2="100" y2="220"/><line x1="220" y1="20" x2="220" y2="220"/><line x1="340" y1="20" x2="340" y2="220"/><line x1="460" y1="20" x2="460" y2="220"/><line x1="580" y1="20" x2="580" y2="220"/><line x1="700" y1="20" x2="700" y2="220"/></g>
+<g fill="#6b6890" font-size="11"><text x="8" y="24">50k</text><text x="8" y="74">40k</text><text x="8" y="124">30k</text><text x="8" y="174">20k</text><text x="8" y="224">10k</text>
+<text x="90" y="244">Jan</text><text x="210" y="244">Feb</text><text x="330" y="244">Mar</text><text x="450" y="244">Apr</text><text x="570" y="244">May</text><text x="690" y="244">Jun</text></g>
+<path d="M100 150 C160 130 180 160 220 120 S300 90 340 110 S420 60 460 80 S540 40 580 50 S660 30 700 25 L700 220 L100 220 Z" fill="url(#g)"/>
+<path d="M100 150 C160 130 180 160 220 120 S300 90 340 110 S420 60 460 80 S540 40 580 50 S660 30 700 25" fill="none" stroke="#a855f7" stroke-width="3"/>
+<path d="M100 190 C160 185 200 180 220 175 S300 170 340 168 S420 160 460 165 S540 150 580 155 S660 145 700 140" fill="none" stroke="#3b82f6" stroke-width="3"/>
+<path d="M100 200 C160 195 200 190 220 192 S300 180 340 185 S420 170 460 175 S540 165 580 160 S660 150 700 150" fill="none" stroke="#ec4899" stroke-width="3"/>
+</svg></div>
+</main></body></html>
