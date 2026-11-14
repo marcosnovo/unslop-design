@@ -54,7 +54,7 @@ Process (`SKILL.md`, `checklist.md`):
   vertical ones. #51: app-wide categories keep their color; parts of one
   measure use one hue light and dark, with a dash or a direct label.
 
-Tests: 13 new cases (pressure, adjective claims, gradient text, the UA
+Tests: 14 new cases (pressure, adjective claims, gradient text (twice), the UA
 button, SVG text, an SVG chart, Title Case nouns, grid edges, and the three test screens before and
 after).
 

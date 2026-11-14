@@ -288,6 +288,10 @@
     },
     "title-case-nouns": {
       "title-case": 2
+    },
+    "audit-gradient-own-bg": {
+      "gradient": 1,
+      "raw-color": 3
     }
   },
   "audit": {
@@ -616,6 +620,24 @@
         "estimated": 0,
         "unknown": 0,
         "off_scale": 1,
+        "edges": 1
+      }
+    },
+    "audit-gradient-own-bg": {
+      "page": "index.html",
+      "expect": {
+        "contrast": 2,
+        "graphics": 0,
+        "emoji": 0,
+        "glow": 0,
+        "text_scales": false,
+        "long_lines": 0,
+        "aligned_text": 0,
+        "empty_blocks": 0,
+        "tiny_text": 0,
+        "estimated": 1,
+        "unknown": 0,
+        "off_scale": 0,
         "edges": 1
       }
     }

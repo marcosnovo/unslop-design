@@ -223,7 +223,10 @@ function measure(scaleValues) {
       const stops = (bi.match(/(?:rgba?|hsla?|oklch|oklab|lab|lch|color)\([^)]*\)|#[0-9a-f]{3,8}\b/gi) || []).map(parse).filter(Boolean);
       if (!stops.length) return null;
       if (stops.every((c) => c.a >= 1)) return stops;  // opaque stops: what's underneath doesn't show
-      const under = n.parentElement ? bgOf(n.parentElement) : { r: 255, g: 255, b: 255, a: 1 };
+      // Translucent stops sit on the element's own background color first, then on what's behind it.
+      const behind = n.parentElement ? bgOf(n.parentElement) : { r: 255, g: 255, b: 255, a: 1 };
+      const own = parse(getComputedStyle(n).backgroundColor);
+      const under = own && own.a >= 1 ? own : own && own.a > 0 ? (behind ? blend(own, behind) : null) : behind;
       return under ? stops.map((c) => (c.a < 1 ? blend(c, under) : c)) : null;
     }
     return null;
@@ -294,7 +297,7 @@ function measure(scaleValues) {
       // Typographic marks (✓ ✔ © ™ ★) are painted with CSS color, so they stay in; only real emoji go.
       if (!ownText.replace(/(?![©®™✓✔✕✖✗✘★☆])\p{Extended_Pictographic}|[\uFE0F\u200D\s]/gu, "")) continue;
       // SVG text paints with fill, not color.
-      const paint = el.closest("svg") && /^(rgb|#)/.test(cs.fill) ? cs.fill : cs.color;
+      const paint = el.closest("svg") && parse(cs.fill) ? cs.fill : cs.color;
       const fg = parse(paint);
       const bg = bgOf(el);
       const fade = opacityOf(el);
