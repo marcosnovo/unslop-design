@@ -135,10 +135,12 @@ UNVERIFIED_CLAIM = re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by
 # A map, camera or canvas with a permanent tab bar under it (#59): the chrome eats the
 # canvas's bottom edge. Heuristic and cheap in the score: one canvas and one bottom bar
 # in the same file.
-CANVAS = re.compile(r"\b(?:GoogleMap|MapView|MapboxMap|Map|[A-Z]\w*Map|CameraPreview|CameraView|ARView|SceneView)\s*\(|"
-                    r"\bMap\s*\{|maplibregl|mapboxgl|\bL\.map\(|<canvas\b|<(?:svg|div)\b[^<>]*\bclass=[\"'][^\"']*\bmap\b")
+# Native constructors only in Swift/Kotlin: on the web `new Map()` is a collection, not a map.
+CANVAS_NATIVE = re.compile(r"\b(?:GoogleMap|MapView|MapboxMap|Map|[A-Z]\w*Map|CameraPreview|CameraView|ARView|SceneView)\s*\(|\bMap\s*\{")
+CANVAS_WEB = re.compile(r"maplibregl|mapboxgl|\bL\.map\(|<canvas\b|<(?:GoogleMap|MapContainer|Map)\b|"
+                        r"<(?:svg|div)\b[^<>]*\bclass(?:Name)?=[\"'{`]+[^\"'`}]*\bmap\b")
 BOTTOM_BAR = re.compile(r"\bNavigationBar\s*[({]|\bBottomNavigation\w*\s*[({]|\bTabView\s*[({]|\.tabItem\s*\{|"
-                        r"<nav\b[^<>]*\bclass=[\"'][^\"']*\bfixed\b[^\"']*\bbottom-0|"
+                        r"<nav\b[^<>]*\bclass(?:Name)?=[\"'{`]+[^\"'`}]*\bfixed\b[^\"'`}]*\bbottom-0|"
                         r"\bnav\s*\{[^}]*position\s*:\s*fixed[^}]*bottom\s*:\s*0")
 COMPONENT = re.compile(r"@Composable\b|\bstruct\s+\w+\s*:\s*(?:some\s+)?\w*View\b")
 CTA = re.compile(r"<(button|Button)\b|<a\b[^>]*\bhref")
@@ -274,7 +276,7 @@ def file_checks(path, text, kind, hits):
     # Native: the map and the bar must be in the same composable / view, not two screens in one file.
     starts = [0] + ([m.start() for m in COMPONENT.finditer(text)] if kind == "native" else []) + [len(text)]
     for a, b in zip(starts, starts[1:]):
-        canvas, bar = CANVAS.search(text, a, b), BOTTOM_BAR.search(text, a, b)
+        canvas, bar = (CANVAS_NATIVE if kind == "native" else CANVAS_WEB).search(text, a, b), BOTTOM_BAR.search(text, a, b)
         if canvas and bar and line_of(bar.start()) not in ignored:
             hits.setdefault(("canvas-tabbar", "#59", "Map or camera with a permanent tab bar under it (let the chrome float)"), []).append(
                 (path, line_of(bar.start()), f"canvas: {canvas.group(0).strip()[:30]}"))

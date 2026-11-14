@@ -246,14 +246,20 @@ function measure(scaleValues) {
     if (box.width > 64 || box.height > 64 || box.width < 6 || box.height < 6) continue;
     const bg = bgOf(svg);
     if (!bg) continue;
-    const fade = opacityOf(svg);
     let best = 0, color = "";
     for (const s of svg.querySelectorAll("rect, circle, ellipse, path, polygon, polyline, line")) {
       const scs = getComputedStyle(s);
-      for (const paint of [scs.fill, scs.stroke]) {
+      const fade = opacityOf(s);  // the shape, any <g opacity> between it and the svg, and everything above
+      // A fill only paints if the shape has an area: a stroke-only path keeps SVG's default
+      // black fill, which would otherwise count as a 21:1 icon nobody can see.
+      let area = s.tagName !== "line";
+      try { const b = s.getBBox(); area = area && b.width > 0 && b.height > 0; } catch {}
+      const paints = [[scs.stroke, scs.strokeOpacity]];
+      if (area) paints.unshift([scs.fill, scs.fillOpacity]);
+      for (const [paint, paintOpacity] of paints) {
         const c = paint && paint !== "none" && !paint.startsWith("url(") ? parse(paint) : null;
         if (!c || c.a === 0) continue;
-        const ca = { ...c, a: c.a * fade * Number(scs.opacity || 1) };
+        const ca = { ...c, a: c.a * fade * Number(paintOpacity ?? 1) };
         const r = ratio(ca.a < 1 ? blend(ca, bg) : ca, bg);
         if (r > best) { best = r; color = paint; }
       }
