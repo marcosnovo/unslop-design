@@ -222,7 +222,8 @@ function measure(scaleValues) {
       const clip = cs.webkitBackgroundClip || cs.backgroundClip;
       if (clip === "text" && cs.backgroundImage !== "none") { gradientText.push(label(el)); continue; }
       // Emoji are color bitmaps: CSS color doesn't paint them, so an emoji-only span isn't text to measure.
-      if (!ownText.replace(/[\p{Extended_Pictographic}\uFE0F\u200D\s]/gu, "")) continue;
+      // Typographic marks (✓ ✔ © ™ ★) are painted with CSS color, so they stay in; only real emoji go.
+      if (!ownText.replace(/(?![©®™✓✔✕✖✗✘★☆])\p{Extended_Pictographic}|[\uFE0F\u200D\s]/gu, "")) continue;
       const fg = parse(cs.color);
       const bg = bgOf(el);
       const fade = opacityOf(el);
@@ -432,8 +433,9 @@ results.textScale = await page.evaluate(() => {
     return r.width > 0 && r.height > 0 && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
   }).slice(0, 80);
   const before = els.map((el) => parseFloat(getComputedStyle(el).fontSize));
+  // Twice the root's current size, whatever the page set it to (a page already at 200% must still grow).
   const root = document.documentElement, old = root.style.fontSize;
-  root.style.fontSize = "200%";
+  root.style.fontSize = parseFloat(getComputedStyle(root).fontSize) * 2 + "px";
   const after = els.map((el) => parseFloat(getComputedStyle(el).fontSize));
   root.style.fontSize = old;
   const grew = els.filter((_, i) => after[i] > before[i] * 1.1).length;
@@ -511,8 +513,8 @@ const cf = m.craft || {};
   L.push(``, `## Text scale [#2]`, ``,
     !ts || !ts.checked ? `- no text measured`
       : ts.grew / ts.checked >= 0.5
-        ? `- ${ts.grew} of ${ts.checked} text elements grow with the reader's text size (root at 200%).`
-        : `- **${ts.checked - ts.grew} of ${ts.checked} text elements stay the same size** with the root at 200%: type in px ignores the reader's text size. Set the type scale in rem. e.g. ${ts.fixed.join(", ")}`);
+        ? `- ${ts.grew} of ${ts.checked} text elements grow with the reader's text size (root doubled).`
+        : `- **${ts.checked - ts.grew} of ${ts.checked} text elements stay the same size** with the root doubled: type in px ignores the reader's text size. Set the type scale in rem. e.g. ${ts.fixed.join(", ")}`);
 }
 L.push(``, `## Craft floor [#61-#63]`, ``,
   `- color-scheme: ${cf.colorScheme && cf.colorScheme !== "normal" ? `\`${cf.colorScheme}\`` : "**not set** (native controls and scrollbars won't follow dark mode)"}`,
