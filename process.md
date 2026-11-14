@@ -136,10 +136,16 @@ Borrows     the object's 2-3 rules
 Type        face + how numbers look
 Layout      the one structural consequence
 Color       2-4 values, roles named (#19), contrast measured
-Motion      one named interaction (#63)
+Motion      one named interaction (#63), drawn as a second frame
 Stops at    what stays native
 Risk        the hardest test it faces (long text, dark, density)
 ```
+- **Draw the interaction, don't describe it.** In Persuade and Experience
+  the key screen comes with a **second frame**: the same screen mid-way
+  through the concept's one interaction (the board at the handoff, the jar
+  as a coin drops, the row being ticked off). A static render can't show
+  an interaction, and the critic of § 4 can only remove or replace, so
+  without this frame Specificity stays at 3 however good the concept is.
 - **Compare** with the six axes of § 4 plus *Reach* and *Cost* (how much
   must be redrawn or illustrated and maintained). Hierarchy or Honesty
   under 3 disqualifies a direction. Don't average: recommend one, name what
@@ -204,7 +210,7 @@ axes, honestly, and put the scores on the page:
 |---|---|
 | Hierarchy | Is the first thing you read the answer, in gray too? |
 | Restraint | Did anything get added that a removal would have solved? |
-| Specificity | Covering the logo, is it still this product? Does the concept reach type, layout and one interaction? |
+| Specificity | Covering the logo, is it still this product? Does the concept reach type, layout and one interaction (judged on the second frame, § 2c)? |
 | Execution | Every value from a token; states, long text, dark mode drawn? |
 | Honesty | Only real data, features and numbers (#64, principle 6)? |
 | Fit | Right ambition for the surface mode (operate and read: a signature; persuade: one idea; experience: a world)? Does it survive the dullest screen? |
@@ -213,7 +219,8 @@ Any axis under 3 means revise before the user sees it, not after.
 
 **Second critic (two rounds at most).** Your own scores run optimistic.
 Before the user sees the proposal, a separate agent that didn't design it
-judges the **render** only: light, grayscale and dark if drawn, plus the
+judges the **render** only: light, grayscale and dark if drawn, the
+interaction's second frame for Persuade and Experience (§ 2c), plus the
 four grounding lines and the surface mode, and the checklist's fix titles
 only, so findings can cite a number:
 `grep -E '^[0-9]+\. \*\*' checklist.md`. Not the spec card, the

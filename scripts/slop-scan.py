@@ -87,6 +87,11 @@ RULES = [
                 r"Cutting-edge|Next-level|Elevate your|Transform your|Take your \w+ to the next level|"
                 r"Crush (it|your)|You'?ve got this|You got this|Let'?s (go|do this|crush)|Beast mode|Level up|"
                 r"Unlock your|Smash (it|your))\b", re.I), "all"),
+    ("unverified-claim", "#64", "Social proof or metric to source (\"Trusted by 10,000+ teams\", \"10x faster\") — is it real?",
+     re.compile(r"(?i:\b(?:trusted|used|loved|chosen|relied on) by\s+(?:over\s+|more than\s+)?[\d,.]+\s*[km]?\+?\s+\w+)|"
+                r"(?i:\b(?:join|over|more than)\s+[\d,.]+\s*[km]?\+\s+(?:teams|users|customers|companies|developers|engineers|businesses|people|creators))|"
+                r"\b\d+(?:\.\d+)?x\b(?:\s|<[^<>]+>)+(?i:faster|better|more|quicker|cheaper|productiv)|"
+                r"\b99\.9+%(?:\s|<[^<>]+>)+(?i:uptime|reliab|sla)"), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
 ]
@@ -118,7 +123,9 @@ CLASS_ATTR = re.compile(r"""<(?!(?:span|small|i|b|em|strong|code|kbd|label|svg|i
 UTILITY_SURFACE = re.compile(r"\brounded(-\w+)?\b")
 UTILITY_FILL = re.compile(r"\b(bg-\S+|border\b|border-\S+|shadow(-\S+)?)")
 CSS_RULE = re.compile(r"\.([\w-]+)\s*\{([^}]*)\}")
-NUMBER_CHILD = re.compile(r">\s*[$€£¥+\-−]?\d[\d.,:]*\s*(%|k|K|M|km|h|min)?\s*<|\btext-([2-6]xl)\b|"
+# A number is digits in the text ("$12,400", "99.9%", "10x", "500+"), not just large type: an
+# emoji icon at text-2xl isn't a stat.
+NUMBER_CHILD = re.compile(r">\s*[$€£¥+\-−]?\d[\d.,:]*\s*(%|k|K|M|km|h|min|x|\+)?\s*<|"
                           r"class(?:Name)?=[\"'][^\"']*\b(num|number|value|metric|stat|kpi)\b")
 CAPS_LITERAL = re.compile(r"\b(?:Text)\(\s*(?:text\s*=\s*)?\"([A-Z][A-Z0-9 &·'’/-]{3,})\"")
 TRACKING = re.compile(r"\.tracking\(|\.kerning\(|letterSpacing\s*=")
@@ -252,6 +259,17 @@ def file_checks(path, text, kind, hits):
     if len({v.upper() for _, v in found}) >= 2:
         hits.setdefault(kit_key, []).append((path, found[0][0], f"Compose template colors: {', '.join(v for _, v in found[:3])}"))
 
+    if kind == "web":
+        # A row of nav links hidden on small screens with no menu button: the phone loses navigation (#57).
+        menu = re.search(r"aria-expanded|aria-controls|<details\b|popovertarget", text)
+        for nav in re.finditer(r"<nav\b", text):
+            block = element_at(text, nav.start())
+            for h in re.finditer(r"""<[\w.]+\b[^<>]*?\bclass(?:Name)?\s*=\s*["'{`]+[^"'`}]*\bhidden\s+(?:[^"'`}]*\s)?(?:sm|md|lg|xl):(?:flex|block|inline-flex|grid|inline)\b""", block):
+                n = line_of(nav.start() + h.start())
+                if not menu and n not in ignored and len(re.findall(r"<a\b", element_at(block, h.start()))) >= 2:
+                    hits.setdefault(("hidden-nav", "#57", "Nav links hidden on phones with no menu button"), []).append(
+                        (path, n, "links hidden below a breakpoint, nothing replaces them"))
+
     key = ("card-sameness", "#40 #65", "Same card repeated with a number inside (a row of stat tiles?)")
     if kind == "web":
         surfaces = {m.group(1) for m in CSS_RULE.finditer(text)
@@ -369,7 +387,7 @@ def main():
     if not hits:
         print("nothing found")
         return 0
-    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness"]
+    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav"]
     for (rid, ref, desc), where in sorted(hits.items(), key=lambda kv: (-len(kv[1]), order.index(kv[0][0]))):
         print(f"\n[{ref}] {desc} — {len(where)} hit(s)")
         for path, n, snippet in where[: a.max]:

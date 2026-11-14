@@ -38,6 +38,8 @@ CODE = {
     "blur-content": ("Backdrop blur", "#46", 2, 6),
     "transition-all": ("transition: all", "#63", 2, 6),
     "hype-copy": ("Hype copy", "#64", 2, 6),
+    "unverified-claim": ("Unsourced social proof / metrics", "#64", 2, 6),
+    "hidden-nav": ("Nav hidden on phones", "#57", 3, 3),
     "tracked-caps": ("Tracked caps labels", "#45", 1, 4),
     "stock-kit": ("Starter kit at its defaults", "#6", 3, 3),
     "card-sameness": ("Repeated stat cards", "#65", 1, 3),

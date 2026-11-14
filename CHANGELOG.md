@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.8.4 — 2026-11-14
+
+Found by a third end-to-end run, on a Tailwind landing page in Persuade
+mode (on-call scheduling: 9 → 98 with the rendered page). Two rounds of
+the second critic both cited checklist numbers, and the stop rule ended
+the loop when the second round raised no axis:
+- The loop couldn't raise Specificity. The axis asks whether the concept
+  reaches one interaction, but the critic sees still images and may only
+  remove or replace. Both critics stopped at 3 for "no interaction
+  visible". In Persuade and Experience the key screen now comes with a
+  **second frame** of the concept's interaction (`process.md` § 2c), and
+  the critic and the Specificity axis judge it (§ 4).
+- `web-audit.mjs` no longer counts © ® ™ (or ✓ ★ and the like) as emoji:
+  they're `Extended_Pictographic` but they're characters.
+- `card-sameness` counts a number only when there are digits ("$12,400",
+  "99.9%", "10x", "500+"). Large type alone made three emoji feature cards
+  read as stat tiles.
+- New `unverified-claim` rule (#64): "Trusted by 10,000+ teams", "Join
+  50k+ developers", "10x faster", "99.9% uptime", the usual invented
+  social proof. It asks whether the claim is real and sourced.
+- New `hidden-nav` rule (#57): nav links hidden below a breakpoint
+  (`hidden md:flex`) with no menu button (`aria-expanded`,
+  `aria-controls`, `<details>`), so the phone has no navigation.
+
 ## 1.8.3 — 2026-11-14
 
 Found by a second end-to-end run, on a SwiftUI screen in Operate mode (a

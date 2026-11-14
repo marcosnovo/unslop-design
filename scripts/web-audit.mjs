@@ -168,7 +168,8 @@ function measure(scaleValues) {
   const sizes = new Map(), weights = new Map(), families = new Map(), colors = new Map(), bgs = new Map(),
     radii = new Map(), shadows = new Map(), spacing = new Map(), offScale = new Map(), tracking = new Map();
   const contrastFails = [], contrastUnknown = [], emoji = [], smallTargets = [], gradientText = [], glow = [];
-  const emojiRe = /\p{Extended_Pictographic}/u;
+  // © ® ™ and typographic marks (✓ ✔ ✕ ✗ ★ ☆) are Extended_Pictographic but they're characters, not emoji.
+  const emojiRe = /(?![©®™✓✔✕✖✗✘★☆])\p{Extended_Pictographic}/u;
   const edges = new Map(), transitionAll = [], dots = [];
   const all = [...document.body.querySelectorAll("*")].filter(vis);
   for (const el of all) {

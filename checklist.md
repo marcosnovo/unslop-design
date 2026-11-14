@@ -263,7 +263,10 @@ cite them ("#14") in their boards.
 57. **Works at 390, 768 and 1280 px.** No horizontal scroll at any width;
     the sidebar collapses behind a toggle (that toggle earns the top-left
     slot, not a bell); cards reflow with `minmax()`; tables scroll inside
-    their own container. Check with `scripts/web-audit.mjs`.
+    their own container. Nav links hidden below a breakpoint need a menu
+    button that brings them back; `slop-scan.py` flags a nav with links
+    hidden on phones and no `aria-expanded` toggle. Check the rest with
+    `scripts/web-audit.mjs`.
 
 ## Beyond clean: distinctive
 Everything above gets a screen to *clean*. These are the next step,
