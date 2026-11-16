@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <a href="https://marcosnovo.github.io/unslop-design/"><b>Website and live demo</b></a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#use-it">Use it</a> ·
   <a href="#the-72-fixes">The 72 fixes</a> ·
@@ -171,7 +172,7 @@ review, screenshots, "less AI"), so calling it by name is optional.
   <img src="assets/web-before-after.png" alt="The same finance dashboard before and after. Before: purple gradient page, glowing cards, emoji icons, pill counts, gradient 'Welcome back, Damir!' title and glowing bars. After: neutral canvas, line icons in one column, plan dots matching the chart series, plain counts, 'October 2026' title and deltas with their baseline." width="100%">
 </p>
 
-<p align="center"><sub><a href="examples/dashboard-before.html">examples/dashboard-before.html</a> → <a href="examples/dashboard-after.html">examples/dashboard-after.html</a>, rendered at 1280 px.</sub></p>
+<p align="center"><sub><a href="examples/dashboard-before.html">examples/dashboard-before.html</a> → <a href="examples/dashboard-after.html">examples/dashboard-after.html</a>, rendered at 1280 px. Drag between the two on <a href="https://marcosnovo.github.io/unslop-design/#demo">the website</a>.</sub></p>
 
 For a site or web app the agent also measures instead of eyeballing:
 
