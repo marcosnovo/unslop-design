@@ -47,7 +47,13 @@ diff of `expected.json`: that diff is the change, and it goes in the PR.
 
 ## Releasing
 
-Bump `metadata.version` in `SKILL.md` and `version` in
-`.claude-plugin/plugin.json` together (`python3 scripts/validate.py` fails
-if they differ, and plugin users only get updates when it changes), add the
-entry to `CHANGELOG.md`, and check `claude plugin validate --strict .`.
+Bump `metadata.version` in `SKILL.md`, `version` in
+`.claude-plugin/plugin.json` and `version` in `package.json` together
+(`python3 scripts/validate.py` fails if they differ, and plugin users only
+get updates when it changes), add the `## x.y.z` entry to `CHANGELOG.md`,
+and check `claude plugin validate --strict .`.
+
+Merging that to `main` is the release: `.github/workflows/release.yml` sees
+a version with no tag, runs the tests, tags the commit, publishes the
+GitHub release with the changelog entry and `unslop-design.zip`, and
+publishes to npm when the repository has an `NPM_TOKEN` secret.
