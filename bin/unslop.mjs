@@ -49,8 +49,8 @@ const HOOKS = {
     note: "Gemini CLI: AfterTool on write_file and replace. Project hooks ask for approval the first time.",
     merge: (cfg) => {
       cfg.hooks ??= {};
-      cfg.hooks.AfterTool = (cfg.hooks.AfterTool || []).filter(h => !JSON.stringify(h).includes("unslop-design"));
-      cfg.hooks.AfterTool.push({ matcher: "write_file|replace", hooks: [{ name: "unslop-design", type: "command", command: HOOK, timeout: 30000 }] });
+      cfg.hooks.AfterTool = withOurHook(cfg.hooks.AfterTool,
+        { matcher: "write_file|replace", hooks: [{ name: "unslop-design", type: "command", command: HOOK, timeout: 30000 }] });
       return cfg;
     },
   },
@@ -64,8 +64,8 @@ const HOOKS = {
     note: "Claude Code: the plugin already ships this hook (/plugin install unslop-design@unslop). Use this only without the plugin.",
     merge: (cfg) => {
       cfg.hooks ??= {};
-      cfg.hooks.PostToolUse = (cfg.hooks.PostToolUse || []).filter(h => !JSON.stringify(h).includes("unslop-design"));
-      cfg.hooks.PostToolUse.push({ matcher: "Write|Edit|MultiEdit", hooks: [{ type: "command", command: HOOK, timeout: 30 }] });
+      cfg.hooks.PostToolUse = withOurHook(cfg.hooks.PostToolUse,
+        { matcher: "Write|Edit|MultiEdit", hooks: [{ type: "command", command: HOOK, timeout: 30 }] });
       return cfg;
     },
   },
@@ -75,6 +75,13 @@ const HOOKS = {
     text: `[[hooks.PostToolUse]]\nmatcher = "apply_patch"\n\n[[hooks.PostToolUse.hooks]]\ntype = "command"\ncommand = "${HOOK}"\n`,
   },
 };
+
+// Replace only our own handler in a list of hook groups: other commands in the same group stay.
+function withOurHook(groups, group) {
+  const ours = (h) => typeof h?.command === "string" && h.command.includes("unslop-design");
+  const kept = (groups || []).map(g => ({ ...g, hooks: (g.hooks || []).filter(h => !ours(h)) })).filter(g => g.hooks.length);
+  return [...kept, group];
+}
 
 function hooks([agent, ...flags]) {
   const h = HOOKS[agent];

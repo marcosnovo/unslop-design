@@ -1105,6 +1105,25 @@
         "#67 bounce-easing",
         "motion.css:"
       ]
+    },
+    {
+      "name": "hook-short-edit",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "tool_name": "Edit",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{cases}/../hook-files/margin.css",
+          "old_string": "4",
+          "new_string": "3"
+        }
+      },
+      "contains": [
+        "#1 off-scale",
+        "margin.css:1:"
+      ]
     }
   ]
 }

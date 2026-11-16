@@ -89,7 +89,9 @@ for (const [f, text] of targets) {
   if (text === null) continue;
   const body = readFileSync(f, "utf8");
   const lines = new Set();
-  for (const piece of text.split("\n").map(l => l.trim()).filter(l => l.length >= 3)) {
+  // Every non-empty piece counts, even "3": a short value is a common UI edit. A short piece may
+  // also match other lines; reporting a few extra beats missing what the edit added.
+  for (const piece of text.split("\n").map(l => l.trim()).filter(Boolean)) {
     for (let at = body.indexOf(piece); at !== -1; at = body.indexOf(piece, at + piece.length)) {
       lines.add(body.slice(0, at).split("\n").length);
     }
