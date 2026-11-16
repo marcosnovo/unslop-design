@@ -1,8 +1,9 @@
 name: release
 # On every push to main: if the version in .claude-plugin/plugin.json has no
 # tag yet, tag that commit, publish a GitHub release with the CHANGELOG entry
-# and unslop-design.zip (for claude.ai, Claude desktop and ChatGPT), and
-# publish to npm when an NPM_TOKEN secret is set. Bump the version to release.
+# and unslop-design.zip (for claude.ai, Claude desktop and ChatGPT). Separately,
+# publish to npm when an NPM_TOKEN secret is set and npm lacks the version.
+# Bump the version to release; run it by hand to retry npm.
 on:
   push:
     branches: [main]
@@ -60,18 +61,24 @@ jobs:
         run: |
           gh release create "v$VERSION" dist/unslop-design.zip \
             --target "$GITHUB_SHA" --title "v$VERSION" --notes-file notes.md
-      - if: steps.version.outputs.new == 'true'
-        uses: actions/setup-node@v4
+      # npm is tracked on its own: a version already tagged (a failed publish, or an
+      # NPM_TOKEN added after the release) is published on the next run if npm lacks it.
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
-      - if: steps.version.outputs.new == 'true'
-        name: Publish to npm (only with an NPM_TOKEN secret)
+      - name: Publish to npm (only with an NPM_TOKEN secret, only if npm lacks this version)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::notice title=npm::No NPM_TOKEN secret: skipped. Add one in Settings → Secrets → Actions to publish npx unslop-design."
+            echo "::notice title=npm::No NPM_TOKEN secret: skipped. Add one in Settings → Secrets → Actions; the next run publishes $VERSION."
             exit 0
           fi
+          if [ "$(npm view "unslop-design@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
+            echo "unslop-design@$VERSION is already on npm"
+            exit 0
+          fi
+          python3 scripts/validate.py
           npm publish --provenance --access public
