@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: marcosnovo/unslop-design@v1.13.0
+      - uses: marcosnovo/unslop-design@v1
         with:
           paths: src
           min: 80           # optional; also: allow, scale, type-scale, comment: false

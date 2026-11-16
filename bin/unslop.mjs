@@ -21,6 +21,10 @@ const HELP = `unslop-design: make your app or site stop looking AI-generated
       the rendered page at 390/768/1280 px (needs Playwright)
   npx unslop-design rules
       every rule id with its fix number
+  npx unslop-design contrast <text-color> <background> [more backgrounds]
+      the WCAG ratio of a color pair (hex, rgba(), Compose 0xFF…)
+  npx unslop-design hook
+      the post-edit hook itself: reads the agent's event on stdin (what hook configs run)
   npx unslop-design hooks <gemini|codex|copilot|claude> [--write]
       the post-edit hook for that agent: prints its config, --write adds it to this project
 
@@ -119,6 +123,7 @@ switch (cmd) {
   case "scan": python("slop-scan.py", rest); break;
   case "score": python("unslop-score.py", rest); break;
   case "rules": python("slop-scan.py", ["--list-rules"]); break;
+  case "contrast": python("contrast.py", rest); break;
   case "hook": {
     const r = spawnSync(process.execPath, [join(ROOT, "hooks", "unslop-hook.mjs")], { stdio: "inherit" });
     process.exit(r.status ?? 0);

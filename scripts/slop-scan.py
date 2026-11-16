@@ -104,7 +104,7 @@ RULES = [
     ("empty-action", "#64", "A control whose action is empty (it implies a feature that doesn't exist: principle 6)",
      re.compile(r"\bonClick\s*=\s*\{\s*\}|\bonClick=\{\s*\(\s*\)\s*=>\s*\{\s*\}\s*\}|"
                 r"\bButton\s*\(\s*(?:action:\s*)?\{\s*\}|\bButton\s*\{\s*\}\s*label|\baction:\s*\{\s*\}"), "all"),
-    ("pressure", "#64", "Pressure copy (countdown, scarcity, \"most popular\", \"save N%\"): true, computed and sourced?",
+    ("pressure", "#64", "Pressure copy (countdown, scarcity, \"most popular\", \"save N%\"): true, computed and sourced? (\"Recommended\" is honest)",
      re.compile(r"(?i:\boffer ends in\b|\bends in \d|\blimited[- ]time (?:offer|deal|only)\b|\bonly \d+ (?:left|spots?|seats?)\b|"
                 r"\bhurry\b|\bact now\b|\blast chance\b|\bmost popular\b|\bbest (?:value|seller)\b|"
                 r"\bsave \d+\s?%(?!(?:\s|<[^<>]+>)*(?:vs\.?|versus|compared|than)\b))"), "all"),

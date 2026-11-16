@@ -1124,6 +1124,57 @@
         "#1 off-scale",
         "margin.css:1:"
       ]
+    },
+    {
+      "name": "contrast-fails",
+      "script": "contrast.py",
+      "args": [
+        "#ffffff",
+        "#3ddc84"
+      ],
+      "exit": 1,
+      "contains": [
+        "1.78:1",
+        "fails text (4.5)"
+      ]
+    },
+    {
+      "name": "contrast-passes-worst",
+      "script": "contrast.py",
+      "args": [
+        "#151513",
+        "#f5f5f2",
+        "#ffffff"
+      ],
+      "exit": 0,
+      "contains": [
+        "passes text",
+        "worst: 16.74:1"
+      ]
+    },
+    {
+      "name": "contrast-translucent",
+      "script": "contrast.py",
+      "args": [
+        "rgba(255,255,255,0.6)",
+        "#2440c8"
+      ],
+      "exit": 1,
+      "contains": [
+        "3.88:1"
+      ]
+    },
+    {
+      "name": "contrast-compose-hex",
+      "script": "contrast.py",
+      "args": [
+        "0xFF6650A4",
+        "#fff"
+      ],
+      "exit": 0,
+      "contains": [
+        "6.46:1"
+      ]
     }
   ]
 }

@@ -125,8 +125,10 @@ The most common AI-generated web screen. Check in this order:
 - Sections share one gap (#44); no "✨ Powered by AI" eyebrow above every
   heading.
 - Logos of customers in one tone, one height, fixed frames (#37).
-- Pricing: one recommended plan, prices from the source of truth, the
-  currency of the visitor's market or none.
+- Pricing: one recommended plan, labeled "Recommended" (your advice,
+  true by definition), never "Most popular" without the data behind it
+  (#64); prices from the source of truth, the currency of the visitor's
+  market or none.
 - Check at 390 px first: most visits are on a phone.
 
 ## 6. Verification for a web PR

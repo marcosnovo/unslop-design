@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.13.0"
+  version: "1.14.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -44,7 +44,9 @@ If `.unslop/context.md` exists, read it first and follow its **Keeps**: the
 scripts already take its scale and allowed rules. If it doesn't, don't
 block: run as usual and offer `init` once at the end.
 
-Three scripts measure instead of guessing:
+The scripts live in this skill's folder: run them by their full path from
+the project (`python3 <skill>/scripts/unslop-score.py src/`), or through
+`npx unslop-design scan|score|audit|contrast`. They measure instead of guessing:
 - `python3 scripts/slop-scan.py <paths> [--scale …] [--allow rules]` — slop patterns in source (web,
   SwiftUI, Compose) with file, line and fix number, including starter-kit
   defaults (#6), rows of identical stat cards (#65), pep-talk copy, Title
@@ -68,6 +70,9 @@ Three scripts measure instead of guessing:
   A hit is fixed by changing the value, never by hiding it from the
   scanner (a `calc()` that lands on the same 11px is still 11px).
 
+`scripts/contrast.py <text> <background>` gives the WCAG ratio of any pair
+(hex, `rgba()`, Compose `0xFF…`; translucent text composited first): use it
+for native colors, where there's no rendered page to audit.
 `scripts/slop-scan.py --list-rules` lists every rule id; `--json` and `--github`
 (Actions annotations) are for CI, and `action.yml` wraps both with a
 minimum score. In Claude Code the plugin's hook runs the scan after each
@@ -138,11 +143,15 @@ One screenshot, one screen or one page, or the user says "quick": no
 subagents, no jury, one pass you can finish in a few minutes.
 
 1. Ground it in one line (what the screen is for, its surface mode) and
-   measure what you can: `scripts/unslop-score.py` on the screen's code
-   (with `--audit` for a web page). Then the passes on the render
-   (`process.md` § 2): one second, squint, cover the logo, left edges, gray,
-   ten-app lineup. For a Persuade or Experience screen, write three
-   one-line concepts and pick one (`process.md` § 2c).
+   measure what you can: `scripts/unslop-score.py` on **this screen's own
+   files** with `--save` and `--json > .unslop/before.json` (and `--audit`
+   for a web page), so the trend and the "after" have a baseline. A
+   stylesheet shared with other screens carries their slop too: score the
+   screen's files, and report the shared file's leftovers apart. Then the
+   passes on the render (`process.md` § 2): one second, squint, cover the
+   logo, left edges, gray, ten-app lineup. Only when redesigning a Persuade
+   or Experience screen, write three one-line concepts and pick one
+   (`process.md` § 2c); a refine keeps the skeleton and skips them.
 2. Pick the **five fixes that change the screen most**, each with its
    `checklist.md` number and one line of why. Hierarchy and spacing before
    color, color before polish. Say what you would *not* change.
@@ -150,8 +159,12 @@ subagents, no jury, one pass you can finish in a few minutes.
    the edited code's render, or an HTML mock of the screen when there's no
    code or it can't run here (native without a simulator: the mock at
    device size is the render, and the report says so), with the filled
-   `spec-card.md` rows it uses. Audit each state as its own page, not the
-   side-by-side board, or the census mixes before and after; a phone mock
+   `spec-card.md` rows it uses. Put the board, the mocks and the audits in
+   `.unslop/proposal/` (the scanner skips dot folders, so they never count
+   against the project's score or its CI), and change no project file
+   before the "yes". Audit each state as its own page with its own `--out`
+   (`.unslop/proposal/audit-before`, `-after`), not the side-by-side
+   board, or the census mixes before and after; a phone mock
    (fluid up to the device width, not a fixed 393px) with `--device` and
    `--widths 390` (its text-scale line says nothing
    about native Dynamic Type: draw the largest size instead). For a
@@ -165,11 +178,14 @@ subagents, no jury, one pass you can finish in a few minutes.
    the second critic of § 4 once (with no subagents: answer its questions
    1-3 from the image alone, before rereading your own notes); for Operate
    and Read, answer questions 1-3 yourself.
-4. On "yes", apply them as tokens (principle 1), rerun the score with
-   `--save` and report "score X → Y" and what's still left. Write the five
-   fixes to `.unslop/review.md` (format in `context.md`): applied `[x]`,
-   accepted but not done `[ ]`, rejected `[-]` with the reason, so the next
-   run neither repeats nor forgets them.
+4. On "yes", apply the accepted fixes as tokens (principle 1): all five,
+   unless the user picked some. Rerun the score on the same files with
+   `--save --baseline .unslop/before.json` and report "score X → Y" and
+   what's still left. Write the five fixes to `.unslop/review.md` (format
+   in `context.md`): applied `[x]`, accepted but not done `[ ]`, rejected
+   `[-]` with the reason, so the next run neither repeats nor forgets them.
+   *unslop apply* picks up the `[ ]` rows later; with none left, it says
+   so and offers the next steps instead.
 
 End the proposal with this report, filled honestly, so a skipped step shows:
 
@@ -178,7 +194,9 @@ Render looked at   yes / no (which widths, light/dark)
 Passes             one second · squint · logo · edges · gray · lineup
 Six axes           H _  R _  S _  E _  Honesty _  Fit _
 Spec card rows     the rows the after uses
-Score              X → Y (same script version, --allow if any)
+Contrast           pairs measured (web-audit, or scripts/contrast.py for native)
+Score              X → Y (same files, same script version, --allow if any)
+Context            .unslop/context.md read / none (offer init once)
 Not checked        largest text, dark, long data, … (say which)
 ```
 
@@ -243,11 +261,15 @@ world. A concept the product's content doesn't ask for stays a signature.
 
 ## Refine or redesign
 
-Ask which one before proposing. **Refining preserves**: the layout, the
+Ask which one before proposing, unless the request already says ("keep
+our layout", "start over"). **Refining preserves**: the layout, the
 brand face, the signature and the voice stay, and fixes move values inside
 them. **Redesigning replaces**: the concept (`process.md` § 2b) can change
 the skeleton. Most requests are refinements; a refine that quietly redraws
-the screen is the one thing the user didn't ask for.
+the screen is the one thing the user didn't ask for. A refine still removes
+what principles 5 and 6 rule out (contrast under AA, invented numbers,
+logos and testimonials): keep the slot when it has a job ("social proof
+here, once there is some") and say what real content goes in it.
 
 ## If the project already has its own design skill
 

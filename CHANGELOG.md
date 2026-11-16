@@ -1,5 +1,47 @@
 # Changelog
 
+## 1.14.0 — 2026-11-16
+
+Three blind runs of 1.13 by fresh agents that only had the skill and the
+request: a web app (no command, then init, a quick pass, "yes", score), a
+SwiftUI screen with no simulator (quick pass, apply, then the Gemini hook
+and the Action), and a landing page (critique, then "refine, don't
+redesign"). Each worked end to end (27 → 68, 62 → 100, 2 → 96); what they
+had to guess is now written down.
+
+Quick mode (`SKILL.md`):
+- The "before" is saved (`--save --json > .unslop/before.json`) and the
+  "after" compares with it (`--baseline`): the trend had only one entry.
+- Score **the screen's own files**; a stylesheet shared with other screens
+  carries their slop and is reported apart (a fixed screen read 68).
+- The board, mocks and audits go in `.unslop/proposal/`, each audit with its
+  own `--out`: mocks were counted in the project's score (and its CI),
+  and the second audit overwrote the first. No project file changes
+  before the "yes".
+- On "yes", apply the accepted fixes; *apply* picks up `[ ]` rows and,
+  with none left, says so and offers the next steps.
+- The report gets **Contrast** (pairs measured) and **Context** (read, or
+  none: offer `init` once) rows.
+- Refine or redesign: don't ask when the request already says. The three
+  concepts are for a redesign only. A refine still removes what principles
+  5 and 6 rule out, keeping the slot and saying what real content goes in.
+
+- `scripts/contrast.py` (and `npx unslop-design contrast`): the WCAG ratio
+  of any pair, translucent text composited, Compose `0xFF…` hex read, the
+  worst of several backgrounds. Native screens had no way to measure
+  principle 5.
+- `context.md`: with no tokens, the scale is a proposal from the most used
+  values; commit only on a "yes" to the context; `allow:` may be empty.
+- `web.md` and the `pressure` rule: the recommended plan is labeled
+  "Recommended", never "Most popular" without data (they contradicted).
+- `npx unslop-design --help` lists `hook` and `contrast`.
+- Releases move a major tag (`v1`), so `uses: marcosnovo/unslop-design@v1`
+  follows every 1.x release; the README and guide use it.
+- README in 30 seconds (587 → 266 lines); install options, automation,
+  how it works and the FAQ move to `guide/`.
+
+Tests: 4 contrast checks.
+
 ## 1.13.0 — 2026-11-16
 
 The post-edit hook in every agent whose hooks can talk back to the model.

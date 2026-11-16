@@ -9,13 +9,18 @@ Without it, every session re-asks the same questions or guesses the scale.
 1. **Read before asking.** The README, the app's screens, the token or
    theme files (`tokens`, `theme`, `tailwind.config`, `Color.kt`,
    `Theme.swift`), the existing design doc or skill. Derive the scales from
-   the tokens, not from what the screens happen to use.
+   the tokens, not from what the screens happen to use. With no tokens,
+   propose a scale from the values the screens use most and list the
+   off-scale ones as findings: the scale is a proposal for the user, not a
+   fact about the project.
 2. **Ask three questions at most**, only what the code can't answer:
    who uses it and in what scene (`process.md` § 2b, step 0), what must
    not change (the brand face, a color, a signature), and which surface
    mode each main area is (`SKILL.md` § Surface modes).
-3. **Write the file** with the template below, show it, and commit it with
-   the user's "yes". Keep it under a screen: it is read on every run.
+3. **Write the file** with the template below and show it. Commit it only
+   on a "yes" to the context itself (a "yes" to a later proposal isn't
+   one). Keep it under a screen: it is read on every run. Leave `allow:`
+   empty (or drop the line) when nothing is allowed.
 4. **Never block on it.** A one-screen quick pass without context runs as
    before and offers `init` at the end, once.
 
