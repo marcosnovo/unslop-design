@@ -10,8 +10,8 @@ Without it, every session re-asks the same questions or guesses the scale.
    theme files (`tokens`, `theme`, `tailwind.config`, `Color.kt`,
    `Theme.swift`), the existing design doc or skill. Derive the scales from
    the tokens, not from what the screens happen to use. With no tokens,
-   propose a scale from the values the screens use most and list the
-   off-scale ones as findings: the scale is a proposal for the user, not a
+   propose the base-4 scale (`checklist.md` #1) nearest to the values the
+   screens use most, and list the values off it as findings: the scale is a proposal for the user, not a
    fact about the project.
 2. **Ask three questions at most**, only what the code can't answer:
    who uses it and in what scene (`process.md` § 2b, step 0), what must
@@ -86,7 +86,10 @@ Score 41 → (pending)
 - [ ] #20 Quiet badges: "Cheapest" as dark text on a 10% tint
 - [ ] #43 One left edge for title, price and address
 - [-] #47 Dot-matrix numerals: rejected, the brand face stays (Keeps)
+- [~] #65 Stat row as one line: the user keeps the cards for now
 ```
 
 `[ ]` proposed and accepted, `[x]` applied (rerun the score), `[-]`
-rejected with the reason, so the next review doesn't propose it again.
+rejected with the reason, so the next review doesn't propose it again,
+`[~]` deferred by the user ("not now"): *apply* skips it and the next
+review may raise it once more.

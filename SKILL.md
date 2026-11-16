@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.14.0"
+  version: "1.14.1"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -75,7 +75,7 @@ the project (`python3 <skill>/scripts/unslop-score.py src/`), or through
 for native colors, where there's no rendered page to audit.
 `scripts/slop-scan.py --list-rules` lists every rule id; `--json` and `--github`
 (Actions annotations) are for CI, and `action.yml` wraps both with a
-minimum score. In Claude Code the plugin's hook runs the scan after each
+minimum score and a PR comment (`uses: marcosnovo/unslop-design@v1`). In Claude Code the plugin's hook runs the scan after each
 UI edit and tells you what you just added: fix those hits before moving on.
 Gemini CLI, Codex and Copilot get the same hook with `npx unslop-design hooks <agent>`.
 
@@ -146,8 +146,9 @@ subagents, no jury, one pass you can finish in a few minutes.
    measure what you can: `scripts/unslop-score.py` on **this screen's own
    files** with `--save` and `--json > .unslop/before.json` (and `--audit`
    for a web page), so the trend and the "after" have a baseline. A
-   stylesheet shared with other screens carries their slop too: score the
-   screen's files, and report the shared file's leftovers apart. Then the
+   stylesheet shared with other screens carries their slop too: on the web
+   the page's markup plus its rendered `--audit` is the screen's score, and
+   the shared stylesheet's code score is reported apart. Then the
    passes on the render (`process.md` § 2): one second, squint, cover the
    logo, left edges, gray, ten-app lineup. Only when redesigning a Persuade
    or Experience screen, write three one-line concepts and pick one
@@ -161,8 +162,8 @@ subagents, no jury, one pass you can finish in a few minutes.
    device size is the render, and the report says so), with the filled
    `spec-card.md` rows it uses. Put the board, the mocks and the audits in
    `.unslop/proposal/` (the scanner skips dot folders, so they never count
-   against the project's score or its CI), and change no project file
-   before the "yes". Audit each state as its own page with its own `--out`
+   against the project's score or its CI), the edited "after" as a copy in
+   `.unslop/proposal/after/`, and change no project file before the "yes". Audit each state as its own page with its own `--out`
    (`.unslop/proposal/audit-before`, `-after`), not the side-by-side
    board, or the census mixes before and after; a phone mock
    (fluid up to the device width, not a fixed 393px) with `--device` and
@@ -177,13 +178,15 @@ subagents, no jury, one pass you can finish in a few minutes.
    axis, revise before showing. For Persuade and Experience screens run
    the second critic of § 4 once (with no subagents: answer its questions
    1-3 from the image alone, before rereading your own notes); for Operate
-   and Read, answer questions 1-3 yourself.
+   and Read, answer questions 1-3 yourself. A "revise" verdict means one
+   more pass; if it still holds, show it with the verdict stated.
 4. On "yes", apply the accepted fixes as tokens (principle 1): all five,
    unless the user picked some. Rerun the score on the same files with
    `--save --baseline .unslop/before.json` and report "score X → Y" and
    what's still left. Write the five fixes to `.unslop/review.md` (format
    in `context.md`): applied `[x]`, accepted but not done `[ ]`, rejected
-   `[-]` with the reason, so the next run neither repeats nor forgets them.
+   `[-]` with the reason, deferred "for now" `[~]`, so the next run neither
+   repeats nor forgets them. Commit nothing unless the user asks.
    *unslop apply* picks up the `[ ]` rows later; with none left, it says
    so and offers the next steps instead.
 

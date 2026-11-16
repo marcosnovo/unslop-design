@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.14.1 — 2026-11-16
+
+Two blind runs of 1.14 with a small model (Haiku), only the skill and the
+user's messages: the web app flow (no command, init, quick pass, "yes",
+score: 58 → 99) and the SwiftUI flow with a partial yes ("skip the stat
+cards for now"), apply, the Gemini hook and the Action (62 → 94). Both
+followed the 1.14 changes (baseline saved, proposal in `.unslop/proposal/`,
+Contrast and Context rows, context not committed). What they had to guess:
+
+- `review.md` gets `[~]` for "not now": *apply* skips it, the next review
+  may raise it once. "Skip for now" had to be filed as rejected.
+- `SKILL.md` names the Action as `uses: marcosnovo/unslop-design@v1`; a run
+  pinned the version from the skill's metadata instead.
+- On the web, the screen's score is its markup plus the rendered audit; a
+  shared stylesheet's code score is reported apart.
+- With code, the edited "after" is a copy in `.unslop/proposal/after/`.
+- A "revise" verdict from the second critic: one more pass, then show it
+  with the verdict stated. Commit nothing unless the user asks.
+- `context.md`: with no tokens, propose the base-4 scale nearest to the
+  most used values (it contradicted #1).
+- `unslop-score.py` and `test.py` no longer write `__pycache__` into the
+  installed skill's folder.
+
 ## 1.14.0 — 2026-11-16
 
 Three blind runs of 1.13 by fresh agents that only had the skill and the

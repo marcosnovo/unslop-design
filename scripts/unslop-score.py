@@ -23,6 +23,9 @@ with `unslop-ignore`). Standard library only.
 """
 import argparse
 import importlib.util
+import sys as _sys
+
+_sys.dont_write_bytecode = True  # no __pycache__ inside the installed skill
 import json
 import datetime
 import os
