@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.13.0 — 2026-11-16
+
+The post-edit hook in every agent whose hooks can talk back to the model.
+
+- `hooks/unslop-hook.mjs` reads the event of each agent: Claude Code
+  (`Write`/`Edit`/`MultiEdit`), Gemini CLI (`AfterTool` on `write_file` and
+  `replace`), Codex CLI (`apply_patch`, with the paths and added lines taken
+  from the patch) and GitHub Copilot / VS Code agents (`postToolUse`, the
+  path from `tool_input` or `toolArgs`). It scans every UI file the edit
+  touched and answers with `hookSpecificOutput.additionalContext`, which all
+  four read. Hits now show as `file:line`.
+- `npx unslop-design hook` runs it from npm, so a config needs no path.
+- `npx unslop-design hooks gemini|copilot|claude [--write]` prints or adds
+  the config to the project (`.gemini/settings.json` merged,
+  `.github/hooks/unslop-design.json`, `.claude/settings.json`; writing twice
+  doesn't duplicate it). `hooks codex` prints the `config.toml` block.
+- Cursor and Windsurf are left out on purpose: their post-edit hooks can't
+  send anything back to the agent yet.
+
+Tests: 4 new hook checks (Gemini write and a clean replace, a Codex patch,
+Copilot `toolArgs`).
+
 ## 1.12.0 — 2026-11-16
 
 The score where people read it: on the pull request, against the base

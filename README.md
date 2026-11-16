@@ -300,6 +300,21 @@ edit just added, with the fix number. It says nothing when the edit is
 clean, never changes code itself, and turns off with `UNSLOP_HOOK=off` or
 `hook: off` in `.unslop/context.md`.
 
+**While other agents write.** The same hook works wherever an agent's hooks
+can hand a note back to the model. One command sets it up in the project:
+
+```bash
+npx unslop-design hooks gemini --write    # .gemini/settings.json, AfterTool
+npx unslop-design hooks copilot --write   # .github/hooks/unslop-design.json, postToolUse (preview)
+npx unslop-design hooks codex             # prints the ~/.codex/config.toml block, PostToolUse
+```
+
+Each runs `npx -y unslop-design hook` after a write or edit, reads the
+agent's event (Gemini's `write_file`/`replace`, Codex's `apply_patch`,
+Copilot's tool arguments) and answers in the format they share. Cursor's and
+Windsurf's post-edit hooks can't send anything back to the agent yet, so
+there is no hook for them; the scanner and the CI work there as anywhere.
+
 **On every pull request (GitHub Actions).** Each hit becomes an annotation
 on its line, and one comment on the PR keeps the score and the change
 against the base branch, updated on every push:
@@ -321,7 +336,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: marcosnovo/unslop-design@v1.12.0
+      - uses: marcosnovo/unslop-design@v1.13.0
         with:
           paths: src
           min: 80           # optional; also: allow, scale, type-scale, comment: false

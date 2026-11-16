@@ -980,7 +980,7 @@
       },
       "contains": [
         "#68 ghost-card",
-        "line 1:"
+        "Card.tsx:1:"
       ]
     },
     {
@@ -1029,6 +1029,81 @@
       "exit": 1,
       "contains": [
         "can't read the baseline"
+      ]
+    },
+    {
+      "name": "hook-gemini-aftertool",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "hook_event_name": "AfterTool",
+        "tool_name": "write_file",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{cases}/framework-svelte/Toast.svelte",
+          "content": "…"
+        }
+      },
+      "contains": [
+        "\"hookEventName\":\"AfterTool\"",
+        "#66 hard-shadow"
+      ]
+    },
+    {
+      "name": "hook-gemini-replace-clean",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "hook_event_name": "AfterTool",
+        "tool_name": "replace",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{cases}/framework-svelte/Toast.svelte",
+          "old_string": "12px 16px",
+          "new_string": "padding: 12px 16px;"
+        }
+      },
+      "excludes": [
+        "hookSpecificOutput"
+      ]
+    },
+    {
+      "name": "hook-codex-apply-patch",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "apply_patch",
+        "cwd": "{root}",
+        "tool_input": {
+          "input": "*** Begin Patch\n*** Update File: tests/cases/craft-ghost-card/Card.tsx\n@@\n-export const Card = ({ children }) => <div>{children}</div>;\n+export const Card = ({ children }) => <div className=\"rounded-xl border bg-card text-card-foreground shadow\">{children}</div>;\n*** End Patch"
+        }
+      },
+      "contains": [
+        "#68 ghost-card",
+        "Card.tsx:1:"
+      ],
+      "excludes": [
+        "Card.tsx:3:"
+      ]
+    },
+    {
+      "name": "hook-copilot-toolargs",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "hookEventName": "PostToolUse",
+        "toolName": "create_file",
+        "cwd": "{root}",
+        "toolArgs": "{\"filePath\": \"tests/cases/craft-bounce-easing/motion.css\", \"content\": \"…\"}"
+      },
+      "contains": [
+        "#67 bounce-easing",
+        "motion.css:"
       ]
     }
   ]

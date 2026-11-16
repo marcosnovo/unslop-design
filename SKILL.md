@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.12.0"
+  version: "1.13.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -72,6 +72,7 @@ Three scripts measure instead of guessing:
 (Actions annotations) are for CI, and `action.yml` wraps both with a
 minimum score. In Claude Code the plugin's hook runs the scan after each
 UI edit and tells you what you just added: fix those hits before moving on.
+Gemini CLI, Codex and Copilot get the same hook with `npx unslop-design hooks <agent>`.
 
 `examples/dashboard-before.html` and `-after.html` show both on one page.
 
