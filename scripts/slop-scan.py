@@ -630,6 +630,25 @@ def files(paths):
                     yield os.path.join(root, n)
 
 
+# Code samples and at-rule conditions aren't UI copy or layout (straight-quotes, fixed-width).
+CODE_SPAN = re.compile(r"<(code|pre|kbd|samp)\b[^>]*>.*?</\1>", re.S)
+
+
+def mask_code(line, in_pre):
+    """The line without code: what a multi-line <pre> still holds, inline <code>/<pre>/<kbd>/<samp>
+    spans, and an unclosed <pre> to the end of the line. Returns (masked line, inside <pre> after it)."""
+    if in_pre:
+        end = line.find("</pre>")
+        if end == -1:
+            return "", True
+        line = line[end + len("</pre>"):]
+    line = CODE_SPAN.sub("", line)
+    start = line.find("<pre")
+    if start != -1:
+        return line[:start], True
+    return line, False
+
+AT_RULE_PRELUDE = re.compile(r"@(?:media|container|supports)\b[^{]*")
 DEFAULT_SCALE = "0,1,2,4,8,12,16,20,24,32,40,48,64,80,96"
 DEFAULT_TYPE_SCALE = {11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 44, 48, 56, 64, 72, 80, 96}
 # Colored shadows in CSS, any offset: "0 10px 30px rgba(255,107,107,.45)" is a glow too (#32).
@@ -666,7 +685,9 @@ def scan(path, scale, hits, type_scale=None):
     has_focus_visible = "focus-visible" in text
     file_checks(path, text, kind, hits)
     in_root = False
+    in_pre = False
     for n, line in enumerate(text.splitlines(), 1):
+        copy_line, in_pre = mask_code(line, in_pre)
         if "unslop-ignore" in line:
             continue
         stripped = line.strip()
@@ -688,7 +709,12 @@ def scan(path, scale, hits, type_scale=None):
                 continue
             if rid in ("native-literal", "elevation-literal") and is_token_file:
                 continue  # Tokens.kt / Type.kt / Theme.swift: literals belong there
-            if rx.search(line):
+            target = line
+            if rid == "straight-quotes":
+                target = copy_line  # code samples keep their straight quotes
+            elif rid == "fixed-width":
+                target = AT_RULE_PRELUDE.sub("", line)  # @media (min-width: 768px) is a breakpoint, not a width
+            if rx.search(target):
                 hits.setdefault((rid, ref, desc), []).append((path, n, stripped[:110]))
         if kind == "web":
             glow_key = next((r[0], r[1], r[2]) for r in RULES if r[0] == "glow")

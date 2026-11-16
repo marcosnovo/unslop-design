@@ -4,3 +4,7 @@
 .page { max-width: 1200px; }
 @media (min-width: 768px) { .grid { display: grid; } }
 .avatar { width: 48px; }
+/* misses from review: at-rule conditions with spaces */
+@media ( min-width: 768px ) { .grid { display: grid; } }
+@media screen and ( max-width:1024px ) { .b { width: 50%; } }
+@container (width > 600px) { .c { color: var(--fg); } }
