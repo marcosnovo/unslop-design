@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.12.0 — 2026-11-16
+
+The score where people read it: on the pull request, against the base
+branch.
+
+- **PR comment** (`action.yml`): on `pull_request`, the action also scores
+  the base commit with the same scripts and options, and keeps one comment
+  on the PR, updated on every push: "unslop score: 88/100 (+7 vs main)",
+  what got worse, what got better, every row in a fold. New inputs
+  `comment` (default true) and `github-token`, a new `delta` output. It
+  needs `pull-requests: write`; without it (or on a fork's read-only token)
+  it leaves a warning and the job goes on.
+- **`unslop-score.py --baseline`** compares with an earlier `--json` run, in
+  text, Markdown and JSON (`--baseline-label main`), so the same comparison
+  works locally between two branches.
+- **Share your score**: an issue template (before/after, both numbers, the
+  fixes that mattered, what it missed, permission to show it) and a
+  **Scores in the wild** section in the README.
+- This repo's CI comments its own score on its PRs.
+
+Tests: 3 new command-line checks (text, Markdown, a missing baseline).
+
 ## 1.11.0 — 2026-11-16
 
 Thirteen scanner rules for fixes that had no automatic check, picked by one

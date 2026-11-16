@@ -1,5 +1,5 @@
 name: unslop design score
-description: Scan UI source for AI-slop patterns, annotate the lines and score the UI from 0 to 100.
+description: Scan UI source for AI-slop patterns, annotate the lines, score the UI from 0 to 100 and comment the change on the PR.
 author: marcosnovo
 branding:
   icon: eye
@@ -20,10 +20,19 @@ inputs:
   type-scale:
     description: Allowed font sizes in px, comma-separated (your type tokens)
     default: ""
+  comment:
+    description: On pull requests, post (and keep updating) one comment with the score and the change against the base branch. Needs `pull-requests write`.
+    default: "true"
+  github-token:
+    description: Token used for the PR comment
+    default: ${{ github.token }}
 outputs:
   score:
     description: The score from 0 to 100
     value: ${{ steps.score.outputs.score }}
+  delta:
+    description: Change against the base branch on pull requests (empty otherwise)
+    value: ${{ steps.score.outputs.delta }}
 runs:
   using: composite
   steps:
@@ -35,6 +44,8 @@ runs:
         UNSLOP_ALLOW: ${{ inputs.allow }}
         UNSLOP_SCALE: ${{ inputs.scale }}
         UNSLOP_TYPE_SCALE: ${{ inputs.type-scale }}
+        UNSLOP_COMMENT: ${{ inputs.comment }}
+        GH_TOKEN: ${{ inputs.github-token }}
         SCRIPTS: ${{ github.action_path }}/scripts
       run: |
         set -euo pipefail
@@ -43,13 +54,54 @@ runs:
         [ -n "$UNSLOP_ALLOW" ] && opts+=(--allow "$UNSLOP_ALLOW")
         [ -n "$UNSLOP_SCALE" ] && opts+=(--scale "$UNSLOP_SCALE")
         [ -n "$UNSLOP_TYPE_SCALE" ] && opts+=(--type-scale "$UNSLOP_TYPE_SCALE")
-        # One annotation per hit on the changed lines' files.
-        python3 "$SCRIPTS/slop-scan.py" "${paths[@]}" "${opts[@]}" --github > "$RUNNER_TEMP/unslop-scan.txt" || true
-        grep '^::warning' "$RUNNER_TEMP/unslop-scan.txt" | head -200 || true
-        python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --markdown >> "$GITHUB_STEP_SUMMARY" || true
-        score=$(python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --json | python3 -c 'import json,sys; print(json.load(sys.stdin)["score"])')
+        out="$RUNNER_TEMP/unslop"
+        mkdir -p "$out"
+
+        # One annotation per hit.
+        python3 "$SCRIPTS/slop-scan.py" "${paths[@]}" "${opts[@]}" --github > "$out/scan.txt" || true
+        grep '^::warning' "$out/scan.txt" | head -200 || true
+
+        python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --json > "$out/head.json"
+        score=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["score"])' "$out/head.json")
         echo "score=$score" >> "$GITHUB_OUTPUT"
         echo "unslop score: $score/100"
+
+        # On a pull request: score the base branch with the same scripts and options.
+        pr="" base_ref="" baseline=()
+        if [[ "${GITHUB_EVENT_NAME:-}" == pull_request* ]] && [ -f "${GITHUB_EVENT_PATH:-}" ]; then
+          read -r pr base_sha base_ref < <(python3 -c 'import json,sys; p=json.load(open(sys.argv[1]))["pull_request"]; print(p["number"], p["base"]["sha"], p["base"]["ref"])' "$GITHUB_EVENT_PATH")
+          if git fetch -q --depth=1 origin "$base_sha" 2>/dev/null && git worktree add -q --detach "$out/base" "$base_sha" 2>/dev/null; then
+            if (cd "$out/base" && python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --json > "$out/base.json" 2>/dev/null); then
+              baseline=(--baseline "$out/base.json" --baseline-label "$base_ref")
+              delta=$(python3 -c 'import json,sys; print(int(sys.argv[2]) - json.load(open(sys.argv[1]))["score"])' "$out/base.json" "$score")
+              echo "delta=$delta" >> "$GITHUB_OUTPUT"
+            else
+              echo "::notice title=unslop::No UI files to score on $base_ref; the comment shows this branch only."
+            fi
+            git worktree remove --force "$out/base" || true
+          else
+            echo "::notice title=unslop::Couldn't fetch the base commit; the comment shows this branch only."
+          fi
+        fi
+
+        python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" "${baseline[@]}" --markdown > "$out/summary.md"
+        cat "$out/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+        # One comment per PR, updated on every push.
+        if [ -n "$pr" ] && [ "$UNSLOP_COMMENT" = "true" ]; then
+          marker="<!-- unslop-score -->"
+          { echo "$marker"; cat "$out/summary.md"; } > "$out/comment.md"
+          python3 -c 'import json,sys; print(json.dumps({"body": open(sys.argv[1]).read()}))' "$out/comment.md" > "$out/comment.json"
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/$pr/comments" --paginate --jq ".[] | select(.body | startswith(\"$marker\")) | .id" 2>/dev/null | head -1 || true)
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" --input "$out/comment.json" > /dev/null \
+              || echo "::warning title=unslop::Couldn't update the PR comment. Give the job 'pull-requests: write', or set comment: false."
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$pr/comments" --input "$out/comment.json" > /dev/null \
+              || echo "::warning title=unslop::Couldn't comment on the PR (forks get a read-only token). Give the job 'pull-requests: write', or set comment: false."
+          fi
+        fi
+
         if [ -n "$UNSLOP_MIN" ] && python3 -c "import sys; sys.exit(0 if $score < float('$UNSLOP_MIN') else 1)"; then
           echo "::error title=unslop score::$score is under the minimum of $UNSLOP_MIN"
           exit 1

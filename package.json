@@ -1,6 +1,6 @@
 {
   "name": "unslop-design",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "Make your app or site stop looking AI-generated: install the agent skill, scan UI code for slop and score it 0-100.",
   "license": "MIT",
   "author": "Marcos Novo (https://github.com/marcosnovo)",

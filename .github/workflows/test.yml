@@ -5,6 +5,7 @@ on:
   pull_request:
 permissions:
   contents: read
+  pull-requests: write   # the action comments its own score on this repo's PRs
 jobs:
   scripts:
     runs-on: ubuntu-latest

@@ -212,6 +212,18 @@ python3 scripts/unslop-score.py examples/swiftui/after    # 100/100
 The SwiftUI folders also hold the HTML mock of each state at iPhone size,
 the way quick mode shows a native before/after when there's no simulator.
 
+## Scores in the wild
+
+Ran it on your own app or site? [Share the before/after and the
+score](https://github.com/marcosnovo/unslop-design/issues/new?template=score-report.yml),
+and it goes here with your permission: what the app is, the two numbers,
+one image. What it missed is just as useful: that's how rules get added.
+
+| App | Platform | Score | |
+|---|---|---|---|
+| [Refil](https://refil.app) (the author's) | iOS, Android | before/after above | [screens](#one-fix-at-a-time) |
+| *Yours?* | | | [share it](https://github.com/marcosnovo/unslop-design/issues/new?template=score-report.yml) |
+
 ## Use it
 
 Type `/unslop-design` (or `$unslop-design` in Codex), or just ask in plain
@@ -289,22 +301,34 @@ clean, never changes code itself, and turns off with `UNSLOP_HOOK=off` or
 `hook: off` in `.unslop/context.md`.
 
 **On every pull request (GitHub Actions).** Each hit becomes an annotation
-on its line, the score goes to the job summary, and the job fails under your
-minimum:
+on its line, and one comment on the PR keeps the score and the change
+against the base branch, updated on every push:
+
+> ### unslop score: 88/100 (+7 vs main)
+> **Worse** · [#68] Border and shadow on one card: 0 → 2 (-2)
+> **Better** · [#32] Colored glows: 3 → 0 (+8) · [#33] Emoji in the UI: 4 → 0 (+8)
+
+The job fails under your minimum, if you set one:
 
 ```yaml
 # .github/workflows/unslop.yml
 on: pull_request
+permissions:
+  contents: read
+  pull-requests: write   # for the comment
 jobs:
   unslop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: marcosnovo/unslop-design@v1.11.0
+      - uses: actions/checkout@v5
+      - uses: marcosnovo/unslop-design@v1.12.0
         with:
           paths: src
-          min: 80           # optional; also: allow, scale, type-scale
+          min: 80           # optional; also: allow, scale, type-scale, comment: false
 ```
+
+Locally, `unslop-score.py --json > main.json` on one branch and
+`--baseline main.json` on another gives the same comparison.
 
 **Anywhere else.** `python3 scripts/slop-scan.py src --github` prints the
 same annotations, `--json` every hit for other tools, and `--list-rules`

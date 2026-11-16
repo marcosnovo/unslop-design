@@ -1,0 +1,60 @@
+name: Share your score
+description: Ran unslop-design on your app or site? Share the before/after and the score for "Scores in the wild".
+title: "Score: <app or site> <before> → <after>"
+labels: ["score report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing. With your permission, it goes in the README's **Scores in the wild**: the app's name, the two numbers, one image and a link. Only share screens you own or are allowed to show.
+  - type: input
+    id: app
+    attributes:
+      label: App or site, and a link if it's public
+      placeholder: "Refil (refil.app), fuel prices, iOS + Android"
+    validations:
+      required: true
+  - type: input
+    id: score
+    attributes:
+      label: Score before → after
+      description: The same script version both times. Say if a project decision used --allow, or if the after is a mock.
+      placeholder: "41 → 88 (code only) · 1.11.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options: [Web, SwiftUI, Jetpack Compose, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: before-after
+    attributes:
+      label: Before and after
+      description: Two screenshots of the same screen, or a recording. Drag them in.
+    validations:
+      required: true
+  - type: textarea
+    id: fixes
+    attributes:
+      label: The fixes that mattered most
+      description: Their numbers and one line each. What you rejected and why helps too.
+      placeholder: |
+        #19 one accent: the brand green leaves the cards
+        #11 the price leads
+        Rejected #47: our brand face stays
+  - type: textarea
+    id: missed
+    attributes:
+      label: What it missed or got wrong
+      description: Slop it didn't catch, or a hit that wasn't slop. This is how rules get added.
+  - type: checkboxes
+    id: permission
+    attributes:
+      label: Permission
+      options:
+        - label: I own these screens or may show them, and they can appear in the README and on the website.
+          required: true

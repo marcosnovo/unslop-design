@@ -1,0 +1,57 @@
+{
+  "score": 76,
+  "verdict": "a few tics",
+  "files": 1,
+  "audit": false,
+  "badge": "https://img.shields.io/badge/unslop_score-76%2F100-green",
+  "penalties": [
+    {
+      "rule": "[#3] Raw colors outside tokens",
+      "count": 12,
+      "points": 6.0
+    },
+    {
+      "rule": "[#33] Emoji in the UI",
+      "count": 2,
+      "points": 4
+    },
+    {
+      "rule": "[#1] Values off the spacing scale",
+      "count": 8,
+      "points": 4.0
+    },
+    {
+      "rule": "[#52] Deltas with no baseline",
+      "count": 4,
+      "points": 4
+    },
+    {
+      "rule": "[#30] Gradient fills",
+      "count": 1,
+      "points": 2
+    },
+    {
+      "rule": "[#25] Exclamation in UI text",
+      "count": 1,
+      "points": 1
+    },
+    {
+      "rule": "[#25] Title Case in UI text",
+      "count": 2,
+      "points": 1.0
+    },
+    {
+      "rule": "[#65] Repeated stat cards",
+      "count": 1,
+      "points": 1
+    },
+    {
+      "rule": "[#61] Straight quotes in copy",
+      "count": 1,
+      "points": 0.5
+    }
+  ],
+  "allowed": [],
+  "trend": null,
+  "baseline": null
+}

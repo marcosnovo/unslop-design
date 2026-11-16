@@ -3,7 +3,7 @@
 
     python3 scripts/unslop-score.py [paths…] [--audit unslop-audit/report.json]
                                     [--scale …] [--json | --markdown] [--min 80]
-                                    [--save [.unslop]]
+                                    [--save [.unslop]] [--baseline base.json]
 
 Scores the source with the same rules as `slop-scan.py` and, if you pass a
 `web-audit.mjs` report, the rendered page too (scroll, contrast, focus,
@@ -13,7 +13,9 @@ are left more than how big the codebase is. Prints the breakdown and a
 README badge. With --min it exits 1 below that score (pre-commit hook).
 With --save it appends the run to .unslop/history.json and prints the
 trend ("score 41 → 88 → 91"); --markdown prints a table for a PR comment or
-a GitHub Actions job summary.
+a GitHub Actions job summary. --baseline compares with an earlier --json
+run (the base branch in a PR): "score 72 → 81 (+9)", what got better and what
+got worse.
 
 It is a smoke alarm, not a judge: a 95 can still have a flat hierarchy,
 and a gradient you chose on purpose costs points anyway (silence that line
@@ -179,6 +181,26 @@ def save_run(folder, run):
     return [h["score"] for h in history]
 
 
+def compare(base, score, lines):
+    """Score delta and per-row changes against an earlier --json output."""
+    before = {r["rule"]: (r["count"], r["points"]) for r in base.get("penalties", [])}
+    now = {r: (n, p) for p, r, n in lines}
+    better, worse = [], []
+    for rule in sorted(set(before) | set(now)):
+        (bn, bp), (nn, np_) = before.get(rule, (0, 0)), now.get(rule, (0, 0))
+        if np_ < bp:
+            better.append({"rule": rule, "from": bn, "to": nn, "points": round(bp - np_, 1)})
+        elif np_ > bp:
+            worse.append({"rule": rule, "from": bn, "to": nn, "points": round(np_ - bp, 1)})
+    better.sort(key=lambda x: -x["points"])
+    worse.sort(key=lambda x: -x["points"])
+    return {"score": base["score"], "delta": score - base["score"], "better": better, "worse": worse}
+
+
+def signed(n):
+    return f"+{n:g}" if n > 0 else f"{n:g}" if n < 0 else "±0"
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", help="source to scan (default: . unless only --audit is given)")
@@ -189,6 +211,8 @@ def main():
     ap.add_argument("--save", nargs="?", const=".unslop", metavar="DIR",
                     help="append this run to DIR/history.json (default .unslop) and show the trend")
     ap.add_argument("--min", type=float, help="exit 1 below this score")
+    ap.add_argument("--baseline", metavar="JSON", help="an earlier --json output to compare with (e.g. the base branch)")
+    ap.add_argument("--baseline-label", default="baseline", metavar="NAME", help="what to call it (e.g. main)")
     ap.add_argument("--type-scale", help="allowed font sizes in px (default: the project context, else slop-scan's)")
     ap.add_argument("--context", metavar="FILE", help="project context to read (default .unslop/context.md if present)")
     ap.add_argument("--no-context", action="store_true", help="ignore .unslop/context.md")
@@ -255,12 +279,34 @@ def main():
         scores = save_run(a.save, {"score": score, "files": files, "audit": bool(a.audit), "allowed": allowed,
                                    "penalties": [{"rule": r, "count": n, "points": p} for p, r, n in lines]})
         trend = " → ".join(str(s) for s in scores[-5:])
+    cmp_ = None
+    if a.baseline:
+        try:
+            with open(a.baseline, encoding="utf-8") as fh:
+                cmp_ = compare(json.load(fh), score, lines)
+        except (OSError, ValueError, KeyError) as e:
+            sys.exit(f"can't read the baseline {a.baseline}: {e}. It is the --json output of an earlier run.")
     if a.markdown:
-        out = [f"### unslop score: {score}/100 ({word})", ""]
+        if cmp_:
+            out = [f"### unslop score: {score}/100 ({signed(cmp_['delta'])} vs {a.baseline_label})", "",
+                   f"{a.baseline_label} {cmp_['score']} → this change {score}", ""]
+            for title, rows, sign in (("Worse", cmp_["worse"], "-"), ("Better", cmp_["better"], "+")):
+                if rows:
+                    out.append(f"**{title}**")
+                    out += [f"- {r['rule']}: {r['from']} → {r['to']} ({sign}{r['points']:g})" for r in rows]
+                    out.append("")
+            if not cmp_["better"] and not cmp_["worse"]:
+                out += ["No change in any row.", ""]
+            if lines:
+                out += ["<details><summary>Every row now</summary>", ""]
+        else:
+            out = [f"### unslop score: {score}/100 ({word})", ""]
         if trend and "→" in trend:
             out += [f"Trend: {trend}", ""]
         if lines:
             out += ["| Points | Fix | Hits |", "|---:|---|---:|"] + [f"| -{p:g} | {r} | {n} |" for p, r, n in lines]
+            if cmp_:
+                out += ["", "</details>"]
         else:
             out.append("Nothing found.")
         if allowed:
@@ -270,7 +316,7 @@ def main():
     elif a.json:
         print(json.dumps({"score": score, "verdict": word, "files": files, "audit": bool(a.audit), "badge": badge,
                           "penalties": [{"rule": r, "count": n, "points": p} for p, r, n in lines],
-                          "allowed": allowed, "trend": trend}, indent=2))
+                          "allowed": allowed, "trend": trend, "baseline": cmp_}, indent=2))
     else:
         src = []
         if paths:
@@ -282,6 +328,11 @@ def main():
         print(f"unslop score: {score}/100 — {word}  ({' + '.join(src)})")
         if trend and "→" in trend:
             print(f"trend: {trend}  ({os.path.join(a.save, 'history.json')})")
+        if cmp_:
+            print(f"vs {a.baseline_label}: {cmp_['score']} → {score} ({signed(cmp_['delta'])})")
+            for title, rows, sign in (("worse", cmp_["worse"], "-"), ("better", cmp_["better"], "+")):
+                for r in rows:
+                    print(f"  {title}: {r['rule']} {r['from']} → {r['to']} ({sign}{r['points']:g})")
         if allowed:
             print("allowed by the project (--allow, not scored): " + ", ".join(allowed))
         if lines:

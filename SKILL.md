@@ -4,7 +4,7 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.11.0"
+  version: "1.12.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
@@ -63,7 +63,8 @@ Three scripts measure instead of guessing:
   as one number from 0 to 100 with where the points went, plus a README
   badge. Run it before and after: "score 41 → 88" is the PR's headline.
   `--save` appends the run to `.unslop/history.json` and prints the trend;
-  `--markdown` gives the table for a PR.
+  `--markdown` gives the table for a PR, and `--baseline main.json` (an
+  earlier `--json` run) adds what got better and what got worse.
   A hit is fixed by changing the value, never by hiding it from the
   scanner (a `calc()` that lands on the same 11px is still 11px).
 

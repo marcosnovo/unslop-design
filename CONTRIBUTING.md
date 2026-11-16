@@ -3,6 +3,12 @@
 The checklist grows from real redesigns. The best contribution is a pattern
 of AI slop it doesn't catch yet, with proof.
 
+## Share your score
+
+Ran it on your own app? Open a **Share your score** issue: before/after,
+the two numbers, and what it missed. With your permission it goes in the
+README's *Scores in the wild*, and a miss becomes a rule.
+
 ## Propose a new fix
 
 Open an issue with the **New fix** template and include:

@@ -982,6 +982,54 @@
         "#68 ghost-card",
         "line 1:"
       ]
+    },
+    {
+      "name": "baseline-text",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/screen-dash-after",
+        "--baseline",
+        "{cases}/../baselines/dash-before.json",
+        "--baseline-label",
+        "main",
+        "--no-context"
+      ],
+      "exit": 0,
+      "contains": [
+        "vs main: ",
+        "better: [#"
+      ]
+    },
+    {
+      "name": "baseline-markdown",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/screen-dash-after",
+        "--baseline",
+        "{cases}/../baselines/dash-before.json",
+        "--baseline-label",
+        "main",
+        "--markdown",
+        "--no-context"
+      ],
+      "exit": 0,
+      "contains": [
+        "vs main)",
+        "**Better**"
+      ]
+    },
+    {
+      "name": "baseline-missing-file",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/screen-dash-after",
+        "--baseline",
+        "{cases}/../baselines/nope.json"
+      ],
+      "exit": 1,
+      "contains": [
+        "can't read the baseline"
+      ]
     }
   ]
 }

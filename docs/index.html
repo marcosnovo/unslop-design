@@ -232,19 +232,22 @@
         <h2>It keeps working after the review</h2>
         <ul class="list">
           <li>In Claude Code, a hook scans every UI file the agent edits and tells it what slop it just added. Silent when clean.</li>
-          <li>On GitHub, the action annotates each line and fails the PR under your minimum score.</li>
+          <li>On GitHub, the action annotates each line, keeps one PR comment with the score and the change against the base branch, and fails under your minimum.</li>
           <li><code>.unslop/context.md</code> keeps your scales and decisions, so a base-6 grid or a brand face isn’t flagged twice.</li>
           <li>Native first: SwiftUI and Compose are scanned, not only web.</li>
         </ul>
       </div>
       <pre><code># .github/workflows/unslop.yml
 on: pull_request
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
   unslop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: marcosnovo/unslop-design@v1.11.0
+      - uses: actions/checkout@v5
+      - uses: marcosnovo/unslop-design@v1.12.0
         with:
           paths: src
           min: 80</code></pre>
