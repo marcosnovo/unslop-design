@@ -56,4 +56,6 @@ and check `claude plugin validate --strict .`.
 Merging that to `main` is the release: `.github/workflows/release.yml` sees
 a version with no tag, runs the tests, tags the commit, publishes the
 GitHub release with the changelog entry and `unslop-design.zip`, and
-publishes to npm when the repository has an `NPM_TOKEN` secret.
+publishes to npm through Trusted Publishing (no secret; configured on the
+package's npm settings for `release.yml`). An `NPM_TOKEN` secret, if
+present, is used instead.
