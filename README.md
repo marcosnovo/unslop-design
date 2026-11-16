@@ -2,14 +2,15 @@
 
 <p align="center">
   <b>An agent skill that makes your app stop looking AI-generated.</b><br>
-  It reviews your UI, shows you the before/after, and applies 65 numbered design fixes one at a time.<br>
+  It reviews your UI, shows you the before/after, and applies 72 numbered design fixes one at a time.<br>
   Works with Claude Code · Codex · Cursor · Copilot · Gemini CLI · Windsurf · OpenCode and more.
 </p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#the-65-fixes">The 65 fixes</a> ·
+  <a href="#the-72-fixes">The 72 fixes</a> ·
+  <a href="#keep-it-clean">Hook and CI</a> ·
   <a href="#web-and-dashboards">Web</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#faq">FAQ</a>
@@ -23,11 +24,11 @@
 
 **What you get**
 
-- **A review you can read.** Numbered fixes (#1-#65), each with its reason, so
+- **A review you can read.** Numbered fixes (#1-#72), each with its reason, so
   you accept or reject them one by one.
 - **A before/after first.** Nothing in your code changes until you approve it.
 - **A number, not a vibe.** Scripts measure your UI and score it from 0 to 100:
-  the example dashboard goes from **25 to 100**, and 90+ slop hits to none.
+  the example dashboard goes from **24 to 100**, and 89 slop hits to none.
 
 <p align="center">
   <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill-111111">
@@ -47,8 +48,14 @@
 /plugin install unslop-design@unslop
 ```
 
-**Any other agent** (Codex, Cursor, Copilot, Gemini CLI, Windsurf, OpenCode…),
-with the [skills CLI](https://github.com/vercel-labs/skills):
+**Any other agent** (Codex, Cursor, Copilot, Gemini CLI, Windsurf, OpenCode,
+Devin, Trae, Qoder, Pi…), every one found on your machine at once:
+
+```bash
+npx unslop-design install
+```
+
+Or with the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
 npx skills add marcosnovo/unslop-design -g
@@ -61,6 +68,10 @@ apps, manual clone) are in [More ways to install](#more-ways-to-install).
 **Check it works.** In a project, paste a screenshot and write *unslop this
 screen*. You should get five numbered fixes, each with its reason, and a
 before/after to approve before any code changes.
+
+**Then, once per project:** *unslop init*. It reads your tokens, asks three
+questions at most and writes `.unslop/context.md`, so your scales and brand
+decisions are never flagged again.
 
 ---
 
@@ -118,7 +129,7 @@ overwritten: an existing folder with the same name is left alone.
 | Agent | Global folder | Call it |
 |---|---|---|
 | Claude Code | `~/.claude/skills/` | `/unslop-design` |
-| Codex · Cline · Zed | `~/.agents/skills/` | `$unslop-design` (Codex) |
+| Codex · Replit · Cline · Zed | `~/.agents/skills/` | `$unslop-design` (Codex) |
 | Cursor | `~/.cursor/skills/` | ask for it by name |
 | GitHub Copilot | `~/.copilot/skills/` | ask for it by name |
 | Gemini CLI | `~/.gemini/skills/` | ask for it by name |
@@ -128,6 +139,9 @@ overwritten: an existing folder with the same name is left alone.
 | Amp | `~/.config/agents/skills/` | ask for it by name |
 | Kiro | `~/.kiro/skills/` | ask for it by name |
 | Goose · Roo Code · Junie | `~/.config/goose/skills/` · `~/.roo/skills/` · `~/.junie/skills/` | ask for it by name |
+| Devin · Grok Build · Hermes | `~/.config/devin/skills/` · `~/.grok/skills/` · `~/.hermes/skills/` | ask for it by name |
+| Pi · Oh My Pi · Qoder | `~/.pi/agent/skills/` · `~/.omp/agent/skills/` · `~/.qoder/skills/` | ask for it by name |
+| Trae · Rovo Dev · Mistral Vibe · DeepSeek | `~/.trae/skills/` · `~/.rovodev/skills/` · `~/.vibe/skills/` · `~/.dsh/skills/` | ask for it by name |
 
 ```bash
 git clone https://github.com/marcosnovo/unslop-design ~/.claude/skills/unslop-design
@@ -170,8 +184,8 @@ On the example above, `web-audit.mjs` goes from 19 spacing values (15 off
 the scale), 5 weights, 6 radii, 6 shadows, a page that scrolls sideways
 on a phone and 11 links with no focus style, to 6 spacing values, all on the scale, 2
 weights, 1 shadow, no sideways scroll and a focus ring on everything.
-`slop-scan.py` finds 88 hits in the before and none in the after, and
-`unslop-score.py` goes from 25 to 100 on the code alone. Details
+`slop-scan.py` finds 89 hits in the before and none in the after, and
+`unslop-score.py` goes from 24 to 100 on the code alone. Details
 in [`web.md`](web.md).
 
 ## Use it
@@ -198,6 +212,21 @@ number), the before/after, and on your yes it applies them and reports the
 score. Several screens, a recording or "full review" switch to the full
 process with parallel reviewers.
 
+### Commands
+
+You can also name what you want. With nothing attached and no command, the
+agent reads where you left off and proposes the next two or three steps.
+
+| Say | What you get |
+|---|---|
+| *unslop init* | `.unslop/context.md`: your users, scene, surfaces, scales and the decisions the checklist must respect |
+| *unslop* + a screen | Quick mode: five fixes, before/after, applied on your yes |
+| *unslop score* | The number and the trend ("41 → 88 → 91"), no proposal |
+| *unslop audit* | Every finding ranked by fix number; changes nothing |
+| *unslop critique* | A usability report: tasks walked as three users, cognitive load, ten heuristics scored 0-4, P0-P3 findings |
+| *unslop apply* | The accepted fixes still pending in `.unslop/review.md`, one at a time |
+| *unslop full* | The whole process below, with parallel reviewers |
+
 ### Score it
 
 ```bash
@@ -207,27 +236,61 @@ python3 scripts/unslop-score.py src/ --audit unslop-audit/report.json  # plus th
 
 ```text
 $ python3 scripts/unslop-score.py examples/dashboard-before.html
-unslop score: 25/100 — slop  (1 source file)
+unslop score: 24/100 — slop  (1 source file)
 
 Where the points went (fix the top rows first):
-  -  12  [#32] Colored glows  (4)
+  -  12  [#32] Colored glows  (6)
   -  10  [#33] Emoji in the UI  (19)
   -   8  [#53] Focus outline removed  (1)
   …
 
-Badge: [![unslop score](https://img.shields.io/badge/unslop_score-25%2F100-red)](https://github.com/marcosnovo/unslop-design)
+Badge: [![unslop score](https://img.shields.io/badge/unslop_score-24%2F100-red)](https://github.com/marcosnovo/unslop-design)
 ```
 
 Each kind of slop costs points per hit up to a cap, so the number says how
 many kinds are left, not how big the codebase is. Paste the badge in your
-README, and put "score 25 → 100" at the top of the PR. It's a smoke alarm,
+README, and put "score 24 → 100" at the top of the PR. It's a smoke alarm,
 not a judge: a 95 can still have a flat hierarchy. `--min 80` makes it exit
-1 below 80 if you want it in a pre-commit hook.
+1 below 80 if you want it in a pre-commit hook, and `--save` keeps every run
+in `.unslop/history.json` so the score has a trend.
+
+## Keep it clean
+
+A review fixes the screen; these keep the next edit from undoing it.
+
+**While the agent writes (Claude Code).** The plugin ships a hook: after
+every edit to a UI file it scans that file and tells the agent what slop the
+edit just added, with the fix number. It says nothing when the edit is
+clean, never changes code itself, and turns off with `UNSLOP_HOOK=off` or
+`hook: off` in `.unslop/context.md`.
+
+**On every pull request (GitHub Actions).** Each hit becomes an annotation
+on its line, the score goes to the job summary, and the job fails under your
+minimum:
+
+```yaml
+# .github/workflows/unslop.yml
+on: pull_request
+jobs:
+  unslop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: marcosnovo/unslop-design@v1.10.0
+        with:
+          paths: src
+          min: 80           # optional; also: allow, scale, type-scale
+```
+
+**Anywhere else.** `python3 scripts/slop-scan.py src --github` prints the
+same annotations, `--json` every hit for other tools, and `--list-rules`
+every rule id. All of them read `.unslop/context.md`, so your scale and your
+allowed rules apply without flags.
 
 Screen recordings need `ffmpeg` (`brew install ffmpeg`) so the agent can
 pull frames from them.
 
-## The 65 fixes
+## The 72 fixes
 
 Every fix has a number so reviewers can cite it ("#20 badge is too loud")
 and you can accept or reject them one by one. A few of them:
@@ -254,9 +317,13 @@ and you can accept or reject them one by one. A few of them:
 | 50 | Counts as muted tabular numbers | `12` in a hot-pink pill, `210 👤` |
 | 52 | A delta names its baseline | "+12%!!" |
 | 55 | Ink headline on a neutral canvas | gradient text over a purple glow |
+| 68 | One separator per surface | a 1px border and a soft shadow on every card |
+| 70 | A modal is the last resort; Undo beats Confirm | "Are you sure?" before every delete |
+| 71 | Plurals, dates and money from the platform | "3 item(s)", a hand-built "MM/DD" |
+| 72 | Four choices or fewer per group | nine filter chips in a row |
 
 <details>
-<summary><b>All 65, by section</b></summary>
+<summary><b>All 72, by section</b></summary>
 
 **System** · 1 spacing scale · 2 type scale and two weights · 3 palette with
 shades defined up front · 4 grays with one temperature · 5 named elevation
@@ -274,17 +341,20 @@ concretely
 22 no gray on color · 23 neutral global tint · 24 color never alone
 
 **Typography** · 25 sentence case · 26 title, not a greeting · 27 line height
-and length · 28 align for readability · 29 letter-spacing with intent
+and length · 28 align for readability · 29 letter-spacing with intent · 69
+code faces for code and data
 
 **Decoration and depth** · 30 remove ornaments · 31 fewer borders · 32 shadows
-mean height · 33 one icon style · 34 decoration with conditions
+mean height · 33 one icon style · 34 decoration with conditions · 66 a hard
+offset shadow is a style · 68 one separator per surface
 
 **Images and charts** · 35 good images or none · 36 text over images ·
 37 user content in fixed frames · 38 screenshots at their size · 39 charts
 without noise
 
 **Layout** · 40 one card per idea · 41 action pyramid · 42 components don't
-scale proportionally
+scale proportionally · 70 a modal is the last resort · 72 four choices or
+fewer per group
 
 **Chrome and signature** · 43 rails · 44 one section gap, no filler · 45
 section headers are quiet labels · 46 floating chrome in the system material,
@@ -300,7 +370,8 @@ chrome floats · 65 a skeleton from the job, not from the template
 
 **Craft floor** · 60 structure carries information or goes · 61 real
 typography characters · 62 system surfaces wear the theme · 63 motion is
-named, short and optional · 64 nothing invented, nothing inflated
+named, short and optional · 64 nothing invented, nothing inflated · 67 ease
+out, don't bounce · 71 built for every language and every size of data
 
 Full text with the reason behind each one: [`checklist.md`](checklist.md).
 
@@ -352,7 +423,9 @@ before/after without the whole team.
 | File | What it covers |
 |---|---|
 | [`SKILL.md`](SKILL.md) | Principles, quick mode and the full flow (what the agent reads first) |
-| [`checklist.md`](checklist.md) | The 65 fixes, each with what to do and why |
+| [`checklist.md`](checklist.md) | The 72 fixes, each with what to do and why |
+| [`context.md`](context.md) | `init`: the `.unslop/context.md` template, `review.md` backlog and what scripts read |
+| [`critique.md`](critique.md) | The usability report: tasks, cognitive load, ten heuristics, severities |
 | [`spec-card.md`](spec-card.md) | The card each reviewer fills: named values, ticked as they land |
 | [`process.md`](process.md) | Inventory, reviewers, proposal, devs, verification, PR |
 | [`platforms.md`](platforms.md) | SwiftUI, Compose, web, widgets, watch and car notes |
@@ -362,6 +435,10 @@ before/after without the whole team.
 | [`scripts/unslop-score.py`](scripts/unslop-score.py) | Both as one score from 0 to 100, with the breakdown and a badge |
 | [`examples/`](examples) | One dashboard before and after, to try the scripts on |
 | [`.claude-plugin/`](.claude-plugin) | Claude Code plugin and marketplace manifests |
+| [`hooks/`](hooks) | The Claude Code hook that scans each UI edit |
+| [`action.yml`](action.yml) | The GitHub Action: annotations, job summary, minimum score |
+| [`bin/unslop.mjs`](bin/unslop.mjs) | `npx unslop-design install / scan / score / audit / rules` |
+| [`docs/`](docs) | The landing page (GitHub Pages) with the live before/after |
 | [`install.sh`](install.sh) | Installs or updates the skill for every agent it finds |
 | [`scripts/validate.py`](scripts/validate.py) | Checks `SKILL.md` against the Agent Skills spec |
 | [`scripts/test.py`](scripts/test.py) | Regression tests: every case in `tests/cases` gives exactly the hits `tests/expected.json` lists |

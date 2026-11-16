@@ -4,20 +4,45 @@ description: Review and redesign an app or website UI to strip out the "slop" (d
 license: MIT
 metadata:
   author: marcosnovo
-  version: "1.9.0"
+  version: "1.10.0"
   homepage: https://github.com/marcosnovo/unslop-design
 ---
 
 # Unslop design
 
-Three parts: **what to fix** (`checklist.md`, each fix with its reason),
+Three parts: **what to fix** (`checklist.md`, 72 fixes, each with its reason),
 **how to orchestrate it** (`process.md`, rounds with reviewers and devs in
 parallel) and **cases and sources** (`references.md`: the before/afters
 that shaped this skill and a map of *Refactoring UI*). The spec card every
 reviewer fills is in `spec-card.md`. Per-platform notes
 (SwiftUI, Compose, web, widgets, watch, car) live in `platforms.md`; websites,
-web apps and dashboards have their own playbook in `web.md`. Read the one
-you need, not all of them.
+web apps and dashboards have their own playbook in `web.md`. The project's
+own decisions live in `.unslop/context.md` (`context.md`), and the usability
+rubric in `critique.md`. Read the one you need, not all of them.
+
+## Commands
+
+The user can name one; with none, pick by what they gave you.
+
+| Say | What happens |
+|---|---|
+| *unslop* / *review* + a screen | Quick mode below: five fixes, before/after, wait for "yes" |
+| *unslop init* | Write `.unslop/context.md` (`context.md`): three questions at most |
+| *unslop score* | Run the scripts, `--save` the run, report "score X → Y" and the top rows. No proposal |
+| *unslop audit* | `scripts/slop-scan.py` + `scripts/web-audit.mjs`, findings ranked by fix number. Changes nothing |
+| *unslop critique* | The usability report in `critique.md`. Changes nothing, doesn't touch the score |
+| *unslop apply* | The next accepted fixes from `.unslop/review.md`, one at a time, score after each |
+| *unslop full* | The full flow below |
+
+**No command and nothing attached:** read `.unslop/context.md`, the last
+entry of `.unslop/history.json`, `.unslop/review.md` and `git status`, and
+propose two or three concrete next steps ("3 accepted fixes are pending in
+review.md: apply them?", "the settings screen changed since the last score:
+score it?", "no context yet: init?"). One line each, then wait.
+
+If `.unslop/context.md` exists, read it first and follow its **Keeps**: the
+scripts already take its scale and allowed rules. If it doesn't, don't
+block: run as usual and offer `init` once at the end.
 
 Three scripts measure instead of guessing:
 - `python3 scripts/slop-scan.py <paths> [--scale …] [--allow rules]` — slop patterns in source (web,
@@ -34,11 +59,18 @@ Three scripts measure instead of guessing:
   `--device iphone,iphone-se,pixel` renders at real phone
   size and density with safe areas and reports which font really
   rendered. Needs Playwright.
-- `python3 scripts/unslop-score.py <paths> [--audit report.json]` — both
+- `python3 scripts/unslop-score.py <paths> [--audit report.json] [--save]` — both
   as one number from 0 to 100 with where the points went, plus a README
   badge. Run it before and after: "score 41 → 88" is the PR's headline.
+  `--save` appends the run to `.unslop/history.json` and prints the trend;
+  `--markdown` gives the table for a PR.
   A hit is fixed by changing the value, never by hiding it from the
   scanner (a `calc()` that lands on the same 11px is still 11px).
+
+`scripts/slop-scan.py --list-rules` lists every rule id; `--json` and `--github`
+(Actions annotations) are for CI, and `action.yml` wraps both with a
+minimum score. In Claude Code the plugin's hook runs the scan after each
+UI edit and tells you what you just added: fix those hits before moving on.
 
 `examples/dashboard-before.html` and `-after.html` show both on one page.
 
@@ -131,8 +163,11 @@ subagents, no jury, one pass you can finish in a few minutes.
    the second critic of § 4 once (with no subagents: answer its questions
    1-3 from the image alone, before rereading your own notes); for Operate
    and Read, answer questions 1-3 yourself.
-4. On "yes", apply them as tokens (principle 1), rerun the score and report
-   "score X → Y" and what's still left.
+4. On "yes", apply them as tokens (principle 1), rerun the score with
+   `--save` and report "score X → Y" and what's still left. Write the five
+   fixes to `.unslop/review.md` (format in `context.md`): applied `[x]`,
+   accepted but not done `[ ]`, rejected `[-]` with the reason, so the next
+   run neither repeats nor forgets them.
 
 End the proposal with this report, filled honestly, so a skipped step shows:
 
@@ -203,6 +238,14 @@ world. A concept the product's content doesn't ask for stays a signature.
    compile, audit, PR, answer review bots, merge when green.
 7. Finally: update the project's design system (doc + tokens + its own
    skill) with what's new.
+
+## Refine or redesign
+
+Ask which one before proposing. **Refining preserves**: the layout, the
+brand face, the signature and the voice stay, and fixes move values inside
+them. **Redesigning replaces**: the concept (`process.md` § 2b) can change
+the skeleton. Most requests are refinements; a refine that quietly redraws
+the screen is the one thing the user didn't ask for.
 
 ## If the project already has its own design skill
 

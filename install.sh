@@ -4,7 +4,7 @@
 #   curl -fsSL https://raw.githubusercontent.com/marcosnovo/unslop-design/main/install.sh | bash
 #
 # One real copy lives in ~/.agents/skills/unslop-design (read by Codex,
-# Cline and Zed). Every other agent whose config folder exists gets a
+# Replit, Cline and Zed). Every other agent whose config folder exists gets a
 # symlink to it, so `git pull` there updates them all.
 #
 #   --copy     copy instead of symlinking (for agents that skip symlinks)
@@ -44,6 +44,17 @@ Kiro|.kiro|.kiro/skills
 Goose|.config/goose|.config/goose/skills
 Roo Code|.roo|.roo/skills
 Junie|.junie|.junie/skills
+Devin|.config/devin|.config/devin/skills
+Grok Build|.grok|.grok/skills
+Hermes|.hermes|.hermes/skills
+Pi|.pi|.pi/agent/skills
+Oh My Pi|.omp|.omp/agent/skills
+Qoder|.qoder|.qoder/skills
+Trae|.trae|.trae/skills
+Trae CN|.trae-cn|.trae-cn/skills
+Rovo Dev|.rovodev|.rovodev/skills
+Mistral Vibe|.vibe|.vibe/skills
+DeepSeek Harness|.dsh|.dsh/skills
 "
 
 MARK=.installed-by-unslop-design
@@ -77,7 +88,7 @@ if [ -d "$MAIN/.git" ]; then
 elif [ -e "$MAIN" ]; then
   echo "  $MAIN exists and is not a git clone: leaving it as it is"
 else
-  echo "  cloning into $MAIN  (Codex, Cline, Zed)"
+  echo "  cloning into $MAIN  (Codex, Replit, Cline, Zed)"
   run mkdir -p "$(dirname "$MAIN")"
   run git clone --quiet --depth 1 "$REPO" "$MAIN"
   [ "$DRY" = 1 ] || touch "$MAIN/$MARK"
@@ -108,5 +119,5 @@ while IFS='|' read -r agent marker skills; do
 done <<< "$AGENTS"
 
 echo
-echo "Done: Codex/Cline/Zed + $linked more agent(s)."
+echo "Done: Codex/Replit/Cline/Zed + $linked more agent(s)."
 echo "Restart open agents, then try /unslop-design (Claude Code, Cursor…) or \$unslop-design (Codex)."

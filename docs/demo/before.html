@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — before</title>
+<!-- A typical AI-generated dashboard. Every rule it breaks is on purpose:
+     run scripts/web-audit.mjs and scripts/slop-scan.py on it. -->
+<style>
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; color: #e9e3ff;
+    background: linear-gradient(160deg, #5b2bd6 0%, #1a0b3d 60%, #0d0626 100%); min-height: 100vh; }
+  .app { display: flex; margin: 40px; width: 1240px; border-radius: 22px; overflow: hidden;
+    background: rgba(20, 10, 50, .7); backdrop-filter: blur(20px); box-shadow: 0 0 80px rgba(140, 90, 255, .45); }
+  .side { width: 300px; padding: 17px 13px; border-right: 1px solid rgba(255,255,255,.08); }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 21px; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg,#7c5cff,#3a7bd5);
+    display: grid; place-items: center; box-shadow: 0 0 18px #7c5cff; }
+  .pro { font-size: 11px; padding: 3px 9px; border-radius: 99px; background: #7c3aed; color: #fff; }
+  .search { margin: 18px 0 26px; padding: 11px 13px; border-radius: 14px; border: 1px solid rgba(160,120,255,.5);
+    background: rgba(255,255,255,.05); color: #b9a8ff; font-size: 15px; display: flex; justify-content: space-between; }
+  .kbd { background: #7c3aed; color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 11px; }
+  .head { font-size: 11px; letter-spacing: .14em; color: #8e7bd6; margin: 22px 9px 9px; font-weight: 700; }
+  .nav a { display: flex; justify-content: space-between; align-items: center; padding: 9px 11px; margin: 5px 0;
+    border-radius: 13px; color: #e9e3ff; text-decoration: none; font-size: 16px; font-weight: 600; }
+  .nav a:focus { outline: none; }
+  .nav a.on { background: linear-gradient(90deg,#7c3aed,#2f6bff); box-shadow: 0 6px 24px rgba(124,58,237,.6); }
+  .pill { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 99px; background: #e11d74; color: #fff; }
+  .pill.v { background: #6d4aff; }
+  main { flex: 1; padding: 21px 27px; }
+  h1 { font-size: 38px; margin: 14px 0 22px; font-weight: 900;
+    background: linear-gradient(90deg,#f0abfc,#a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .row { display: flex; gap: 18px; }
+  .card { flex: 1; padding: 19px 23px; border-radius: 26px; background: rgba(60,40,140,.35);
+    border: 1px solid rgba(170,140,255,.35); box-shadow: 0 10px 40px rgba(110,70,255,.35); }
+  .label { font-size: 12px; letter-spacing: .12em; font-weight: 800; color: #b9a8ff; }
+  .num { font-size: 34px; font-weight: 800; margin: 6px 0; color: #ddd3ff; }
+  .delta { color: #4ade80; font-weight: 700; font-size: 15px; }
+  .bars { display: flex; align-items: flex-end; gap: 22px; height: 220px; margin-top: 24px; }
+  .bars div { flex: 1; border-radius: 99px; background: #7c5cff; box-shadow: 0 0 20px #7c5cff; }
+  .bars div.hot { background: #c084fc; box-shadow: 0 0 34px #e879f9; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><span class="logo">✨</span> EmberAI <span class="pro">PRO</span> <span style="margin-left:auto">🔔</span></div>
+    <div class="search">🔍 Search anything... <span class="kbd">⌘K</span></div>
+    <div class="head">NAVIGATION</div>
+    <nav class="nav">
+      <a class="on" href="#">🏠 Overview</a>
+      <a href="#">📥 Inbox <span class="pill">12</span></a>
+      <a href="#">🚀 Projects <span class="pill v">New ✨</span></a>
+      <a href="#">👥 Customers</a>
+      <a href="#">💸 Invoices</a>
+      <a href="#">📊 Reports</a>
+    </nav>
+    <div class="head">💳 PLANS</div>
+    <nav class="nav">
+      <a href="#">🏢 Enterprise <span class="pill v">18 👤</span></a>
+      <a href="#">💼 Business <span class="pill v">64 👤</span></a>
+      <a href="#">⚡ Pro <span class="pill v">210 👤</span></a>
+      <a href="#">🌱 Starter <span class="pill v">480 👤</span></a>
+      <a href="#">🎁 Free <span class="pill v">1.2k 👤</span></a>
+    </nav>
+  </aside>
+  <main>
+    <div>📊 Overview</div>
+    <h1>Welcome back, Damir! 👋</h1>
+    <div class="row">
+      <div class="card"><div class="label">💰 PAID THIS MONTH</div><div class="num">$48,210</div><div class="delta">🔥 +12%!!</div></div>
+      <div class="card"><div class="label">⚠️ OVERDUE</div><div class="num">07</div><div class="delta">😮 3 less!!</div></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <div class="label">📈 REVENUE</div><div class="num">$124,860.40</div><div class="delta">🚀 +4.2% this month!!</div>
+      <div class="bars"><div style="height:55%"></div><div style="height:78%"></div><div style="height:62%"></div><div class="hot" style="height:100%"></div><div style="height:74%"></div><div style="height:48%"></div><div style="height:68%"></div></div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -41,6 +41,10 @@ if compat and len(compat) > 500:
 lines = body.count("\n")
 if lines > 500:
     problems.append(f"SKILL.md body: {lines} lines, keep it under 500")
+# Token budget: SKILL.md is loaded on every run; the rest is read on demand.
+words = len(body.split())
+if words > 3000:
+    problems.append(f"SKILL.md body: {words} words, budget 3000 (move detail to a file read on demand)")
 
 for ref in sorted(set(re.findall(r"`([\w./-]+\.(?:md|yaml|py|sh|mjs))`", text))):
     if "/" not in ref and not (root / ref).exists() and ref not in ("SKILL.md",):
@@ -54,8 +58,16 @@ if plugin.exists():
     if pv != sv:
         problems.append(f"version: SKILL.md says {sv}, .claude-plugin/plugin.json says {pv} (bump both, or plugin users miss the update)")
 
+pkg = root / "package.json"
+if pkg.exists():
+    import json
+    pv = json.loads(pkg.read_text(encoding="utf-8")).get("version")
+    sv = re.search(r'^\s+version:\s*"?([^"\n]+)"?', front, re.M)
+    if sv and pv != sv.group(1):
+        problems.append(f"version: SKILL.md says {sv.group(1)}, package.json says {pv} (bump all three)")
+
 for p in problems:
     print("✗", p)
 if problems:
     sys.exit(1)
-print(f"✓ {name}: frontmatter OK, description {len(desc)}/1024 chars, body {lines} lines")
+print(f"✓ {name}: frontmatter OK, description {len(desc)}/1024 chars, body {lines} lines, {words}/3000 words")

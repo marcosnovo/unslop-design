@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>unslop-design</title>
+<meta name="description" content="An agent skill that makes your app stop looking AI-generated: 72 numbered design fixes, a before/after you approve, and a score from 0 to 100.">
+<meta property="og:title" content="unslop-design">
+<meta property="og:description" content="Your app stops looking AI-generated, and you get a number to prove it.">
+<meta property="og:image" content="https://raw.githubusercontent.com/marcosnovo/unslop-design/main/assets/social-preview.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;600&display=swap">
+<style>
+  /* Concept: an inspection report. The score is the hero object; everything
+     else is the evidence under it. One accent (the signal orange) marks slop
+     and nothing else; "after" is the ink. */
+  :root {
+    color-scheme: light;
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+    --t-sm: 0.875rem; --t-md: 1rem; --t-xl: 1.5rem; --t-2xl: 2.25rem; --t-3xl: 3.5rem; --t-4xl: 6rem;
+    --font: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
+    --font-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --canvas: #f5f5f2; --surface: #ffffff; --line: #deded8;
+    --ink: #151513; --ink-2: #55554f; --on-ink: #f5f5f2;
+    --slop: #b2400f; --clean: #13703f;
+    --r-sm: 8px; --r-md: 12px; --r-full: 999px;
+    --rail: var(--s5);
+    --measure: 64ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --canvas: #121211; --surface: #1b1b19; --line: #30302c;
+      --ink: #edede8; --ink-2: #a8a8a0; --on-ink: #121211;
+      --slop: #f08a5d; --clean: #5fcf8e;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font: 400 var(--t-md)/1.6 var(--font); }
+  ::selection { background: var(--ink); color: var(--on-ink); }
+  a { color: inherit; text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: max(var(--rail), env(safe-area-inset-left)) max(var(--rail), env(safe-area-inset-right)); }
+  main { display: flex; flex-direction: column; gap: var(--s9); padding-block: var(--s7) var(--s9); }
+  section { display: flex; flex-direction: column; gap: var(--s5); }
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+  h1 { font-size: var(--t-3xl); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; max-width: 16ch; }
+  h2 { font-size: var(--t-2xl); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+  h3 { font-size: var(--t-md); font-weight: 600; line-height: 1.3; }
+  p { margin: 0; max-width: var(--measure); }
+  .lede { font-size: var(--t-md); color: var(--ink-2); max-width: 52ch; }
+  .muted { color: var(--ink-2); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Top bar */
+  .top { display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding-block: var(--s5); }
+  .brand { font-family: var(--font-display); font-weight: 800; font-size: var(--t-md); text-decoration: none; }
+  .top nav { display: flex; gap: var(--s4); font-size: var(--t-sm); }
+  .top nav a, footer a { display: inline-block; padding-block: var(--s1); }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--s7); align-items: end; }
+  .hero-copy { display: flex; flex-direction: column; gap: var(--s5); }
+  .score { display: flex; flex-direction: column; gap: var(--s2); }
+  .score-line { display: flex; align-items: baseline; gap: var(--s4); font-family: var(--font-display); font-weight: 800; line-height: 1; }
+  .score-line .from { font-size: var(--t-2xl); color: var(--slop); text-decoration: line-through; text-decoration-thickness: 3px; }
+  .score-line .arrow { font-size: var(--t-xl); color: var(--ink-2); }
+  .score-line .to { font-size: var(--t-4xl); letter-spacing: -0.03em; }
+  .score-line .of { font-size: var(--t-xl); color: var(--ink-2); font-weight: 600; }
+  .score p { font-size: var(--t-sm); color: var(--ink-2); }
+
+  /* Install */
+  .install { display: flex; flex-direction: column; gap: var(--s3); }
+  .cmd { display: flex; align-items: center; gap: var(--s3); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s3) var(--s3) var(--s3) var(--s4); }
+  .cmd code { font: 400 var(--t-sm)/1.4 var(--font-code); flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; }
+  .copy { font: 600 var(--t-sm)/1 var(--font); color: var(--on-ink); background: var(--ink); border: 0; border-radius: var(--r-full); padding: var(--s2) var(--s4); min-height: 32px; cursor: pointer; }
+  .install p { font-size: var(--t-sm); color: var(--ink-2); }
+
+  /* Before / after */
+  .compare { position: relative; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line); background: var(--surface); aspect-ratio: 16 / 10; max-width: 100%; }
+  .compare iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .compare .after { clip-path: inset(0 0 0 var(--cut, 50%)); }
+  .divider { position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 2px; background: var(--ink); pointer-events: none; }
+  .tag { position: absolute; top: var(--s3); font: 600 var(--t-sm)/1 var(--font); padding: var(--s2) var(--s3); border-radius: var(--r-full); background: var(--ink); color: var(--on-ink); pointer-events: none; }
+  .tag.l { left: var(--s3); } .tag.r { right: var(--s3); }
+  .slider { display: flex; align-items: center; gap: var(--s4); }
+  .slider input { flex: 1; accent-color: var(--ink); min-height: 32px; }
+  .slider label { font-size: var(--t-sm); color: var(--ink-2); }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s5); }
+  .fact { display: flex; flex-direction: column; gap: var(--s1); }
+  .fact b { font-family: var(--font-display); font-size: var(--t-xl); font-weight: 600; }
+  .fact span { font-size: var(--t-sm); color: var(--ink-2); }
+
+  /* Steps */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s6); counter-reset: step; }
+  .steps li { display: flex; flex-direction: column; gap: var(--s2); padding-top: var(--s4); border-top: 2px solid var(--ink); counter-increment: step; }
+  .steps li::before { content: "Step " counter(step); font-size: var(--t-sm); color: var(--ink-2); }
+  .steps p { font-size: var(--t-md); color: var(--ink-2); }
+
+  /* Rules */
+  .rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s7); margin: 0; }
+  .rule { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--s3); padding-block: var(--s3); border-bottom: 1px solid var(--line); }
+  .rule dt { font: 400 var(--t-sm)/1.6 var(--font-code); color: var(--slop); }
+  .rule dd { margin: 0; }
+  .rule dd span { display: block; font-size: var(--t-sm); color: var(--ink-2); }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: var(--s3); }
+  figure img { width: 100%; height: auto; border-radius: var(--r-md); border: 1px solid var(--line); display: block; }
+  figcaption { font-size: var(--t-sm); color: var(--ink-2); max-width: var(--measure); }
+
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s7); align-items: start; }
+  pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s4); overflow-x: auto; font: 400 var(--t-sm)/1.6 var(--font-code); }
+  .list { margin: 0; padding-left: var(--s5); display: flex; flex-direction: column; gap: var(--s2); }
+
+  footer { border-top: 1px solid var(--line); padding-block: var(--s6) var(--s7); font-size: var(--t-sm); color: var(--ink-2); }
+  footer .wrap { display: flex; justify-content: space-between; gap: var(--s4); flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    .hero, .two { grid-template-columns: minmax(0, 1fr); }
+    .steps, .rules { grid-template-columns: minmax(0, 1fr); }
+    h1 { font-size: var(--t-2xl); }
+    .score-line .to { font-size: var(--t-3xl); }
+    .compare { aspect-ratio: 3 / 4; }
+  }
+  @media (max-width: 480px) {
+    .facts { grid-template-columns: minmax(0, 1fr); }
+    .top nav { display: none; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .copy { transition: opacity 150ms ease-out; }
+    .copy:active { opacity: .8; }
+  }
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <a class="brand" href="https://github.com/marcosnovo/unslop-design">unslop-design</a>
+  <nav aria-label="Sections">
+    <a href="#demo">Demo</a>
+    <a href="#how">How it works</a>
+    <a href="#ci">CI and hooks</a>
+    <a href="https://github.com/marcosnovo/unslop-design">GitHub</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Your app stops looking AI-generated.</h1>
+      <p class="lede">An agent skill for Claude Code, Codex, Cursor and 20 more. It reviews your screen, shows a before/after you approve, applies numbered fixes one at a time, and measures the result.</p>
+      <div class="install">
+        <div class="cmd"><code id="cmd-npx">npx unslop-design install</code><button class="copy" type="button" data-copy="cmd-npx">Copy</button></div>
+        <div class="cmd"><code id="cmd-plugin">/plugin marketplace add marcosnovo/unslop-design</code><button class="copy" type="button" data-copy="cmd-plugin">Copy</button></div>
+        <p>Then paste a screenshot and write “unslop this screen”. MIT license, no dependencies.</p>
+      </div>
+    </div>
+    <div class="score" aria-label="Example score: from 24 to 100">
+      <div class="score-line num"><span class="from">24</span><span class="arrow" aria-hidden="true">→</span><span class="to">100</span><span class="of">/100</span></div>
+      <p>The example dashboard in the repo, scored by <code>unslop-score.py</code> before and after the checklist.</p>
+    </div>
+  </section>
+
+  <section id="demo">
+    <h2>Drag to see what changed</h2>
+    <div class="compare" id="compare">
+      <iframe src="demo/before.html" title="Dashboard before: gradients, glows, emoji and a purple palette" loading="lazy" tabindex="-1"></iframe>
+      <iframe class="after" src="demo/after.html" title="Dashboard after the checklist" loading="lazy" tabindex="-1"></iframe>
+      <span class="divider" aria-hidden="true"></span>
+      <span class="tag l">Before · 24</span>
+      <span class="tag r">After · 100</span>
+    </div>
+    <div class="slider">
+      <label for="cut">Before</label>
+      <input id="cut" type="range" min="0" max="100" value="50" aria-label="Show more of the before or the after">
+      <label for="cut">After</label>
+    </div>
+    <div class="facts">
+      <div class="fact"><b class="num">89 → 0</b><span>slop hits in the source</span></div>
+      <div class="fact"><b class="num">19 emoji → 0</b><span>icons from one set instead</span></div>
+      <div class="fact"><b class="num">6 glows → 0</b><span>a shadow means height, not style</span></div>
+    </div>
+  </section>
+
+  <section>
+    <figure>
+      <img src="https://raw.githubusercontent.com/marcosnovo/unslop-design/main/assets/hero.png" width="2400" height="1440" loading="lazy"
+           alt="Refil, a fuel price app, before and after. Before: a green gradient card with a filled Great price badge. After: a dark card with one Cheapest badge, the price with a small last digit and a white Go to Esso button.">
+      <figcaption>Refil, a real fuel price app, same screen and city on Oct 22 and Nov 3. The price with a smaller last digit is the one signature, taken from the price boards at the station.</figcaption>
+    </figure>
+  </section>
+
+  <section id="how">
+    <h2>One fix at a time, and nothing changes until you say yes</h2>
+    <ol class="steps">
+      <li><h3>Review</h3><p>Five numbered fixes for the screen, each with its reason and its checklist number. Hierarchy and spacing before color.</p></li>
+      <li><h3>Before/after</h3><p>Both versions on one page at the same width. Nothing in your code moves until you approve it.</p></li>
+      <li><h3>Apply and measure</h3><p>Each fix lands as a token, not a literal. The score runs again and the PR says “score 41 → 88”.</p></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>What it catches</h2>
+    <p class="muted">72 fixes in the checklist; 35 of them checked by a scanner that reads web, SwiftUI and Compose code. A few:</p>
+    <dl class="rules">
+      <div class="rule"><dt>#19</dt><dd>One accent<span>The brand color fills one gesture, not every badge and icon.</span></dd></div>
+      <div class="rule"><dt>#26</dt><dd>A title, not a greeting<span>“November budget”, not “Hey Alex!”.</span></dd></div>
+      <div class="rule"><dt>#55</dt><dd>No gradient text, no page glow<span>Headlines in the ink color.</span></dd></div>
+      <div class="rule"><dt>#64</dt><dd>Nothing invented<span>No user counts, ratings or logos without a source.</span></dd></div>
+      <div class="rule"><dt>#65</dt><dd>A skeleton from the job<span>Not greeting, stat card, 2×2 tiles, list, tab bar.</span></dd></div>
+      <div class="rule"><dt>#68</dt><dd>One separator per surface<span>A border or a shadow, not both on every card.</span></dd></div>
+      <div class="rule"><dt>#71</dt><dd>Every language, every size of data<span>Plurals from the platform, never “item(s)”.</span></dd></div>
+      <div class="rule"><dt>P5</dt><dd>Measured contrast<span>WCAG AA from the real colors, light and dark.</span></dd></div>
+    </dl>
+  </section>
+
+  <section id="ci">
+    <div class="two">
+      <div class="hero-copy">
+        <h2>It keeps working after the review</h2>
+        <ul class="list">
+          <li>In Claude Code, a hook scans every UI file the agent edits and tells it what slop it just added. Silent when clean.</li>
+          <li>On GitHub, the action annotates each line and fails the PR under your minimum score.</li>
+          <li><code>.unslop/context.md</code> keeps your scales and decisions, so a base-6 grid or a brand face isn't flagged twice.</li>
+          <li>Native first: SwiftUI and Compose are scanned, not only web.</li>
+        </ul>
+      </div>
+      <pre><code># .github/workflows/unslop.yml
+on: pull_request
+jobs:
+  unslop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: marcosnovo/unslop-design@v1.10.0
+        with:
+          paths: src
+          min: 80</code></pre>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>unslop-design · MIT · made from real redesigns</span>
+    <a href="https://github.com/marcosnovo/unslop-design">Source, checklist and changelog on GitHub</a>
+  </div>
+</footer>
+
+<script>
+  const compare = document.getElementById("compare");
+  const cut = document.getElementById("cut");
+  cut.addEventListener("input", () => compare.style.setProperty("--cut", cut.value + "%"));
+  document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", async () => {
+    const text = document.getElementById(btn.dataset.copy).textContent;
+    try { await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
+    catch { getSelection().selectAllChildren(document.getElementById(btn.dataset.copy)); btn.textContent = "Selected"; }
+    setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+  }));
+</script>
+</body>
+</html>

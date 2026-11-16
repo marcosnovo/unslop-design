@@ -7,8 +7,9 @@ the hits tests/expected.json says, per rule, and no others.
     python3 scripts/test.py --update        # rewrite expected.json from the current output (review the diff!)
     python3 scripts/test.py stock-kit       # only cases whose name contains "stock-kit"
 
-expected.json also holds "cli" checks: a script, its arguments, the exit code
-and strings the output must (or must not) contain.
+expected.json also holds "cli" checks: a script, its arguments (and stdin),
+the exit code and strings the output must (or must not) contain. A script
+with a slash is relative to the repo (hooks/unslop-hook.mjs runs with node).
 
 Each case is one folder, scanned as a unit (so cross-file checks like
 undefined tokens see the whole case). A rule not listed for a case must give
@@ -109,9 +110,17 @@ def main():
     for check in expected.get("cli", []):
         if a.only and a.only not in check["name"]:
             continue
-        cmd = [sys.executable, os.path.join(HERE, check["script"])] + [
-            arg.replace("{cases}", CASES) for arg in check["args"]]
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        runner = ["node"] if check["script"].endswith(".mjs") else [sys.executable]
+        script = os.path.join(ROOT, check["script"]) if "/" in check["script"] else os.path.join(HERE, check["script"])
+        cmd = runner + [script] + [arg.replace("{cases}", CASES) for arg in check["args"]]
+        stdin = check.get("stdin")
+        if stdin is not None:
+            stdin = json.dumps(stdin).replace("{cases}", CASES.replace("\\", "/")).replace("{root}", ROOT.replace("\\", "/"))
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=120, input=stdin)
+        except FileNotFoundError:
+            print(f"- {check['name']}: skipped ({runner[0]} not found)")
+            continue
         out = r.stdout + r.stderr
         ran += 1
         problems = []

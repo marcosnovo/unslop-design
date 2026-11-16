@@ -1,0 +1,56 @@
+name: unslop design score
+description: Scan UI source for AI-slop patterns, annotate the lines and score the UI from 0 to 100.
+author: marcosnovo
+branding:
+  icon: eye
+  color: gray-dark
+inputs:
+  paths:
+    description: Space-separated paths to scan
+    default: "."
+  min:
+    description: Fail the job below this score (empty = never fail)
+    default: ""
+  allow:
+    description: Comma-separated rule ids a written project decision allows (never contrast, focus, targets or claims)
+    default: ""
+  scale:
+    description: Allowed spacing values in px, comma-separated (your tokens)
+    default: ""
+  type-scale:
+    description: Allowed font sizes in px, comma-separated (your type tokens)
+    default: ""
+outputs:
+  score:
+    description: The score from 0 to 100
+    value: ${{ steps.score.outputs.score }}
+runs:
+  using: composite
+  steps:
+    - id: score
+      shell: bash
+      env:
+        UNSLOP_PATHS: ${{ inputs.paths }}
+        UNSLOP_MIN: ${{ inputs.min }}
+        UNSLOP_ALLOW: ${{ inputs.allow }}
+        UNSLOP_SCALE: ${{ inputs.scale }}
+        UNSLOP_TYPE_SCALE: ${{ inputs.type-scale }}
+        SCRIPTS: ${{ github.action_path }}/scripts
+      run: |
+        set -euo pipefail
+        read -r -a paths <<< "$UNSLOP_PATHS"
+        opts=()
+        [ -n "$UNSLOP_ALLOW" ] && opts+=(--allow "$UNSLOP_ALLOW")
+        [ -n "$UNSLOP_SCALE" ] && opts+=(--scale "$UNSLOP_SCALE")
+        [ -n "$UNSLOP_TYPE_SCALE" ] && opts+=(--type-scale "$UNSLOP_TYPE_SCALE")
+        # One annotation per hit on the changed lines' files.
+        python3 "$SCRIPTS/slop-scan.py" "${paths[@]}" "${opts[@]}" --github > "$RUNNER_TEMP/unslop-scan.txt" || true
+        grep '^::warning' "$RUNNER_TEMP/unslop-scan.txt" | head -200 || true
+        python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --markdown >> "$GITHUB_STEP_SUMMARY" || true
+        score=$(python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --json | python3 -c 'import json,sys; print(json.load(sys.stdin)["score"])')
+        echo "score=$score" >> "$GITHUB_OUTPUT"
+        echo "unslop score: $score/100"
+        if [ -n "$UNSLOP_MIN" ] && python3 -c "import sys; sys.exit(0 if $score < float('$UNSLOP_MIN') else 1)"; then
+          echo "::error title=unslop score::$score is under the minimum of $UNSLOP_MIN"
+          exit 1
+        fi

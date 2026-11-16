@@ -292,6 +292,39 @@
     "audit-gradient-own-bg": {
       "gradient": 1,
       "raw-color": 3
+    },
+    "copy-plural-hack": {
+      "plural-hack": 4
+    },
+    "craft-bounce-easing": {
+      "bounce-easing": 4
+    },
+    "craft-ghost-card": {
+      "ghost-card": 2,
+      "raw-color": 2
+    },
+    "craft-hard-shadow": {
+      "hard-shadow": 3,
+      "raw-color": 3
+    },
+    "craft-mono-disguise": {
+      "mono-disguise": 3
+    },
+    "craft-side-stripe": {
+      "side-stripe": 3
+    },
+    "framework-next-shadcn": {
+      "ghost-card": 1
+    },
+    "framework-svelte": {
+      "bounce-easing": 1,
+      "hard-shadow": 1,
+      "raw-color": 1
+    },
+    "framework-vue-sfc": {
+      "mono-disguise": 1,
+      "plural-hack": 1,
+      "side-stripe": 1
     }
   },
   "audit": {
@@ -739,6 +772,148 @@
       "exit": 1,
       "contains": [
         "can't include targets"
+      ]
+    },
+    {
+      "name": "list-rules",
+      "script": "slop-scan.py",
+      "args": [
+        "--list-rules"
+      ],
+      "exit": 0,
+      "contains": [
+        "ghost-card",
+        "#68",
+        "plural-hack",
+        "side-stripe",
+        "unverified-claim"
+      ]
+    },
+    {
+      "name": "github-annotations",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/framework-svelte",
+        "--github"
+      ],
+      "exit": 0,
+      "contains": [
+        "::warning file=",
+        "title=unslop #66 hard-shadow::",
+        "line=8,title=unslop #67 bounce-easing"
+      ]
+    },
+    {
+      "name": "json-hits",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/craft-ghost-card",
+        "--json"
+      ],
+      "exit": 0,
+      "contains": [
+        "\"rule\": \"ghost-card\"",
+        "\"line\": 1"
+      ],
+      "excludes": [
+        "unslop scan:"
+      ]
+    },
+    {
+      "name": "score-markdown",
+      "script": "unslop-score.py",
+      "args": [
+        "{cases}/framework-svelte",
+        "--markdown"
+      ],
+      "exit": 0,
+      "contains": [
+        "### unslop score:",
+        "| Points | Fix | Hits |",
+        "[#66] Hard offset shadows"
+      ]
+    },
+    {
+      "name": "hook-write-reports",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "tool_name": "Write",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{cases}/framework-svelte/Toast.svelte"
+        }
+      },
+      "contains": [
+        "\"hookEventName\":\"PostToolUse\"",
+        "#66 hard-shadow",
+        "#67 bounce-easing"
+      ]
+    },
+    {
+      "name": "hook-clean-edit-silent",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "tool_name": "Edit",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{cases}/framework-svelte/Toast.svelte",
+          "new_string": "    padding: 12px 16px;"
+        }
+      },
+      "excludes": [
+        "hookSpecificOutput"
+      ]
+    },
+    {
+      "name": "hook-skips-non-ui",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "tool_name": "Write",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{root}/scripts/test.py"
+        }
+      },
+      "excludes": [
+        "hookSpecificOutput"
+      ]
+    },
+    {
+      "name": "context-file-sets-scale-and-allow",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--context",
+        "{cases}/../context/context.md",
+        "--strict"
+      ],
+      "exit": 0,
+      "contains": [
+        "(context: ",
+        "allowed by the project (--allow): tracked-caps ×1",
+        "nothing found"
+      ]
+    },
+    {
+      "name": "flags-beat-context",
+      "script": "slop-scan.py",
+      "args": [
+        "{cases}/project-decisions",
+        "--context",
+        "{cases}/../context/context.md",
+        "--scale",
+        "0,4,8",
+        "--strict"
+      ],
+      "exit": 1,
+      "contains": [
+        "off the scale"
       ]
     }
   ]

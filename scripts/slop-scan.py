@@ -2,14 +2,15 @@
 """Find the usual slop patterns in UI source code, with the checklist number.
 
     python3 scripts/slop-scan.py [paths…] [--scale 0,2,4,8,12,16,20,24,32,40,48,64]
-                                 [--max 8] [--strict]
+                                 [--max 8] [--strict] [--json] [--github] [--list-rules]
 
 Reads web (CSS, SCSS, HTML, JSX/TSX, Vue, Svelte, Astro), SwiftUI and
 Compose files. Standard library only. It is a grep with opinions: each hit
 is a place to look, not a verdict — a gradient can be the one signature
 gesture (#34, principle 7). Silence a line with a comment containing
 `unslop-ignore`. With --strict it exits 1 when anything is found (for a
-pre-commit hook; don't put it in paid CI without asking).
+pre-commit hook; don't put it in paid CI without asking). --github adds an
+Actions annotation per hit; --json prints every location for other tools.
 """
 import argparse
 import os
@@ -107,6 +108,8 @@ RULES = [
      re.compile(r"(?i:\boffer ends in\b|\bends in \d|\blimited[- ]time (?:offer|deal|only)\b|\bonly \d+ (?:left|spots?|seats?)\b|"
                 r"\bhurry\b|\bact now\b|\blast chance\b|\bmost popular\b|\bbest (?:value|seller)\b|"
                 r"\bsave \d+\s?%(?!(?:\s|<[^<>]+>)*(?:vs\.?|versus|compared|than)\b))"), "all"),
+    ("plural-hack", "#71", "\"item(s)\" in UI text (let the platform's plural rules pick the form)",
+     re.compile(r"(?:[\"'`]|(?<!=)>)[^\"'<`\n]*(?<=[\s>\"'`])[A-Za-z][a-z]{2,}\(s\)(?=[\s.,:!?<\"'`]|$)"), "all"),
     ("no-focus", "#53", "Focus outline removed — is there a :focus-visible style?",
      re.compile(r"outline\s*:\s*(none|0)\b|\boutline-none\b|focus:outline-none"), "web"),
 ]
@@ -341,6 +344,9 @@ def file_checks(path, text, kind, hits):
                     hits.setdefault(("hidden-nav", "#57", "Nav links hidden on phones with no menu button"), []).append(
                         (path, n, "links hidden below a breakpoint, nothing replaces them"))
 
+    if kind == "web":
+        block_checks(path, text, ignored, line_of, hits)
+
     key = ("card-sameness", "#40 #65", "Same card repeated with a number inside (a row of stat tiles?)")
     if kind == "web":
         css = linked_css(path, text)
@@ -385,6 +391,84 @@ def file_checks(path, text, kind, hits):
             n = line_of(starts[0])
             if len(starts) >= 3 and n not in ignored and NATIVE_ROW.search(text):
                 hits.setdefault(key, []).append((path, n, f"{name}(…) ×{len(starts)}"))
+
+
+# Rule-level checks (#60, #66-#69): what a declaration means depends on its neighbors in the
+# same rule or class list, so they read whole CSS blocks and whole class attributes.
+CSS_EXT = {".css", ".scss", ".sass", ".less", ".html", ".htm", ".vue", ".svelte", ".astro"}
+CSS_BLOCK = re.compile(r"([^{}]+)\{([^{}]*)\}")
+SIDE_BORDER = re.compile(r"border-(?:left|right|inline-start|inline-end)(?:-width)?\s*:\s*(\d+(?:\.\d+)?)px\s*(?:solid|[^;]*)", re.I)
+RADIUS = re.compile(r"border-radius\s*:(?!\s*0(?:px)?\s*(?:[;}]|$))", re.I)
+# A box-shadow layer with no blur: "4px 4px 0 #000", "6px 6px 0px 0px black". Insets and 0 0 rings excluded.
+HARD_SHADOW = re.compile(r"(?<![\w.-])(-?[1-9]\d*(?:\.\d+)?)px\s+(-?\d+(?:\.\d+)?)(?:px)?\s+0(?:px)?(?:\s+-?\d+(?:px)?)?\s+(?:#|rgba?\(|hsla?\(|oklch\(|[a-z]+\b)", re.I)
+TW_HARD_SHADOW = re.compile(r"\bshadow-\[-?\d+px_-?\d+px_0(?:px)?[_\]]")
+SHADOW_DECL_ANY = re.compile(r"box-shadow\s*:\s*([^;}]+)", re.I)
+# Easing that overshoots (y outside 0..1) or animations named for a bounce (#67).
+CUBIC = re.compile(r"cubic-bezier\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*,\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)")
+BOUNCE_NAME = re.compile(r"@keyframes\s+[\w-]*(bounce|elastic|wobble|jiggle|rubber)|\banimation(?:-name)?\s*:[^;]*\b[\w-]*(bounce|elastic|wobble|jiggle|rubber)|"
+                         r"\banimate-bounce\b|\bease(?:In|Out|InOut)?(?:Back|Elastic|Bounce)\b|\b(?:back|elastic|bounce)\.(?:out|in|inOut)\b", re.I)
+# A 1px border and a soft shadow on the same rounded surface (#68): two separators doing one job.
+TW_GHOST = re.compile(r"""(?=[^"'`]*\brounded(?:-\w+)?\b)(?=[^"'`]*(?<![\w:-])border(?![\w-]))(?=[^"'`]*(?<![\w:-])shadow(?:-(?:sm|md|xs))?(?![\w-]))""")
+BORDER_1PX = re.compile(r"(?<![\w-])border\s*:\s*1px\s+solid", re.I)
+SOFT_SHADOW = re.compile(r"box-shadow\s*:\s*(?!none|0\s+0\s+0)[^;}]*\d+px\s+\d+px", re.I)
+# Monospace as a costume (#69): headings or the whole page set in a code face.
+MONO_FACE = re.compile(r"font-family\s*:\s*[^;}]*(?:\bmono\b|monospace|courier|fira code|space mono|menlo|consolas|jetbrains mono|ibm plex mono|geist mono|sf mono|roboto mono)", re.I)
+MONO_SELECTOR = re.compile(r"(?:^|[\s,>])(?:h[1-3]|body|html|:root)\b|\.[\w-]*(?:hero|title|headline|heading|display)\b", re.I)
+TW_MONO_HEADING = re.compile(r"<(h[1-3]|body|html)\b[^<>]*\bclass(?:Name)?\s*=\s*[\"'{`]+[^\"'`}]*\bfont-mono\b")
+
+
+def block_checks(path, text, ignored, line_of, hits):
+    ext = os.path.splitext(path)[1].lower()
+
+    def add(key, pos, snippet):
+        n = line_of(pos)
+        if n not in ignored:
+            hits.setdefault(key, []).append((path, n, snippet[:110]))
+
+    stripe = ("side-stripe", "#60", "Colored side stripe on a rounded card (does the stripe encode a status?)")
+    hard = ("hard-shadow", "#66", "Hard offset shadow (no blur): a costume unless the brand is neobrutalist")
+    bounce = ("bounce-easing", "#67", "Bouncy or elastic easing (ease out, don't overshoot)")
+    ghost = ("ghost-card", "#68", "1px border and a soft shadow on the same card (pick one separator)")
+    mono = ("mono-disguise", "#69", "Monospace on headings or the whole page (code faces are for code and data)")
+
+    if ext in CSS_EXT:
+        for m in CSS_BLOCK.finditer(text):
+            sel, body = m.group(1).strip(), m.group(2)
+            if sel.startswith("@") or "@keyframes" in sel:
+                continue
+            pos = m.start(2)
+            side = SIDE_BORDER.search(body)
+            if side and float(side.group(1)) >= 2 and RADIUS.search(body):
+                add(stripe, pos + side.start(), f"{sel.split()[-1] if sel.split() else sel} {{ {side.group(0).strip()} …radius }}")
+            if BORDER_1PX.search(body) and SOFT_SHADOW.search(body) and RADIUS.search(body):
+                add(ghost, pos, f"{sel[-40:]} {{ border: 1px … box-shadow … }}")
+            if MONO_FACE.search(body) and MONO_SELECTOR.search(" " + sel):
+                add(mono, pos + MONO_FACE.search(body).start(), f"{sel[-40:]} {{ {MONO_FACE.search(body).group(0)[:60]} }}")
+    for m in SHADOW_DECL_ANY.finditer(text):
+        for layer in re.split(r",(?![^()]*\))", m.group(1)):
+            if "inset" in layer:
+                continue
+            h = HARD_SHADOW.search(layer.strip())
+            if h:
+                add(hard, m.start(), f"box-shadow: {layer.strip()[:60]}")
+                break
+    for m in TW_HARD_SHADOW.finditer(text):
+        add(hard, m.start(), m.group(0))
+    for m in CUBIC.finditer(text):
+        y1, y2 = float(m.group(2)), float(m.group(4))
+        if y1 < -0.05 or y1 > 1.05 or y2 < -0.05 or y2 > 1.05:
+            add(bounce, m.start(), m.group(0))
+    for m in BOUNCE_NAME.finditer(text):
+        add(bounce, m.start(), m.group(0).strip())
+    for m in CLASS_ATTR.finditer(text):
+        cls = m.group(2)
+        if TW_GHOST.match(cls):
+            add(ghost, m.start(), f'class "{" ".join(cls.split())[:60]}"')
+        side = re.search(r"\bborder-[lrse]-(?:[2-9]|\[\d+px\])\b", cls)
+        if side and re.search(r"\brounded(?:-\w+)?\b", cls):
+            add(stripe, m.start(), f'class "{" ".join(cls.split())[:60]}"')
+    for m in TW_MONO_HEADING.finditer(text):
+        add(mono, m.start(), f"<{m.group(1)} class=… font-mono>")
 
 
 # Custom properties across the scanned files: a var(--name) nobody defines falls back in
@@ -432,6 +516,29 @@ def parse_allow(value):
     return allow
 
 
+CONTEXT = ".unslop/context.md"
+CONTEXT_KEY = re.compile(r"^\s*[-*]?\s*(scale|type-scale|allow):\s*`?([\w.,\s-]+?)`?\s*$", re.M)
+
+
+def read_context(path=None):
+    """The machine-read lines of .unslop/context.md (scale, type-scale, allow), {} if there is none."""
+    path = path or CONTEXT
+    try:
+        text = open(path, encoding="utf-8").read()
+    except OSError:
+        return {}
+    return {k: v.replace(" ", "") for k, v in CONTEXT_KEY.findall(text)}
+
+
+def resolve_options(a):
+    """Command-line flags win; then the project's .unslop/context.md; then the defaults."""
+    ctx = {} if getattr(a, "no_context", False) else read_context(getattr(a, "context", None))
+    a.scale = a.scale or ctx.get("scale") or DEFAULT_SCALE
+    a.type_scale = a.type_scale or ctx.get("type-scale")
+    a.allow = a.allow if a.allow is not None else ctx.get("allow")
+    return ctx
+
+
 def files(paths):
     for p in paths:
         if os.path.isfile(p):
@@ -444,6 +551,7 @@ def files(paths):
                     yield os.path.join(root, n)
 
 
+DEFAULT_SCALE = "0,1,2,4,8,12,16,20,24,32,40,48,64,80,96"
 DEFAULT_TYPE_SCALE = {11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 44, 48, 56, 64, 72, 80, 96}
 # Colored shadows in CSS, any offset: "0 10px 30px rgba(255,107,107,.45)" is a glow too (#32).
 SHADOW_DECL = re.compile(r"box-shadow\s*:\s*([^;}]+)", re.I)
@@ -528,22 +636,57 @@ def scan(path, scale, hits, type_scale=None):
                     hits.setdefault(key, []).append((path, n, f"{m.group(1)}{m.group(2) or ''}: {', '.join(o + 'px' for o in off)}"))
 
 
+# Rules that run on whole files or blocks rather than line regexes: (id, ref, description).
+FILE_RULES = [
+    ("off-scale", "#1", "Spacing / type / radius value off the scale"),
+    ("stock-kit", "#6", "Starter kit left at its defaults (set radius, grays and accent from the product)"),
+    ("card-sameness", "#40 #65", "Same card repeated with a number inside (a row of stat tiles?)"),
+    ("hidden-nav", "#57", "Nav links hidden on phones with no menu button"),
+    ("unverified-claim", "#64", "Social proof or metric to source (\"Trusted by 10,000+ teams\", \"10x faster\") — is it real?"),
+    ("canvas-tabbar", "#59", "Map or camera with a permanent tab bar under it (let the chrome float)"),
+    ("undefined-token", "#1", "Token used but defined nowhere in the scanned files"),
+    ("side-stripe", "#60", "Colored side stripe on a rounded card (does the stripe encode a status?)"),
+    ("hard-shadow", "#66", "Hard offset shadow (no blur): a costume unless the brand is neobrutalist"),
+    ("bounce-easing", "#67", "Bouncy or elastic easing (ease out, don't overshoot)"),
+    ("ghost-card", "#68", "1px border and a soft shadow on the same card (pick one separator)"),
+    ("mono-disguise", "#69", "Monospace on headings or the whole page (code faces are for code and data)"),
+]
+
+
+def all_rules():
+    return [(r[0], r[1], r[2], r[4]) for r in RULES] + [(i, ref, d, "web" if i in ("hidden-nav", "side-stripe", "hard-shadow",
+            "bounce-easing", "ghost-card", "mono-disguise", "off-scale", "undefined-token") else "all") for i, ref, d in FILE_RULES]
+
+
+def gh_escape(s):
+    return str(s).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", default=["."])
-    ap.add_argument("--scale", default="0,1,2,4,8,12,16,20,24,32,40,48,64,80,96",
-                    help="allowed px values (1 for hairlines); match your tokens")
-    ap.add_argument("--type-scale", default=",".join(str(v) for v in sorted(DEFAULT_TYPE_SCALE)),
-                    help="allowed font sizes in px; match your type tokens")
+    ap.add_argument("--scale", help=f"allowed px values (1 for hairlines); match your tokens. Default: {DEFAULT_SCALE}")
+    ap.add_argument("--type-scale", help="allowed font sizes in px; match your type tokens")
+    ap.add_argument("--context", metavar="FILE", help=f"project context to read (default {CONTEXT} if present)")
+    ap.add_argument("--no-context", action="store_true", help=f"ignore {CONTEXT}")
     ap.add_argument("--max", type=int, default=8, help="locations shown per rule")
     ap.add_argument("--strict", action="store_true", help="exit 1 if anything is found")
     ap.add_argument("--allow", metavar="RULES",
                     help="rule ids a written project decision allows (e.g. tracked-caps,off-scale); "
                          "listed apart, not counted. Never contrast or invented claims")
+    ap.add_argument("--json", action="store_true", help="machine-readable hits (every location, no cap)")
+    ap.add_argument("--github", action="store_true",
+                    help="also print GitHub Actions annotations (::warning file=…,line=…) for every hit")
+    ap.add_argument("--list-rules", action="store_true", help="print every rule id with its fix number and exit")
     a = ap.parse_args()
+    if a.list_rules:
+        for rid, ref, desc, applies in all_rules():
+            print(f"{rid:<18} {ref:<8} {applies:<6} {desc}")
+        return 0
+    ctx = resolve_options(a)
     allow = parse_allow(a.allow)
     scale = {float(x) for x in a.scale.split(",")}
-    type_scale = {float(x) for x in a.type_scale.split(",")}
+    type_scale = {float(x) for x in a.type_scale.split(",")} if a.type_scale else DEFAULT_TYPE_SCALE
     hits, count, seen = {}, 0, []
     for f in files(a.paths):
         count += 1
@@ -552,13 +695,24 @@ def main():
     token_checks(seen, hits)
     allowed = {k: v for k, v in hits.items() if k[0] in allow}
     hits = {k: v for k, v in hits.items() if k[0] not in allow}
-    print(f"unslop scan: {count} files")
+    if a.github:
+        for (rid, ref, desc), where in sorted(hits.items()):
+            for path, n, snippet in where:
+                print(f"::warning file={gh_escape(path).replace(',', '%2C').replace(':', '%3A')},line={n},title=unslop {ref} {rid}::{gh_escape(desc)}")
+    if a.json:
+        import json
+        print(json.dumps({"files": count,
+                          "hits": [{"rule": rid, "ref": ref, "description": desc, "file": path, "line": n, "snippet": snip}
+                                   for (rid, ref, desc), where in sorted(hits.items()) for path, n, snip in where],
+                          "allowed": {k[0]: len(v) for k, v in sorted(allowed.items())}}, indent=2, ensure_ascii=False))
+        return 1 if a.strict and hits else 0
+    print(f"unslop scan: {count} files" + (f"  (context: {a.context or CONTEXT})" if ctx else ""))
     if allowed:
         print("allowed by the project (--allow): " + ", ".join(f"{k[0]} ×{len(v)}" for k, v in sorted(allowed.items())))
     if not hits:
         print("nothing found")
         return 0
-    order = [r[0] for r in RULES] + ["off-scale", "stock-kit", "card-sameness", "hidden-nav", "unverified-claim", "canvas-tabbar", "undefined-token"]
+    order = [r[0] for r in RULES] + [r[0] for r in FILE_RULES]
     for (rid, ref, desc), where in sorted(hits.items(), key=lambda kv: (-len(kv[1]), order.index(kv[0][0]))):
         print(f"\n[{ref}] {desc} — {len(where)} hit(s)")
         for path, n, snippet in where[: a.max]:

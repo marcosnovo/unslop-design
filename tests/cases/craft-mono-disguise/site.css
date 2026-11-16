@@ -1,0 +1,5 @@
+body { font-family: "JetBrains Mono", monospace; }
+h1, h2 { font-family: "Space Mono", monospace; }
+/* miss: code and data keep their face */
+code, pre, kbd { font-family: ui-monospace, Menlo, monospace; }
+.amount { font-family: "IBM Plex Mono", monospace; }

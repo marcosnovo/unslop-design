@@ -73,6 +73,10 @@ Persuade, one bold idea in the hero and one more place; Experience, a
 world (type, layout, color, illustration and motion all come from it).
 
 **Procedure (ten minutes):**
+0. Write the **scene** in one sentence: who looks at this, where, when,
+   on what device and in what light ("a nurse at 4 a.m. between rooms, on
+   a phone, lights dimmed"). The scene decides light or dark, density and
+   type size, not the product category ("finance apps are dark").
 1. List 5-8 candidates from the domain's physical world, not from other
    apps: tools of the trade (stopwatch, jar, seed packet), places (track,
    village, market stall), rituals (lights out, watering day, dealing

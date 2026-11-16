@@ -131,6 +131,11 @@ cite them ("#14") in their boards.
     bit tighter. ALL CAPS, where you kept it (a date stamp like "WED, OCT 28 ·
     7:42", a signature overline): wider. Leave
     the rest as the type designer set it.
+69. **Code faces for code and data.** Monospace on headings or on the whole
+    page is a costume for "technical". Keep it for code, IDs, keys and
+    values you compare character by character; numbers that line up want
+    the text face's tabular figures (#61). `slop-scan.py` flags monospace
+    on `h1`-`h3`, titles and `body`.
 
 ## Decoration and depth
 30. **Remove frames and ornaments.** Dashed borders, meaningless stacked
@@ -160,6 +165,15 @@ cite them ("#14") in their boards.
     not this allowance, it's #55. Better to "supercharge what's there"
     (checkmarks instead of bullets, selectable cards instead of a stack of
     radio buttons) than to add pieces.
+66. **A hard offset shadow is a style, not depth.** `4px 4px 0 #000`, no
+    blur, reads as neobrutalism. If that is the brand, it is the signature
+    and it is the same everywhere; otherwise use the elevation tokens (#5,
+    #32). `slop-scan.py` flags it.
+68. **One separator per surface.** A 1px border and a soft shadow on the
+    same card (the "ghost card", every starter kit's card) do one job twice.
+    Flat surfaces get the border or a second background; raised ones get
+    the shadow (#31, #32). `slop-scan.py` flags both on one rounded
+    surface, in CSS and in Tailwind classes.
 
 ## Images and charts
 35. **Good images or none.** Generic clip art, template illustrations or
@@ -209,6 +223,15 @@ cite them ("#14") in their boards.
 42. **Components don't scale proportionally.** A large button gets
     relatively more padding and a small one less; a headline isn't "2.5×
     body" on every screen. Each size is tuned, not zoomed.
+
+70. **A modal is the last resort.** Before one: expand in place, a sheet
+    on phones, or a page. Never a confirm dialog for something reversible:
+    do it and offer Undo. A modal has one task, a visible close and closes
+    on Escape (Also: sheets sized to content).
+72. **Four choices or fewer per group.** Options, tabs, tiles and filters
+    come in groups of four or fewer; the rest goes behind "More", a search
+    or the next step. One decision per step in a flow. Working memory is
+    the budget (`critique.md`, cognitive load).
 
 ## Chrome and signature
 43. **Rails: one left edge, one right edge.** Every block starts on the same
@@ -339,11 +362,25 @@ Small things a careful team gets right and a generated UI gets wrong.
     animates layout and color you didn't mean. ≤ 200 ms for state changes,
     and a still alternative under `prefers-reduced-motion` (Reduce Motion
     on iOS/Android).
+67. **Ease out, don't bounce.** State changes decelerate (ease-out, or a
+    curve whose y stays between 0 and 1). Overshoot, `bounce`, `elastic`
+    and wobble read as a toy and delay the answer. The platform's own
+    springs are fine; a custom bounce isn't (#63). `slop-scan.py` flags
+    overshooting `cubic-bezier`, `animate-bounce` and bounce keyframes.
 64. **Nothing invented, nothing inflated.** No made-up metrics ("10,000+
     teams"), testimonials, client logos or ratings; no hand-drawn phone or
     browser frame when a real screenshot can be taken; no hype verbs
     ("Supercharge", "Seamless", "Unleash") — say what it does, with a real
     number if there is one (#16, #48, principle 6).
+71. **Built for every language and every size of data.** Leave 30-40%
+    room for longer translations and test the longest one; use logical
+    properties (`margin-inline-start`, `leading`/`trailing`) so a
+    right-to-left language mirrors; plurals, dates, numbers and currency
+    come from the platform's formatters (`Intl`, ICU, `stringsdict`,
+    `plurals.xml`), never "item(s)" or a hand-built "MM/DD"; long names
+    wrap or truncate in the middle, never overflow; an error names what
+    failed and offers Retry; a list is drawn with 0, 1 and 2,000 rows.
+    `slop-scan.py` flags "item(s)".
 
 ## Also (what came up in real reviews)
 - **Sheets/modals sized to content**, not fixed heights that clip text at

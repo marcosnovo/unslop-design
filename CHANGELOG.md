@@ -1,5 +1,83 @@
 # Changelog
 
+## 1.10.0 — 2026-11-16
+
+A release about what happens after the review: the project's decisions are
+written down once, slop is caught while the agent writes it, and CI keeps
+the score. Plus seven fixes and six scanner rules from a comparison with
+other design skills.
+
+Commands and context (`SKILL.md`, `context.md`, `critique.md`):
+- **Commands:** *init*, *score*, *audit*, *critique*, *apply* and *full*
+  next to the default review. With no command and nothing attached, the
+  agent reads where you left off and proposes the next two or three steps.
+- **`init`** writes `.unslop/context.md`: users, the scene, surface modes,
+  what must not change, and machine-read lines (`scale`, `type-scale`,
+  `allow`, `hook`). Three questions at most, and it never blocks a quick
+  pass. `slop-scan.py`, `unslop-score.py` and the hook read it; flags win.
+- **`.unslop/review.md`** is the backlog: each quick pass writes its five
+  fixes as applied, pending or rejected (with the reason), and *apply*
+  picks up the pending ones.
+- **`critique.md`**: a usability report that changes nothing and doesn't
+  touch the score: tasks walked as three users, eight cognitive-load
+  checks, ten heuristics scored 0-4, findings P0-P3.
+- **Refine or redesign:** ask first. Refining keeps the layout, face,
+  signature and voice; only a redesign may change the skeleton.
+- `process.md` § 2b starts from the **scene** (who, where, when, what
+  light): it decides light or dark and density, not the product category.
+
+Seven fixes (`checklist.md`), numbered after the current ones:
+- #66 a hard offset shadow is a style, not depth · #67 ease out, don't
+  bounce · #68 one separator per surface (the "ghost card") · #69 code
+  faces for code and data · #70 a modal is the last resort, Undo beats
+  Confirm · #71 built for every language and every size of data (text
+  expansion, RTL with logical properties, platform plurals and formatters,
+  errors with Retry) · #72 four choices or fewer per group.
+
+Scanner (`slop-scan.py`), six rules, each with hits and near misses:
+- **side-stripe** (#60): a 2px+ side border on a rounded card, CSS and
+  Tailwind; a square blockquote rule and 1px dividers pass.
+- **hard-shadow** (#66): box-shadow layers with no blur; insets and focus
+  rings pass. **bounce-easing** (#67): overshooting `cubic-bezier`,
+  `animate-bounce`, bounce/elastic/wobble keyframes.
+- **ghost-card** (#68): a 1px border and a soft shadow on one rounded
+  surface, including the shadcn card (`rounded-xl border … shadow`);
+  `hover:shadow` passes. **mono-disguise** (#69): monospace on `h1`-`h3`,
+  title classes or `body`. **plural-hack** (#71): "item(s)" in UI text,
+  not `trim(s)` in code.
+- `--json`, `--github` (an Actions annotation per hit) and `--list-rules`.
+- Scores: the six rules cost 1-2 points per hit with small caps. The
+  example dashboard's before goes from 25 to 24 (its cards are ghost cards).
+
+Score (`unslop-score.py`): `--save` appends each run to
+`.unslop/history.json` and prints the trend; `--markdown` prints a table
+for a PR comment or a job summary.
+
+Automation:
+- **Claude Code hook** (`hooks/`): after each Write or Edit of a UI file,
+  the scan runs on that file and the agent gets the hits its edit added, as
+  context. Silent when clean, never edits, off with `UNSLOP_HOOK=off` or
+  `hook: off`.
+- **GitHub Action** (`action.yml`): annotations, the score in the job
+  summary, a `score` output and an optional `min`.
+- This repo now runs `validate.py` and `test.py` in CI, and the action on
+  its own example.
+
+Distribution:
+- `npx unslop-design install | scan | score | audit | rules`
+  (`package.json`, `bin/unslop.mjs`), no dependencies.
+- `install.sh` links eleven more agents: Devin, Grok Build, Hermes, Pi, Oh
+  My Pi, Qoder, Trae, Trae CN, Rovo Dev, Mistral Vibe, DeepSeek Harness
+  (Replit already reads `~/.agents/skills`).
+- `docs/`: a landing page for GitHub Pages with a draggable before/after of
+  the example dashboard. It scores 100 on its own code and rendered page.
+
+Tests: 9 new cases (one per rule, plus Next/shadcn, Vue and Svelte), 10 new
+command-line checks (rule list, annotations, JSON, Markdown, context file,
+flags over context, the hook on a write, a clean edit and a non-UI file).
+`validate.py` checks a 3,000-word budget for `SKILL.md` and that
+`package.json` carries the same version.
+
 ## 1.9.0 — 2026-11-14
 
 One release for three blind runs by a fresh agent that only had the skill

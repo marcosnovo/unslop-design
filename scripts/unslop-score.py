@@ -2,7 +2,8 @@
 """One number for how unslopped a UI is: 100 = clean, 0 = every tic at once.
 
     python3 scripts/unslop-score.py [paths…] [--audit unslop-audit/report.json]
-                                    [--scale …] [--json] [--min 80]
+                                    [--scale …] [--json | --markdown] [--min 80]
+                                    [--save [.unslop]]
 
 Scores the source with the same rules as `slop-scan.py` and, if you pass a
 `web-audit.mjs` report, the rendered page too (scroll, contrast, focus,
@@ -10,6 +11,9 @@ targets, how many distinct values the page really uses). Each kind of slop
 costs points per hit up to a cap, so the score says how many *kinds* of slop
 are left more than how big the codebase is. Prints the breakdown and a
 README badge. With --min it exits 1 below that score (pre-commit hook).
+With --save it appends the run to .unslop/history.json and prints the
+trend ("score 41 → 88 → 91"); --markdown prints a table for a PR comment or
+a GitHub Actions job summary.
 
 It is a smoke alarm, not a judge: a 95 can still have a flat hierarchy,
 and a gradient you chose on purpose costs points anyway (silence that line
@@ -18,7 +22,9 @@ with `unslop-ignore`). Standard library only.
 import argparse
 import importlib.util
 import json
+import datetime
 import os
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -54,6 +60,12 @@ CODE = {
     "elevation-literal": ("Elevation literals on components", "#5", 1, 3),
     "translucent-text": ("Semi-transparent white text", "#22", 1, 4),
     "empty-action": ("Controls with an empty action", "#64", 2, 6),
+    "side-stripe": ("Side stripes on rounded cards", "#60", 1, 3),
+    "hard-shadow": ("Hard offset shadows", "#66", 1, 3),
+    "bounce-easing": ("Bouncy or elastic easing", "#67", 1, 3),
+    "ghost-card": ("Border and shadow on one card", "#68", 1, 4),
+    "mono-disguise": ("Monospace headings or body", "#69", 2, 4),
+    "plural-hack": ("\"item(s)\" plurals", "#71", 1, 3),
 }
 # Rendered page. "sprawl" = distinct values beyond what a system needs.
 PAGE = {
@@ -133,19 +145,47 @@ def verdict(score):
     return "slop", "red"
 
 
+def save_run(folder, run):
+    """Append this run to <folder>/history.json; return the scores so far, oldest first."""
+    path = os.path.join(folder, "history.json")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            history = json.load(fh)
+    except (OSError, ValueError):
+        history = []
+    try:
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True,
+                                timeout=5).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        commit = None
+    history.append({"date": datetime.datetime.now().isoformat(timespec="seconds"), "commit": commit, **run})
+    os.makedirs(folder, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(history[-200:], fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+    return [h["score"] for h in history]
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", help="source to scan (default: . unless only --audit is given)")
     ap.add_argument("--audit", help="report.json written by web-audit.mjs")
-    ap.add_argument("--scale", default="0,1,2,4,8,12,16,20,24,32,40,48,64,80,96")
+    ap.add_argument("--scale", help="allowed px values (default: the project context, else slop-scan's)")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument("--markdown", action="store_true", help="a Markdown table (PR comment, Actions job summary)")
+    ap.add_argument("--save", nargs="?", const=".unslop", metavar="DIR",
+                    help="append this run to DIR/history.json (default .unslop) and show the trend")
     ap.add_argument("--min", type=float, help="exit 1 below this score")
-    ap.add_argument("--type-scale", help="allowed font sizes in px (default: slop-scan's)")
+    ap.add_argument("--type-scale", help="allowed font sizes in px (default: the project context, else slop-scan's)")
+    ap.add_argument("--context", metavar="FILE", help="project context to read (default .unslop/context.md if present)")
+    ap.add_argument("--no-context", action="store_true", help="ignore .unslop/context.md")
     ap.add_argument("--allow", metavar="RULES",
                     help="rule ids a written project decision allows; not scored, listed apart. "
                          "Never contrast, graphics-contrast or unverified-claim")
     a = ap.parse_args()
-    allow = load_scanner().parse_allow(a.allow)
+    scanner = load_scanner()
+    ctx = scanner.resolve_options(a)
+    allow = scanner.parse_allow(a.allow)
     paths = a.paths or ([] if a.audit else ["."])
     lines, total = [], 0.0
 
@@ -197,17 +237,38 @@ def main():
     word, color = verdict(score)
     badge = f"https://img.shields.io/badge/unslop_score-{score}%2F100-{color}"
     lines.sort(key=lambda x: -x[0])
-    if a.json:
+    trend = None
+    if a.save:
+        scores = save_run(a.save, {"score": score, "files": files, "audit": bool(a.audit), "allowed": allowed,
+                                   "penalties": [{"rule": r, "count": n, "points": p} for p, r, n in lines]})
+        trend = " → ".join(str(s) for s in scores[-5:])
+    if a.markdown:
+        out = [f"### unslop score: {score}/100 ({word})", ""]
+        if trend and "→" in trend:
+            out += [f"Trend: {trend}", ""]
+        if lines:
+            out += ["| Points | Fix | Hits |", "|---:|---|---:|"] + [f"| -{p:g} | {r} | {n} |" for p, r, n in lines]
+        else:
+            out.append("Nothing found.")
+        if allowed:
+            out += ["", "Allowed by the project (not scored): " + ", ".join(allowed)]
+        out += ["", f"[![unslop score]({badge})](https://github.com/marcosnovo/unslop-design)"]
+        print("\n".join(out))
+    elif a.json:
         print(json.dumps({"score": score, "verdict": word, "files": files, "audit": bool(a.audit), "badge": badge,
                           "penalties": [{"rule": r, "count": n, "points": p} for p, r, n in lines],
-                          "allowed": allowed}, indent=2))
+                          "allowed": allowed, "trend": trend}, indent=2))
     else:
         src = []
         if paths:
             src.append(f"{files} source file{'' if files == 1 else 's'}")
         if a.audit:
             src.append("rendered page")
+        if ctx:
+            src.append(f"context {a.context or '.unslop/context.md'}")
         print(f"unslop score: {score}/100 — {word}  ({' + '.join(src)})")
+        if trend and "→" in trend:
+            print(f"trend: {trend}  ({os.path.join(a.save, 'history.json')})")
         if allowed:
             print("allowed by the project (--allow, not scored): " + ", ".join(allowed))
         if lines:

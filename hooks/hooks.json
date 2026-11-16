@@ -1,0 +1,18 @@
+{
+  "description": "unslop-design: scan each UI file the agent writes or edits and tell the agent what slop it just added. Silent when clean. Turn off with UNSLOP_HOOK=off or 'hook: off' in .unslop/context.md.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/unslop-hook.mjs"],
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}
