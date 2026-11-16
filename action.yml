@@ -71,7 +71,19 @@ runs:
         if [[ "${GITHUB_EVENT_NAME:-}" == pull_request* ]] && [ -f "${GITHUB_EVENT_PATH:-}" ]; then
           read -r pr base_sha base_ref < <(python3 -c 'import json,sys; p=json.load(open(sys.argv[1]))["pull_request"]; print(p["number"], p["base"]["sha"], p["base"]["ref"])' "$GITHUB_EVENT_PATH")
           if git fetch -q --depth=1 origin "$base_sha" 2>/dev/null && git worktree add -q --detach "$out/base" "$base_sha" 2>/dev/null; then
-            if (cd "$out/base" && python3 "$SCRIPTS/unslop-score.py" "${paths[@]}" "${opts[@]}" --json > "$out/base.json" 2>/dev/null); then
+            # The same paths inside the base checkout: absolute ones under the repo are rebased,
+            # and relative ones resolve from the same subfolder.
+            root=$(git rev-parse --show-toplevel)
+            base_paths=()
+            for p in "${paths[@]}"; do
+              case "$p" in
+                "$root") base_paths+=("$out/base") ;;
+                "$root"/*) base_paths+=("$out/base${p#"$root"}") ;;
+                *) base_paths+=("$p") ;;
+              esac
+            done
+            sub="${PWD#"$root"}"
+            if (cd "$out/base$sub" && python3 "$SCRIPTS/unslop-score.py" "${base_paths[@]}" "${opts[@]}" --json > "$out/base.json" 2>/dev/null); then
               baseline=(--baseline "$out/base.json" --baseline-label "$base_ref")
               delta=$(python3 -c 'import json,sys; print(int(sys.argv[2]) - json.load(open(sys.argv[1]))["score"])' "$out/base.json" "$score")
               echo "delta=$delta" >> "$GITHUB_OUTPUT"
