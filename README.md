@@ -189,6 +189,29 @@ weights, 1 shadow, no sideways scroll and a focus ring on everything.
 `unslop-score.py` goes from 24 to 100 on the code alone. Details
 in [`web.md`](web.md).
 
+## Native apps
+
+<p align="center">
+  <img src="assets/swiftui-before-after.png" alt="A SwiftUI subscriptions screen before and after. Before: 'Hey Maya!' greeting, 'Your Subscriptions' in Title Case, a purple-to-blue gradient hero card with a glow, three stat tiles, emoji icons in colored circles, pink 'Renews Soon!' pills and a gradient 'Unlock your savings with Pro' button. After: the title 'Subscriptions', $142.87 per month as the one hero number, and a plain system list of next charges with letter monograms and the soonest dates in a role color." width="100%">
+</p>
+
+SwiftUI and Jetpack Compose are scanned like the web, not as an
+afterthought: literals in views, elevation and stock-kit colors, emoji,
+greetings, Title Case and rows of stat cards in `.swift` and `.kt` files.
+
+| Example | Before | After |
+|---|---|---|
+| [`examples/swiftui/`](examples/swiftui) · subscriptions | 32/100: 10 emoji, glows, 4 gradients, 25 literals, "Hey Maya!" | 100/100 |
+| [`examples/compose/`](examples/compose) · settings | 62/100: 7 emoji, 15 literals, the Android Studio template colors | 100/100 |
+
+```bash
+python3 scripts/unslop-score.py examples/swiftui/before   # 32/100
+python3 scripts/unslop-score.py examples/swiftui/after    # 100/100
+```
+
+The SwiftUI folders also hold the HTML mock of each state at iPhone size,
+the way quick mode shows a native before/after when there's no simulator.
+
 ## Use it
 
 Type `/unslop-design` (or `$unslop-design` in Codex), or just ask in plain
@@ -434,7 +457,7 @@ before/after without the whole team.
 | [`scripts/slop-scan.py`](scripts/slop-scan.py) | Finds slop patterns in source with file, line and fix number |
 | [`scripts/web-audit.mjs`](scripts/web-audit.mjs) | Measures a rendered page: overflow, value census, contrast, focus |
 | [`scripts/unslop-score.py`](scripts/unslop-score.py) | Both as one score from 0 to 100, with the breakdown and a badge |
-| [`examples/`](examples) | One dashboard before and after, to try the scripts on |
+| [`examples/`](examples) | Before/after pairs to try the scripts on: a web dashboard, a SwiftUI screen, a Compose screen |
 | [`.claude-plugin/`](.claude-plugin) | Claude Code plugin and marketplace manifests |
 | [`hooks/`](hooks) | The Claude Code hook that scans each UI edit |
 | [`action.yml`](action.yml) | The GitHub Action: annotations, job summary, minimum score |

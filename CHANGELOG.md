@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.10.1 — 2026-11-16
+
+Native proof, and releases that run themselves.
+
+- `examples/swiftui/` and `examples/compose/`: a SwiftUI subscriptions
+  screen (32 → 100, with the HTML mock of each state at iPhone size) and a
+  Compose settings screen (62 → 100), next to the web dashboard. The README
+  and the website show the SwiftUI pair (`assets/swiftui-before-after.png`).
+- Releases: merging a version bump to `main` tags it, publishes the GitHub
+  release with the CHANGELOG entry and `unslop-design.zip` (the skill for
+  claude.ai, Claude desktop and ChatGPT, which earlier releases lacked), and
+  publishes to npm through Trusted Publishing.
+- `npx unslop-design` is on npm; the website is at
+  https://marcosnovo.github.io/unslop-design/.
+
 ## 1.10.0 — 2026-11-16
 
 A release about what happens after the review: the project's decisions are
