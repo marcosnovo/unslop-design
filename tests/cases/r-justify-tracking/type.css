@@ -1,0 +1,5 @@
+.article { text-align: justify; }
+.hero { letter-spacing: -0.06em; }
+/* misses: a slightly tighter headline, a centered caption */
+h1 { letter-spacing: -0.02em; }
+figcaption { text-align: center; }

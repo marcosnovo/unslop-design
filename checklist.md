@@ -419,3 +419,61 @@ Small things a careful team gets right and a generated UI gets wrong.
   elevation comes from lighter surfaces, not shadows.
 - **No invented data**: a number in a headline is one the user has already
   seen; if there isn't one, use the generic headline.
+
+## Automatic checks
+
+What `scripts/slop-scan.py` finds on its own, by fix number (48 rules;
+`--list-rules` prints the same list). Everything else in this checklist is
+judged on the render. `web-audit.mjs` adds the rendered checks: contrast,
+overflow, focus, targets, text size and the census of values.
+
+| Fix | Rule | Reads | What it flags |
+|---|---|---|---|
+| #1 | `arbitrary-value` | web | Tailwind arbitrary value instead of a scale step |
+| #1 | `native-literal` | native | Spacing / size literal in a view (should be a token) |
+| #1 | `off-scale` | web | Spacing / type / radius value off the scale |
+| #1 | `undefined-token` | web | Token used but defined nowhere in the scanned files |
+| #3 | `raw-color` | all | Raw color in a component (should be a role token) |
+| #5 #32 | `elevation-literal` | native | Shadow / elevation literal on a component (one named elevation token) |
+| #6 | `stock-kit` | all | Starter kit left at its defaults (set radius, grays and accent from the product) |
+| #13 | `multiple-h1` | web | More than one h1 on the page (section titles are labels, not h1) |
+| #19 | `ai-palette` | web | Default AI palette (purple/violet/indigo/fuchsia) — is it a decision? |
+| #22 | `translucent-text` | all | Semi-transparent white text (on color it washes out: use a role color, measured) |
+| #25 | `exclaim` | all | Exclamation mark in UI text (say it plainly) |
+| #25 | `title-case` | all | Title Case in UI text (sentence case: "Your subscriptions") |
+| #26 | `greeting` | all | Greeting as a title (name what the screen is) |
+| #28 | `justified-text` | web | Justified text (uneven gaps on screens; align left) |
+| #29 | `extreme-tracking` | web | Letter-spacing tighter than -0.04em (letters collide; a bit tighter, not crushed) |
+| #30 #34 | `gradient` | all | Gradient fill (fine once, as the signature; not as decoration) |
+| #32 | `glow` | all | Colored glow / neon shadow (a shadow means height) |
+| #33 #45 | `emoji` | all | Emoji in UI text (use the icon set, or nothing) |
+| #33 | `icon-circle` | web | Icons in colored circles on every row (one icon style; shapes only in empty states) |
+| #35 #48 | `placeholder-image` | all | Placeholder image service (real images, or none) |
+| #40 #65 | `card-sameness` | all | Same card repeated with a number inside (a row of stat tiles?) |
+| #45 #60 | `tracked-caps` | all | Small tracked all-caps label (eyebrow/kicker) — does it carry information? |
+| #46 | `blur-content` | all | Backdrop blur (chrome only, never behind content) |
+| #48 | `lorem` | all | Lorem ipsum (real content in every mock) |
+| #50 | `count-pill` | web | A count in a filled pill (counts are muted tabular text: "Inbox 12") |
+| #52 | `shouting` | all | Exclamation marks in UI copy |
+| #52 | `bare-delta` | all | A delta with no baseline ("+12%" vs what? "+12% vs September") |
+| #53 | `no-focus` | web | Focus outline removed — is there a :focus-visible style? |
+| #55 | `gradient-text` | web | Gradient text |
+| #57 | `fixed-width` | web | Fixed width of 400px or more (scrolls sideways on a phone: max-width and fluid) |
+| #57 | `hidden-nav` | web | Nav links hidden on phones with no menu button |
+| #59 | `canvas-tabbar` | all | Map or camera with a permanent tab bar under it (let the chrome float) |
+| #60 | `side-stripe` | web | Colored side stripe on a rounded card (does the stripe encode a status?) |
+| #60 | `section-numbers` | web | Sections numbered 01 / 02 / 03 (does the order carry information?) |
+| #61 | `three-dots` | all | Three dots in UI text (use the … character) |
+| #61 | `straight-quotes` | all | Straight quote or apostrophe in UI copy (use ’ “ ”) |
+| #62 | `no-color-scheme` | web | A dark theme with no color-scheme (form controls and scrollbars stay light) |
+| #63 | `transition-all` | web | transition: all (animate transform and opacity, named) |
+| #63 | `no-reduced-motion` | web | Animations with no prefers-reduced-motion alternative |
+| #64 | `hype-copy` | all | Hype copy (say what it does, with a number if there is one) |
+| #64 | `empty-action` | all | A control whose action is empty (it implies a feature that doesn't exist: principle 6) |
+| #64 | `pressure` | all | Pressure copy (countdown, scarcity, "most popular", "save N%"): true, computed and sourced? |
+| #64 | `unverified-claim` | all | Social proof or metric to source ("Trusted by 10,000+ teams", "10x faster") — is it real? |
+| #66 | `hard-shadow` | web | Hard offset shadow (no blur): a costume unless the brand is neobrutalist |
+| #67 | `bounce-easing` | web | Bouncy or elastic easing (ease out, don't overshoot) |
+| #68 | `ghost-card` | web | 1px border and a soft shadow on the same card (pick one separator) |
+| #69 | `mono-disguise` | web | Monospace on headings or the whole page (code faces are for code and data) |
+| #71 | `plural-hack` | all | "item(s)" in UI text (let the platform's plural rules pick the form) |

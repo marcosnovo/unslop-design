@@ -29,7 +29,7 @@
   you accept or reject them one by one.
 - **A before/after first.** Nothing in your code changes until you approve it.
 - **A number, not a vibe.** Scripts measure your UI and score it from 0 to 100:
-  the example dashboard goes from **24 to 100**, and 89 slop hits to none.
+  the example dashboard goes from **21 to 100**, and 91 slop hits to none.
 
 <p align="center">
   <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill-111111">
@@ -185,8 +185,8 @@ On the example above, `web-audit.mjs` goes from 19 spacing values (15 off
 the scale), 5 weights, 6 radii, 6 shadows, a page that scrolls sideways
 on a phone and 11 links with no focus style, to 6 spacing values, all on the scale, 2
 weights, 1 shadow, no sideways scroll and a focus ring on everything.
-`slop-scan.py` finds 89 hits in the before and none in the after, and
-`unslop-score.py` goes from 24 to 100 on the code alone. Details
+`slop-scan.py` finds 91 hits in the before and none in the after, and
+`unslop-score.py` goes from 21 to 100 on the code alone. Details
 in [`web.md`](web.md).
 
 ## Native apps
@@ -260,7 +260,7 @@ python3 scripts/unslop-score.py src/ --audit unslop-audit/report.json  # plus th
 
 ```text
 $ python3 scripts/unslop-score.py examples/dashboard-before.html
-unslop score: 24/100 — slop  (1 source file)
+unslop score: 21/100 — slop  (1 source file)
 
 Where the points went (fix the top rows first):
   -  12  [#32] Colored glows  (6)
@@ -268,12 +268,12 @@ Where the points went (fix the top rows first):
   -   8  [#53] Focus outline removed  (1)
   …
 
-Badge: [![unslop score](https://img.shields.io/badge/unslop_score-24%2F100-red)](https://github.com/marcosnovo/unslop-design)
+Badge: [![unslop score](https://img.shields.io/badge/unslop_score-21%2F100-red)](https://github.com/marcosnovo/unslop-design)
 ```
 
 Each kind of slop costs points per hit up to a cap, so the number says how
 many kinds are left, not how big the codebase is. Paste the badge in your
-README, and put "score 24 → 100" at the top of the PR. It's a smoke alarm,
+README, and put "score 21 → 100" at the top of the PR. It's a smoke alarm,
 not a judge: a 95 can still have a flat hierarchy. `--min 80` makes it exit
 1 below 80 if you want it in a pre-commit hook, and `--save` keeps every run
 in `.unslop/history.json` so the score has a trend.
@@ -300,7 +300,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: marcosnovo/unslop-design@v1.10.0
+      - uses: marcosnovo/unslop-design@v1.11.0
         with:
           paths: src
           min: 80           # optional; also: allow, scale, type-scale

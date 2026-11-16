@@ -66,6 +66,19 @@ CODE = {
     "ghost-card": ("Border and shadow on one card", "#68", 1, 4),
     "mono-disguise": ("Monospace headings or body", "#69", 2, 4),
     "plural-hack": ("\"item(s)\" plurals", "#71", 1, 3),
+    "justified-text": ("Justified text", "#28", 1, 3),
+    "extreme-tracking": ("Crushed letter-spacing", "#29", 1, 3),
+    "fixed-width": ("Fixed widths of 400px+", "#57", 2, 6),
+    "lorem": ("Lorem ipsum", "#48", 3, 6),
+    "placeholder-image": ("Placeholder images", "#48", 2, 6),
+    "bare-delta": ("Deltas with no baseline", "#52", 1, 4),
+    "straight-quotes": ("Straight quotes in copy", "#61", 0.5, 3),
+    "multiple-h1": ("More than one h1", "#13", 2, 2),
+    "section-numbers": ("Sections numbered 01/02/03", "#60", 1, 1),
+    "count-pill": ("Counts in filled pills", "#50", 1, 4),
+    "icon-circle": ("Icons in colored circles", "#33", 1, 2),
+    "no-color-scheme": ("Dark theme without color-scheme", "#62", 2, 2),
+    "no-reduced-motion": ("Animation without reduced motion", "#63", 3, 3),
 }
 # Rendered page. "sprawl" = distinct values beyond what a system needs.
 PAGE = {

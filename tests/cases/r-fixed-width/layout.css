@@ -1,0 +1,6 @@
+.panel { width: 720px; }
+.sidebar { min-width: 480px; }
+/* misses: max-width, a media query, a small fixed width */
+.page { max-width: 1200px; }
+@media (min-width: 768px) { .grid { display: grid; } }
+.avatar { width: 48px; }

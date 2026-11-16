@@ -157,8 +157,8 @@
         <p>Then paste a screenshot and write “unslop this screen”. MIT license, no dependencies.</p>
       </div>
     </div>
-    <div class="score" aria-label="Example score: from 24 to 100">
-      <div class="score-line num"><span class="from">24</span><span class="arrow" aria-hidden="true">→</span><span class="to">100</span><span class="of">/100</span></div>
+    <div class="score" aria-label="Example score: from 21 to 100">
+      <div class="score-line num"><span class="from">21</span><span class="arrow" aria-hidden="true">→</span><span class="to">100</span><span class="of">/100</span></div>
       <p>The example dashboard in the repo, scored by <code>unslop-score.py</code> before and after the checklist.</p>
     </div>
   </section>
@@ -169,7 +169,7 @@
       <iframe src="demo/before.html" title="Dashboard before: gradients, glows, emoji and a purple palette" loading="lazy" tabindex="-1"></iframe>
       <iframe class="after" src="demo/after.html" title="Dashboard after the checklist" loading="lazy" tabindex="-1"></iframe>
       <span class="divider" aria-hidden="true"></span>
-      <span class="tag l">Before · 24</span>
+      <span class="tag l">Before · 21</span>
       <span class="tag r">After · 100</span>
     </div>
     <div class="slider">
@@ -178,7 +178,7 @@
       <label for="cut">After</label>
     </div>
     <div class="facts">
-      <div class="fact"><b class="num">89 → 0</b><span>slop hits in the source</span></div>
+      <div class="fact"><b class="num">91 → 0</b><span>slop hits in the source</span></div>
       <div class="fact"><b class="num">19 emoji → 0</b><span>icons from one set instead</span></div>
       <div class="fact"><b class="num">6 glows → 0</b><span>a shadow means height, not style</span></div>
     </div>
@@ -213,7 +213,7 @@
 
   <section>
     <h2>What it catches</h2>
-    <p class="muted">72 fixes in the checklist; 35 of them checked by a scanner that reads web, SwiftUI and Compose code. A few:</p>
+    <p class="muted">72 fixes in the checklist, and a scanner with 48 rules that reads web, SwiftUI and Compose code. A few:</p>
     <dl class="rules">
       <div class="rule"><dt>#19</dt><dd>One accent<span>The brand color fills one gesture, not every badge and icon.</span></dd></div>
       <div class="rule"><dt>#26</dt><dd>A title, not a greeting<span>“November budget”, not “Hey Alex!”.</span></dd></div>
@@ -233,7 +233,7 @@
         <ul class="list">
           <li>In Claude Code, a hook scans every UI file the agent edits and tells it what slop it just added. Silent when clean.</li>
           <li>On GitHub, the action annotates each line and fails the PR under your minimum score.</li>
-          <li><code>.unslop/context.md</code> keeps your scales and decisions, so a base-6 grid or a brand face isn't flagged twice.</li>
+          <li><code>.unslop/context.md</code> keeps your scales and decisions, so a base-6 grid or a brand face isn’t flagged twice.</li>
           <li>Native first: SwiftUI and Compose are scanned, not only web.</li>
         </ul>
       </div>
@@ -244,7 +244,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: marcosnovo/unslop-design@v1.10.0
+      - uses: marcosnovo/unslop-design@v1.11.0
         with:
           paths: src
           min: 80</code></pre>

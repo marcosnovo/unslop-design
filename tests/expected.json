@@ -104,6 +104,7 @@
       "hype-copy": 2,
       "off-scale": 13,
       "raw-color": 16,
+      "straight-quotes": 2,
       "title-case": 2,
       "tracked-caps": 1,
       "transition-all": 1,
@@ -142,6 +143,7 @@
       "off-scale": 10,
       "raw-color": 14,
       "stock-kit": 1,
+      "straight-quotes": 2,
       "title-case": 2,
       "tracked-caps": 1,
       "translucent-text": 4
@@ -180,8 +182,10 @@
       "gradient": 4,
       "gradient-text": 1,
       "hype-copy": 1,
+      "justified-text": 1,
       "off-scale": 2,
       "raw-color": 13,
+      "straight-quotes": 4,
       "three-dots": 1,
       "title-case": 1,
       "tracked-caps": 1,
@@ -205,8 +209,10 @@
       "gradient": 4,
       "gradient-text": 1,
       "hype-copy": 1,
+      "justified-text": 1,
       "off-scale": 2,
       "raw-color": 13,
+      "straight-quotes": 4,
       "three-dots": 1,
       "title-case": 1,
       "tracked-caps": 1,
@@ -229,6 +235,7 @@
       "translucent-text": 1
     },
     "tokens-dark-in-media": {
+      "no-color-scheme": 1,
       "raw-color": 1
     },
     "audit-css-image-hero": {
@@ -250,12 +257,14 @@
     },
     "screen-dash-after": {},
     "screen-dash-before": {
+      "bare-delta": 4,
       "card-sameness": 1,
       "emoji": 2,
       "exclaim": 1,
       "gradient": 1,
       "off-scale": 8,
       "raw-color": 12,
+      "straight-quotes": 1,
       "title-case": 2
     },
     "screen-order-after": {},
@@ -297,7 +306,8 @@
       "plural-hack": 4
     },
     "craft-bounce-easing": {
-      "bounce-easing": 4
+      "bounce-easing": 4,
+      "no-reduced-motion": 1
     },
     "craft-ghost-card": {
       "ghost-card": 2,
@@ -325,6 +335,44 @@
       "mono-disguise": 1,
       "plural-hack": 1,
       "side-stripe": 1
+    },
+    "r-bare-delta": {
+      "bare-delta": 3
+    },
+    "r-color-scheme-missing": {
+      "no-color-scheme": 1
+    },
+    "r-color-scheme-ok": {},
+    "r-count-pill": {
+      "count-pill": 2
+    },
+    "r-fixed-width": {
+      "arbitrary-value": 2,
+      "fixed-width": 3
+    },
+    "r-icon-circle": {
+      "icon-circle": 1
+    },
+    "r-justify-tracking": {
+      "extreme-tracking": 2,
+      "justified-text": 2
+    },
+    "r-multiple-h1": {
+      "multiple-h1": 1
+    },
+    "r-placeholder-content": {
+      "lorem": 1,
+      "placeholder-image": 2
+    },
+    "r-reduced-motion-missing": {
+      "no-reduced-motion": 1
+    },
+    "r-reduced-motion-ok": {},
+    "r-section-numbers": {
+      "section-numbers": 1
+    },
+    "r-straight-quotes": {
+      "straight-quotes": 3
     }
   },
   "audit": {

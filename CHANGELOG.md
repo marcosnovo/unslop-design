@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.11.0 — 2026-11-16
+
+Thirteen scanner rules for fixes that had no automatic check, picked by one
+test: the fix is already in the checklist and a static check is reliable.
+Each comes with hits and near misses (13 new cases), and none fires on an
+"after" case. The checklist ends with **Automatic checks**, every rule
+by fix number (48 rules).
+
+- **multiple-h1** (#13): two or more `<h1>` in one page file (HTML, Vue,
+  Svelte, Astro; not `.tsx`, which often holds several components).
+- **justified-text** (#28): `text-align: justify`, `text-justify`.
+- **extreme-tracking** (#29): letter-spacing tighter than -0.04em;
+  `tracking-tight` and -0.02em headlines pass.
+- **icon-circle** (#33): three or more icons in tinted circles in one file;
+  one in an empty state passes.
+- **lorem** and **placeholder-image** (#35, #48): lorem ipsum, and
+  placeholder.com, picsum, placehold.co and similar.
+- **count-pill** (#50): a bare count in a filled pill or a `badge`/`pill`;
+  a muted `count` passes.
+- **bare-delta** (#52): "+12%" or "▲ 8%" with no baseline within a few
+  words ("vs September", "from last month" pass), in web and native text.
+- **fixed-width** (#57): `width` or `min-width` of 400px or more, `w-[640px]`;
+  `max-width` and media queries pass.
+- **section-numbers** (#60): 01, 02 and 03 as section markers.
+- **straight-quotes** (#61): "You're", "Let's Go" and straight double
+  quotes in visible copy; attributes and code pass.
+- **no-color-scheme** (#62): a dark theme with no `color-scheme` anywhere
+  in the scanned files. **no-reduced-motion** (#63): keyframe animations
+  with no `prefers-reduced-motion` or `motion-safe:` anywhere.
+
+Found on our own pages: the example dashboard's after had a dark theme with
+no `color-scheme` (fixed, still 100), and the website had one straight
+apostrophe (fixed). The dashboard's before now scores 21 (91 hits).
+
+Workflows use `actions/checkout@v5`, `setup-python@v6` and `setup-node@v5`
+(Node 24), so GitHub's Node 20 deprecation warning is gone.
+
 ## 1.10.1 — 2026-11-16
 
 Native proof, and releases that run themselves.
