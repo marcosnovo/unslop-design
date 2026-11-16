@@ -46,14 +46,20 @@ if (!out) quit();
 
 let hits;
 try { hits = JSON.parse(out).hits; } catch { quit(); }
-// After an Edit, only what the edit brought in: hits on lines that are part of the new text.
-const fresh = [tool.new_string, ...(tool.edits || []).map(e => e.new_string)].filter(Boolean).join("\n");
-if (fresh && ev.tool_name !== "Write") {
-  const lines = readFileSync(file, "utf8").split("\n");
-  hits = hits.filter(h => {
-    const line = (lines[h.line - 1] || "").trim();
-    return line && fresh.includes(line);
-  });
+// After an Edit, only what the edit brought in: hits on the lines its new text now spans
+// (a partial-line edit counts its whole line).
+const fresh = [tool.new_string, ...(tool.edits || []).map(e => e.new_string)].filter(Boolean);
+if (fresh.length && ev.tool_name !== "Write") {
+  const text = readFileSync(file, "utf8");
+  const touched = new Set();
+  for (const ns of fresh) {
+    for (let at = text.indexOf(ns); at !== -1; at = text.indexOf(ns, at + Math.max(1, ns.length))) {
+      const first = text.slice(0, at).split("\n").length;
+      const last = first + ns.split("\n").length - 1;
+      for (let n = first; n <= last; n++) touched.add(n);
+    }
+  }
+  hits = hits.filter(h => touched.has(h.line));
 }
 if (!hits.length) quit();
 hits.sort((a, b) => a.line - b.line);

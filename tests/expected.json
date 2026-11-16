@@ -915,6 +915,25 @@
       "contains": [
         "off the scale"
       ]
+    },
+    {
+      "name": "hook-partial-line-edit",
+      "script": "hooks/unslop-hook.mjs",
+      "args": [],
+      "exit": 0,
+      "stdin": {
+        "tool_name": "Edit",
+        "cwd": "{root}",
+        "tool_input": {
+          "file_path": "{cases}/craft-ghost-card/Card.tsx",
+          "old_string": "rounded-xl border bg-card text-card",
+          "new_string": "rounded-xl border bg-card text-card-foreground shadow"
+        }
+      },
+      "contains": [
+        "#68 ghost-card",
+        "line 1:"
+      ]
     }
   ]
 }

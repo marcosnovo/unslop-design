@@ -70,14 +70,25 @@ const PRESETS = {
 };
 const devices = deviceArg ? deviceArg.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
-let pw;
-try {
-  pw = await import("playwright");
-} catch {
-  try { pw = await import("playwright-core"); } catch {
-    console.error("Playwright not found. In the project: npm i -D playwright && npx playwright install chromium");
-    process.exit(2);
+// Playwright from next to this script, else from the project it runs in (npx runs this
+// script from npm's cache, where the project's node_modules isn't on the import path).
+async function loadPlaywright() {
+  for (const name of ["playwright", "playwright-core"]) {
+    const pick = (m) => (m.chromium ? m : m.default);
+    try { return pick(await import(name)); } catch {}
+    try {
+      const { createRequire } = await import("node:module");
+      const { pathToFileURL } = await import("node:url");
+      const resolved = createRequire(pathToFileURL(process.cwd() + "/").href).resolve(name);
+      return pick(await import(pathToFileURL(resolved).href));
+    } catch {}
   }
+  return null;
+}
+const pw = await loadPlaywright();
+if (!pw) {
+  console.error("Playwright not found. In the project: npm i -D playwright && npx playwright install chromium");
+  process.exit(2);
 }
 let browser;
 try { browser = await pw.chromium.launch(); } catch {
