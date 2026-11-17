@@ -652,7 +652,7 @@ AT_RULE_PRELUDE = re.compile(r"@(?:media|container|supports)\b[^{]*")
 DEFAULT_SCALE = "0,1,2,4,8,12,16,20,24,32,40,48,64,80,96"
 DEFAULT_TYPE_SCALE = {11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 44, 48, 56, 64, 72, 80, 96}
 # Colored shadows in CSS, any offset: "0 10px 30px rgba(255,107,107,.45)" is a glow too (#32).
-SHADOW_DECL = re.compile(r"box-shadow\s*:\s*([^;}]+)", re.I)
+SHADOW_DECL = re.compile(r"box-shadow\s*:\s*([^;}\"']+)", re.I)  # an inline style ends at its quote
 SHADOW_COLOR = re.compile(r"rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)(?:[\s,/]+([\d.]+%?))?\s*\)|#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b")
 
 

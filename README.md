@@ -175,6 +175,17 @@ How the score works, `--save`, `--baseline` and `--min`: [guide/automation.md](g
 
 A review fixes the screen; these keep the next edit from undoing it.
 
+<table>
+  <tr>
+    <td width="50%"><img src="assets/hook.gif" alt="An agent edits RevenueCard.tsx, adding a border plus a shadow and a rocket emoji. The unslop-design hook answers: 2 slop patterns, #68 ghost-card on line 3 and #33 emoji on line 4. The agent removes both, and the hook says nothing." width="100%"></td>
+    <td width="50%"><img src="assets/pr-comment.png" alt="A pull request turns a clean dashboard title into 'Welcome back, Damir!' with a waving hand, adds gradient text and a bare +12.5%. The comment reads: unslop score 82/100, minus 18 vs main, with seven rows that got worse, each with its fix number." width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>While the agent writes</b> · real hook output</td>
+    <td align="center"><b>On the pull request</b> · real <code>--baseline</code> output</td>
+  </tr>
+</table>
+
 - **While the agent writes.** After every edit to a UI file, a hook tells the
   agent what slop it just added, with the fix number, and says nothing when
   the edit is clean. Built into the Claude Code plugin; one command for

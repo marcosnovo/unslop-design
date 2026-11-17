@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.14.2 — 2026-11-17
+
+- `slop-scan.py`: a `box-shadow` in an inline `style="…"` no longer runs
+  past its quote. A neutral shadow followed by a `linear-gradient(#7c3aed…)`
+  in the next attribute was reported as a colored glow (#32). New case:
+  `glow-inline-style` (the neutral one passes, a violet one still hits).
+  Found while making the launch images from real output.
+- The README shows the hook and the PR comment at work
+  (`assets/hook.gif`, `assets/pr-comment.png`, `assets/videos/hook.mp4`),
+  both made from the scripts' real output.
+
 ## 1.14.1 — 2026-11-16
 
 Two blind runs of 1.14 with a small model (Haiku), only the skill and the

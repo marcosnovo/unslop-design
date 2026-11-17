@@ -373,6 +373,11 @@
     },
     "r-straight-quotes": {
       "straight-quotes": 4
+    },
+    "glow-inline-style": {
+      "glow": 1,
+      "gradient": 1,
+      "raw-color": 2
     }
   },
   "audit": {
