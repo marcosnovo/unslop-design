@@ -210,6 +210,7 @@ jobs:
         with: { paths: src, min: 80 }
 ```
 
+On the [GitHub Marketplace](https://github.com/marketplace/actions/unslop-design-score).
 Every option, other agents and the local commands:
 [guide/automation.md](guide/automation.md).
 
